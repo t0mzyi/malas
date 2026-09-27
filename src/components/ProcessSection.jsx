@@ -4,7 +4,7 @@ import { SITE_DATA } from '../data/siteData';
 
 export default function ProcessSection() {
   return (
-    <section id="process" className="section-wrapper" aria-labelledby="process-title">
+    <section id="process" className="section-wrapper bg-elevated" aria-labelledby="process-title">
       <div className="container">
         <motion.div 
           className="section-head-block"

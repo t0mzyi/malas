@@ -3,10 +3,10 @@ import { SITE_DATA } from '../data/siteData';
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="section-wrapper" aria-labelledby="services-title">
+    <section id="services" className="section-wrapper bg-elevated" aria-labelledby="services-title">
       <div className="container">
         <div className="section-head-block">
-          <span className="hero-tag">Engineering Disciplines</span>
+          <span className="contained-eyebrow">Engineering Disciplines</span>
           <h2 id="services-title" className="section-title">
             Specialized Technology Systems
           </h2>

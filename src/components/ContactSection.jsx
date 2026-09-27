@@ -24,7 +24,7 @@ export default function ContactSection() {
     <section id="contact" className="section-wrapper" aria-labelledby="contact-title">
       <div className="container">
         <div className="section-head-block">
-          <span className="hero-tag">Direct Communication</span>
+          <span className="contained-eyebrow">Direct Communication</span>
           <h2 id="contact-title" className="section-title">
             Consult With Our Engineering Team
           </h2>
@@ -38,7 +38,7 @@ export default function ContactSection() {
           <div className="contact-form-pane">
             {submitted ? (
               <div style={{ padding: '32px 0' }}>
-                <span className="hero-tag">Transmission Confirmed</span>
+                <span className="contained-eyebrow">Transmission Confirmed</span>
                 <h3 style={{ color: 'var(--gold)', marginBottom: '14px', fontSize: '1.8rem' }}>Inquiry Received</h3>
                 <p style={{ color: 'var(--paper-muted)', marginBottom: '28px', fontSize: '1.05rem' }}>
                   Thank you, <strong>{formState.name}</strong>. A Malas Electronics engineer will review your project requirements and follow up within one business day.

@@ -65,7 +65,7 @@ export default function HeroSection() {
           <motion.span variants={itemVariants} className="contained-eyebrow">Enterprise Systems Integrator</motion.span>
           <motion.h1 variants={itemVariants} id="hero-title" className="contained-headline">
             Powering The Future. <br />
-            <span className="contained-gold">Built For Precision.</span>
+            <span className="contained-gold" style={{ wordSpacing: '0.6em' }}>Built For Precision.</span>
           </motion.h1>
           <motion.p variants={itemVariants} className="contained-desc">
             End-to-end trading, expert implementation, and meticulous maintenance of advanced electrical, high-performance audiovisual, robotics, and precision control infrastructure across the UAE.

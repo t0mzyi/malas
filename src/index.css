@@ -572,6 +572,11 @@ p, li, span, label {
   padding: 110px 0;
   position: relative;
   background: var(--ink);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.section-wrapper.bg-elevated {
+  background: var(--ink-elevated);
 }
 
 .section-head-block {
