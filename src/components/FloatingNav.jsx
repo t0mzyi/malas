@@ -7,11 +7,20 @@ export default function FloatingNav() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.classList.add('menu-locked');
+    } else {
+      document.body.classList.remove('menu-locked');
+    }
+    return () => document.body.classList.remove('menu-locked');
+  }, [mobileMenuOpen]);
 
   const handleLinkClick = () => {
     setMobileMenuOpen(false);
@@ -21,13 +30,13 @@ export default function FloatingNav() {
     <>
       <div className="floating-nav-wrapper">
         <nav className={`floating-nav-pill ${scrolled ? 'scrolled' : ''}`} aria-label="Main Navigation">
-          {/* Logo */}
-          <a href="#" className="nav-brand-pill" aria-label="Malas Electronics Home">
+          {/* Logo & Brand Name */}
+          <a href="#" className="nav-brand-pill" aria-label="Malas Electronics Home" onClick={handleLinkClick}>
             <img src={SITE_DATA.company.logo} alt="Malas Electronics" className="nav-brand-pill-logo" />
             <span className="nav-brand-pill-text">Malas Electronics</span>
           </a>
 
-          {/* Desktop Nav Links (No Products link) */}
+          {/* Desktop Nav Links */}
           <ul className="nav-pill-links">
             <li><a href="#services" className="nav-pill-link">Services</a></li>
             <li><a href="#about" className="nav-pill-link">About</a></li>
@@ -56,11 +65,36 @@ export default function FloatingNav() {
       {/* Mobile Drawer Overlay */}
       <div className={`mobile-drawer-overlay ${mobileMenuOpen ? 'open' : ''}`}>
         <ul className="mobile-drawer-links">
-          <li><a href="#services" className="nav-pill-link" onClick={handleLinkClick}>Services</a></li>
-          <li><a href="#about" className="nav-pill-link" onClick={handleLinkClick}>About</a></li>
-          <li><a href="#brands" className="nav-pill-link" onClick={handleLinkClick}>Brands</a></li>
-          <li><a href="#process" className="nav-pill-link" onClick={handleLinkClick}>Process</a></li>
-          <li><a href="#contact" className="nav-pill-link" onClick={handleLinkClick}>Contact</a></li>
+          <li>
+            <a href="#services" className="mobile-drawer-item" onClick={handleLinkClick}>
+              <span>Services</span>
+              <span className="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="#about" className="mobile-drawer-item" onClick={handleLinkClick}>
+              <span>About</span>
+              <span className="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="#brands" className="mobile-drawer-item" onClick={handleLinkClick}>
+              <span>Brands</span>
+              <span className="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="#process" className="mobile-drawer-item" onClick={handleLinkClick}>
+              <span>Process</span>
+              <span className="arrow">&rarr;</span>
+            </a>
+          </li>
+          <li>
+            <a href="#contact" className="mobile-drawer-item" onClick={handleLinkClick}>
+              <span>Contact</span>
+              <span className="arrow">&rarr;</span>
+            </a>
+          </li>
         </ul>
         <a href="#contact" className="btn btn-primary" style={{ width: '100%' }} onClick={handleLinkClick}>
           Request Consultation

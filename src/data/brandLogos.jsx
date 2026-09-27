@@ -1,0 +1,157 @@
+import React from 'react';
+
+// Authentic Vector Brand Marks with High-Contrast Vivid Official Colors
+export const BRAND_SVGS = {
+  Bose: (props) => (
+    <svg viewBox="0 0 100 26" fill="#FFFFFF" {...props}>
+      <text x="0" y="20" fontFamily="var(--font-display)" fontSize="20" fontWeight="900" letterSpacing="3">BOSE</text>
+    </svg>
+  ),
+  JBL: (props) => (
+    <svg viewBox="0 0 80 28" {...props}>
+      <rect width="80" height="28" rx="6" fill="#FF5500" />
+      <text x="50%" y="19" textAnchor="middle" fill="#FFFFFF" fontFamily="var(--font-display)" fontSize="18" fontWeight="900" letterSpacing="1">JBL</text>
+    </svg>
+  ),
+  Nexo: (props) => (
+    <svg viewBox="0 0 90 26" fill="#FF2A38" {...props}>
+      <text x="0" y="20" fontFamily="var(--font-display)" fontSize="21" fontWeight="900" letterSpacing="3">NEXO</text>
+    </svg>
+  ),
+  Bosch: (props) => (
+    <svg viewBox="0 0 100 26" {...props}>
+      <circle cx="12" cy="13" r="10" fill="none" stroke="#FF333A" strokeWidth="2.5" />
+      <path d="M7 9h10v8H7z" fill="#38BDF8" />
+      <text x="28" y="19" fill="#38BDF8" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1.5">BOSCH</text>
+    </svg>
+  ),
+  QSC: (props) => (
+    <svg viewBox="0 0 80 26" fill="#38BDF8" {...props}>
+      <text x="0" y="20" fontFamily="var(--font-display)" fontSize="22" fontWeight="900" letterSpacing="2">QSC</text>
+    </svg>
+  ),
+  AtlasIED: (props) => (
+    <svg viewBox="0 0 105 26" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="17" fontWeight="800" letterSpacing="1">
+        <tspan fill="#FF334B">Atlas</tspan><tspan fill="#FFFFFF">IED</tspan>
+      </text>
+    </svg>
+  ),
+  Aton: (props) => (
+    <svg viewBox="0 0 80 26" fill="#F59E0B" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="900" letterSpacing="2">ATON</text>
+    </svg>
+  ),
+  Biamp: (props) => (
+    <svg viewBox="0 0 95 26" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="19" fontWeight="800" letterSpacing="1">
+        <tspan fill="#FFFFFF">biamp</tspan><tspan fill="#FF334B">.</tspan>
+      </text>
+    </svg>
+  ),
+  Extron: (props) => (
+    <svg viewBox="0 0 95 26" fill="#38BDF8" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1.5">Extron</text>
+    </svg>
+  ),
+  Crestron: (props) => (
+    <svg viewBox="0 0 115 26" fill="#38BDF8" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="17" fontWeight="900" letterSpacing="1.5">CRESTRON</text>
+    </svg>
+  ),
+  'Q-SYS': (props) => (
+    <svg viewBox="0 0 90 26" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="19" fontWeight="900" letterSpacing="1.5">
+        <tspan fill="#38BDF8">Q</tspan><tspan fill="#D4AF37">-</tspan><tspan fill="#38BDF8">SYS</tspan>
+      </text>
+    </svg>
+  ),
+  AMX: (props) => (
+    <svg viewBox="0 0 75 26" fill="#FF3B30" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="20" fontWeight="900" letterSpacing="2">AMX</text>
+    </svg>
+  ),
+  Kramer: (props) => (
+    <svg viewBox="0 0 95 26" fill="#2DD4BF" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1.5">KRAMER</text>
+    </svg>
+  ),
+  Atlona: (props) => (
+    <svg viewBox="0 0 95 26" fill="#38BDF8" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1.5">ATLONA</text>
+    </svg>
+  ),
+  Samsung: (props) => (
+    <svg viewBox="0 0 110 26" fill="#60A5FA" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1.5">SAMSUNG</text>
+    </svg>
+  ),
+  LG: (props) => (
+    <svg viewBox="0 0 65 26" {...props}>
+      <circle cx="13" cy="13" r="11" fill="none" stroke="#FF3366" strokeWidth="2.2" />
+      <text x="9" y="18" fill="#FF3366" fontFamily="var(--font-display)" fontSize="13" fontWeight="800">L</text>
+      <text x="32" y="20" fill="#FF3366" fontFamily="var(--font-display)" fontSize="18" fontWeight="900">LG</text>
+    </svg>
+  ),
+  Sony: (props) => (
+    <svg viewBox="0 0 85 26" fill="#FFFFFF" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="20" fontWeight="800" letterSpacing="2.5">SONY</text>
+    </svg>
+  ),
+  Yealink: (props) => (
+    <svg viewBox="0 0 95 26" fill="#38BDF8" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1">Yealink</text>
+    </svg>
+  ),
+  Logitech: (props) => (
+    <svg viewBox="0 0 100 26" {...props}>
+      <text x="0" y="19" fill="#00D2FF" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1">logi<tspan fill="#FFFFFF">tech</tspan></text>
+    </svg>
+  ),
+  Poly: (props) => (
+    <svg viewBox="0 0 75 26" fill="#FF5722" {...props}>
+      <text x="0" y="20" fontFamily="var(--font-display)" fontSize="21" fontWeight="800" letterSpacing="1.5">poly</text>
+    </svg>
+  ),
+  Cisco: (props) => (
+    <svg viewBox="0 0 90 26" {...props}>
+      <path d="M3 13v4M10 9v12M17 5v20M24 9v12M31 13v4" stroke="#00D2FF" strokeWidth="2.5" strokeLinecap="round" />
+      <text x="38" y="19" fill="#00D2FF" fontFamily="var(--font-display)" fontSize="17" fontWeight="800">CISCO</text>
+    </svg>
+  ),
+  ClearOne: (props) => (
+    <svg viewBox="0 0 105 26" fill="#60A5FA" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="17" fontWeight="800" letterSpacing="1">ClearOne.</text>
+    </svg>
+  ),
+  Evoko: (props) => (
+    <svg viewBox="0 0 85 26" fill="#E2E8F0" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="2">EVOKO</text>
+    </svg>
+  ),
+  Atlas: (props) => (
+    <svg viewBox="0 0 80 26" fill="#FF334B" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1.5">ATLAS</text>
+    </svg>
+  ),
+  Shure: (props) => (
+    <svg viewBox="0 0 90 26" fill="#10B981" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="19" fontWeight="900" letterSpacing="2">SHURE</text>
+    </svg>
+  ),
+  Sennheiser: (props) => (
+    <svg viewBox="0 0 120 26" fill="#38BDF8" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="15" fontWeight="800" letterSpacing="1.2">SENNHEISER</text>
+    </svg>
+  ),
+  AKG: (props) => (
+    <svg viewBox="0 0 70 26" fill="#FF3333" {...props}>
+      <text x="0" y="20" fontFamily="var(--font-display)" fontSize="21" fontWeight="900" letterSpacing="2">AKG</text>
+    </svg>
+  ),
+  Taiden: (props) => (
+    <svg viewBox="0 0 90 26" fill="#60A5FA" {...props}>
+      <text x="0" y="19" fontFamily="var(--font-display)" fontSize="18" fontWeight="800" letterSpacing="1.5">TAIDEN</text>
+    </svg>
+  )
+};

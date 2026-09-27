@@ -10,7 +10,7 @@ export const SITE_DATA = {
   company: {
     name: 'Malas Electronics LLC',
     shortName: 'Malas Electronics',
-    tagline: 'Enterprise Systems Integrator',
+    tagline: 'Enterprise Electrical & Technological Infrastructure',
     location: 'Al Muteena, 18B, Deira, Dubai, United Arab Emirates',
     phoneDirect: '+971 50 000 0000',
     phoneLandline: '+971 4 000 0000',
@@ -22,18 +22,27 @@ export const SITE_DATA = {
   },
 
   hero: {
-    headline: 'Turnkey AV, robotics, IT infrastructure, and building control systems across the UAE.',
-    subline: 'Engineering, installation, and 24/7 SLA maintenance for commercial facilities across Dubai, Abu Dhabi, Sharjah, and the Northern Emirates.',
+    headline: 'Advanced electrical and technological infrastructure engineered to power the future.',
+    subline: 'Malas Electronics LLC specializes in the end-to-end trading, expert implementation, and meticulous maintenance of high-performance audiovisual, robotics, computer, and precision control systems across the UAE.',
     image: ledAuditoriumPhoto,
-    imageAlt: 'Auditorium installation with high-resolution curved LED video wall by Malas Electronics'
+    imageAlt: 'High-performance curved LED video wall auditorium installation by Malas Electronics LLC'
+  },
+
+  about: {
+    title: 'The Malas Engineering Standard',
+    quote: 'Malas Electronics LLC stands at the forefront of technological innovation, delivering comprehensive solutions designed to power the future.',
+    highlight: 'We specialize in the end-to-end trading, expert implementation, and meticulous maintenance of advanced electrical and technological infrastructure.',
+    description: 'Our core expertise spans across high-performance audiovisual systems, cutting-edge robotics, computer systems, and precision control systems. We are dedicated to elevating commercial and industrial operations by ensuring your systems operate at their absolute peak of efficiency and reliability.',
+    image: loungePhoto,
+    imageAlt: 'Malas Electronics executive hospitality and technology showroom in Deira, Dubai'
   },
 
   services: [
     {
       id: 'audiovisual',
-      title: 'Audiovisual Systems',
-      scope: 'Turnkey AV engineering for corporate boardrooms, conference centers, hotels, entertainment venues, and education.',
-      capabilities: 'MicroLED displays, video walls, multi-zone acoustic sound reinforcement, digital signage, projection mapping, BYOD conferencing.',
+      title: 'High-Performance Audiovisual Systems',
+      scope: 'End-to-end trading, acoustic engineering, and turnkey installation for corporate boardrooms, conference centers, hotels, entertainment venues, and education.',
+      capabilities: 'MicroLED displays, large-format video walls, multi-zone acoustic sound reinforcement, digital signage, projection systems, and BYOD conferencing.',
       image: boardroomPhoto,
       imageAlt: 'Boardroom AV installation with presentation display and beamforming mics',
       specs: [
@@ -45,9 +54,9 @@ export const SITE_DATA = {
     },
     {
       id: 'robotics',
-      title: 'Robotics & Automation',
-      scope: 'Industrial automation and robotic process integration to reduce overhead and improve throughput.',
-      capabilities: 'Industrial robotic arms, process automation, smart factory floor telemetry, IoT sensor networks, custom PLC programming.',
+      title: 'Cutting-Edge Robotics & Automation',
+      scope: 'Industrial automation and robotic process integration engineered to elevate operational throughput, reduce overhead, and optimize efficiency.',
+      capabilities: 'Industrial robotic arms, automated process engineering, smart factory floor telemetry, IoT sensor networks, and custom PLC programming.',
       image: controlPhoto,
       imageAlt: 'Industrial control and automation operations workstation',
       specs: [
@@ -59,9 +68,9 @@ export const SITE_DATA = {
     },
     {
       id: 'it-infrastructure',
-      title: 'Computer Systems & Infrastructure',
-      scope: 'Mission-critical IT networks, storage arrays, servers, and high-performance engineering workstations.',
-      capabilities: 'Enterprise server clusters, high-speed fiber routing, NVMe storage fabrics, zero-trust network topologies.',
+      title: 'Enterprise Computer Systems',
+      scope: 'Mission-critical computing infrastructure, high-throughput enterprise networks, resilient storage arrays, and high-performance engineering workstations.',
+      capabilities: 'Enterprise server clusters, high-speed fiber routing, NVMe storage fabrics, virtualization, and zero-trust network topologies.',
       image: conferencePhoto,
       imageAlt: 'Enterprise telepresence and digital collaboration suite',
       specs: [
@@ -73,9 +82,9 @@ export const SITE_DATA = {
     },
     {
       id: 'control-systems',
-      title: 'Control Systems',
-      scope: 'Single-pane-of-glass facility automation for lighting, HVAC, access security, and AV.',
-      capabilities: 'Custom capacitive touch interfaces, room scheduling, sensor-triggered scene presets, building-wide automation.',
+      title: 'Precision Control Systems',
+      scope: 'Unified single-pane-of-glass facility automation orchestrating architectural lighting, HVAC climate control, access security, and multi-zone AV.',
+      capabilities: 'Custom capacitive touch interfaces, room scheduling, sensor-triggered scene presets, energy management, and building-wide integration.',
       image: ledShowroomPhoto,
       imageAlt: 'Experience center architectural curved LED installation',
       specs: [
@@ -87,34 +96,26 @@ export const SITE_DATA = {
     }
   ],
 
-  about: {
-    title: 'The Malas Engineering Standard',
-    quote: 'We engineer systems that run with uninterrupted precision, specified and installed by hardware specialists.',
-    description: 'Operating out of Al Muteena, Deira, Malas Electronics LLC delivers turnkey technology installations for luxury commercial, government, and hospitality environments across the UAE. We work with the world\'s leading hardware manufacturers, calibrate every component to exact acoustic and electrical tolerances, and back all systems with dedicated SLA support.',
-    image: loungePhoto,
-    imageAlt: 'Malas Electronics VIP executive facility and AV lounge in Dubai'
-  },
-
   process: [
     {
       num: '01',
-      title: 'Consult',
-      description: 'Site survey in Dubai/UAE, space audit, objective mapping.'
+      title: 'Consult & Audit',
+      description: 'Site survey across Dubai and the UAE, infrastructure audit, and comprehensive operational requirement mapping.'
     },
     {
       num: '02',
-      title: 'Design',
-      description: 'CAD schematics, single-line diagrams, thermal & acoustic calculations, transparent BOM.'
+      title: 'Engineering Design',
+      description: 'CAD schematics, single-line diagrams, thermal & acoustic calculations, and transparent hardware BOM procurement.'
     },
     {
       num: '03',
-      title: 'Build',
-      description: 'Certified installation, clean cable dressing, hardware calibration, user acceptance testing.'
+      title: 'Expert Implementation',
+      description: 'Certified turnkey installation, structured cable dressing, precision hardware calibration, and user acceptance testing.'
     },
     {
       num: '04',
-      title: 'Support',
-      description: 'Preventative maintenance cycles, SLA response, direct access to technicians.'
+      title: 'Meticulous Maintenance',
+      description: 'Preventative maintenance cycles, rapid-dispatch 24/7 SLA response, and direct access to specialized technicians.'
     }
   ]
 };

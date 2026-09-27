@@ -1,66 +1,74 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { SITE_DATA } from '../data/siteData';
 
 export default function HeroSection() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const heroRef = useRef(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      if (rect.top <= windowHeight && rect.bottom >= 0) {
-        const progress = Math.min(Math.max((windowHeight - rect.top) / (windowHeight + rect.height), 0), 1);
-        setScrollProgress(progress);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const imageScale = 1 + scrollProgress * 0.05;
+  const stats = [
+    {
+      value: '15+',
+      label: 'Years of Engineering',
+    },
+    {
+      value: '500+',
+      label: 'Projects Completed',
+    },
+    {
+      value: '99.8%',
+      label: 'Client Satisfaction',
+    },
+    {
+      value: '26+',
+      label: 'Industry Partners',
+    },
+  ];
 
   return (
-    <section ref={heroRef} className="hero-section" aria-labelledby="hero-title">
-      <div className="container">
-        <div className="hero-grid">
-          {/* Left Text Block */}
-          <div className="hero-text-block">
-            <span className="hero-tag">
-              Dubai · Abu Dhabi · Sharjah · UAE
-            </span>
-            <h1 id="hero-title" className="hero-headline">
-              {SITE_DATA.hero.headline}
+    <section className="split-hero-section" aria-labelledby="hero-title">
+      <div className="split-hero-container">
+        {/* Left Side Content */}
+        <div className="split-hero-content">
+          <div className="split-text-area">
+            <span className="split-eyebrow">Enterprise Systems Integrator</span>
+            <h1 id="hero-title" className="split-headline">
+              Powering The Future. <br />
+              <span className="split-gold">Built For Precision.</span>
             </h1>
-            <p className="hero-subline">
-              {SITE_DATA.hero.subline}
+            <p className="split-desc">
+              End-to-end trading, expert implementation, and meticulous maintenance of advanced electrical, high-performance audiovisual, robotics, and precision control infrastructure across the UAE.
             </p>
-            <div className="hero-actions">
-              <a href="#contact" className="btn btn-primary">
-                Request a Consultation
+            <div className="split-cta">
+              <a href="#services" className="btn btn-luxury-gold">
+                Explore Solutions
               </a>
-              <a href={`tel:${SITE_DATA.company.phoneDirect.replace(/\s+/g, '')}`} className="btn btn-secondary">
-                Call {SITE_DATA.company.phoneDirect}
+              <a href="#contact" className="btn btn-luxury-ghost">
+                Get In Touch
               </a>
             </div>
           </div>
+        </div>
 
-          {/* Right Image Block with Real Asset & Luxury Badge */}
-          <div className="hero-image-block">
-            <img
-              src={SITE_DATA.hero.image}
-              alt={SITE_DATA.hero.imageAlt}
-              loading="eager"
-              style={{ transform: `scale(${imageScale})` }}
-            />
-            <div className="hero-image-badge">
-              CURVED LED AUDITORIUM · DUBAI INSTALLATION
+        {/* Right Side Media */}
+        <div className="split-hero-media">
+          <img
+            src={SITE_DATA.hero.image}
+            alt={SITE_DATA.hero.imageAlt}
+            className="split-img"
+            loading="eager"
+          />
+        </div>
+      </div>
+
+      {/* Stats Bar */}
+      <div className="split-stats-wrapper container">
+        <div className="split-stats-bar">
+          {stats.map((stat, idx) => (
+            <div key={idx} className="split-stat-cell">
+              <div className="split-stat-number">{stat.value}</div>
+              <div className="split-stat-label">{stat.label}</div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
+

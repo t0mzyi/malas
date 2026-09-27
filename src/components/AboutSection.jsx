@@ -8,16 +8,19 @@ export default function AboutSection() {
         <div className="about-showcase-grid">
           {/* Left Text Block */}
           <div>
-            <span className="hero-tag">The Malas Standard</span>
+            <span className="service-category-tag">About Malas Electronics LLC</span>
             <blockquote className="about-quote">
-              "{SITE_DATA.about.quote}"
+              "At the forefront of technological innovation, delivering comprehensive solutions designed to power the future."
             </blockquote>
+            <p style={{ color: 'var(--gold-bright)', fontSize: '1.05rem', fontWeight: 500, marginBottom: '16px', lineHeight: 1.6 }}>
+              {SITE_DATA.about.highlight}
+            </p>
             <p className="about-desc">
               {SITE_DATA.about.description}
             </p>
             <div>
               <a href="#contact" className="btn btn-primary">
-                Discuss Your Facility
+                Consult With Our Specialists
               </a>
             </div>
           </div>
