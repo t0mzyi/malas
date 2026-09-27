@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { SITE_DATA } from '../data/siteData';
 
 export default function HeroSection() {
@@ -21,54 +22,96 @@ export default function HeroSection() {
     },
   ];
 
-  return (
-    <section className="split-hero-section" aria-labelledby="hero-title">
-      <div className="split-hero-container">
-        {/* Left Side Content */}
-        <div className="split-hero-content">
-          <div className="split-text-area">
-            <span className="split-eyebrow">Enterprise Systems Integrator</span>
-            <h1 id="hero-title" className="split-headline">
-              Powering The Future. <br />
-              <span className="split-gold">Built For Precision.</span>
-            </h1>
-            <p className="split-desc">
-              End-to-end trading, expert implementation, and meticulous maintenance of advanced electrical, high-performance audiovisual, robotics, and precision control infrastructure across the UAE.
-            </p>
-            <div className="split-cta">
-              <a href="#services" className="btn btn-luxury-gold">
-                Explore Solutions
-              </a>
-              <a href="#contact" className="btn btn-luxury-ghost">
-                Get In Touch
-              </a>
-            </div>
-          </div>
-        </div>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1
+      }
+    }
+  };
 
-        {/* Right Side Media */}
-        <div className="split-hero-media">
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+    }
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.95, y: 40 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.4 }
+    }
+  };
+
+  return (
+    <section className="contained-hero-section" aria-labelledby="hero-title">
+      <div className="container">
+        {/* Top Text Content */}
+        <motion.div 
+          className="contained-hero-content"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.span variants={itemVariants} className="contained-eyebrow">Enterprise Systems Integrator</motion.span>
+          <motion.h1 variants={itemVariants} id="hero-title" className="contained-headline">
+            Powering The Future. <br />
+            <span className="contained-gold">Built For Precision.</span>
+          </motion.h1>
+          <motion.p variants={itemVariants} className="contained-desc">
+            End-to-end trading, expert implementation, and meticulous maintenance of advanced electrical, high-performance audiovisual, robotics, and precision control infrastructure across the UAE.
+          </motion.p>
+          <motion.div variants={itemVariants} className="contained-cta">
+            <a href="#services" className="btn btn-luxury-gold">
+              Explore Solutions
+            </a>
+            <a href="#contact" className="btn btn-luxury-ghost">
+              Get In Touch
+            </a>
+          </motion.div>
+        </motion.div>
+
+        {/* Floating Center Media */}
+        <motion.div 
+          className="contained-hero-media"
+          variants={imageVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <img
             src={SITE_DATA.hero.image}
             alt={SITE_DATA.hero.imageAlt}
-            className="split-img"
+            className="contained-img"
             loading="eager"
           />
-        </div>
+        </motion.div>
       </div>
 
       {/* Stats Bar */}
-      <div className="split-stats-wrapper container">
-        <div className="split-stats-bar">
+      <motion.div 
+        className="contained-stats-wrapper container"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.8 }}
+      >
+        <div className="contained-stats-bar">
           {stats.map((stat, idx) => (
-            <div key={idx} className="split-stat-cell">
-              <div className="split-stat-number">{stat.value}</div>
-              <div className="split-stat-label">{stat.label}</div>
+            <div key={idx} className="contained-stat-cell">
+              <div className="contained-stat-number">{stat.value}</div>
+              <div className="contained-stat-label">{stat.label}</div>
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
-

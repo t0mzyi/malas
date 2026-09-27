@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SITE_DATA } from '../data/siteData';
 
 export default function FloatingNav() {
@@ -63,43 +64,48 @@ export default function FloatingNav() {
       </div>
 
       {/* Mobile Drawer Overlay */}
-      <div className={`mobile-drawer-overlay ${mobileMenuOpen ? 'open' : ''}`}>
-        <ul className="mobile-drawer-links">
-          <li>
-            <a href="#services" className="mobile-drawer-item" onClick={handleLinkClick}>
-              <span>Services</span>
-              <span className="arrow">&rarr;</span>
-            </a>
-          </li>
-          <li>
-            <a href="#about" className="mobile-drawer-item" onClick={handleLinkClick}>
-              <span>About</span>
-              <span className="arrow">&rarr;</span>
-            </a>
-          </li>
-          <li>
-            <a href="#brands" className="mobile-drawer-item" onClick={handleLinkClick}>
-              <span>Brands</span>
-              <span className="arrow">&rarr;</span>
-            </a>
-          </li>
-          <li>
-            <a href="#process" className="mobile-drawer-item" onClick={handleLinkClick}>
-              <span>Process</span>
-              <span className="arrow">&rarr;</span>
-            </a>
-          </li>
-          <li>
-            <a href="#contact" className="mobile-drawer-item" onClick={handleLinkClick}>
-              <span>Contact</span>
-              <span className="arrow">&rarr;</span>
-            </a>
-          </li>
-        </ul>
-        <a href="#contact" className="btn btn-primary" style={{ width: '100%' }} onClick={handleLinkClick}>
-          Request Consultation
-        </a>
-      </div>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            className="mobile-drawer-overlay open"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ul className="mobile-drawer-links">
+              {[
+                { label: 'Services', href: '#services' },
+                { label: 'About', href: '#about' },
+                { label: 'Brands', href: '#brands' },
+                { label: 'Process', href: '#process' },
+                { label: 'Contact', href: '#contact' }
+              ].map((link, idx) => (
+                <motion.li 
+                  key={link.label}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + (idx * 0.05), duration: 0.3 }}
+                >
+                  <a href={link.href} className="mobile-drawer-item" onClick={handleLinkClick}>
+                    <span>{link.label}</span>
+                    <span className="arrow">&rarr;</span>
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+            >
+              <a href="#contact" className="btn btn-primary" style={{ width: '100%' }} onClick={handleLinkClick}>
+                Request Consultation
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
