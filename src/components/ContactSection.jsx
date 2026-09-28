@@ -2,166 +2,152 @@ import React, { useState } from 'react';
 import { SITE_DATA } from '../data/siteData';
 
 export default function ContactSection() {
-  const [formState, setFormState] = useState({
+  const [formData, setFormData] = useState({
     name: '',
-    company: '',
-    service: 'Audiovisual Systems',
+    email: '',
+    phone: '',
+    project: 'Auditorium AV Installation',
     message: ''
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
+    setSent(true);
   };
 
   return (
-    <section id="contact" className="section-wrapper" aria-labelledby="contact-title">
+    <section id="contact" className="section-wrapper">
       <div className="container">
-        <div className="section-head-block">
-          <span className="contained-eyebrow">Direct Communication</span>
-          <h2 id="contact-title" className="section-title">
-            Consult With Our Engineering Team
-          </h2>
-          <p className="section-desc">
-            Direct communication with our engineers and procurement leads in Deira, Dubai.
+        {/* Section Header */}
+        <div className="apple-section-head">
+          <span className="apple-kicker">Get in Touch</span>
+          <h2 className="apple-heading">Contact Our Engineering Team</h2>
+          <p className="apple-desc">
+            Schedule an on-site survey or request an AV proposal for your upcoming project in Dubai or the UAE.
           </p>
         </div>
 
-        <div className="contact-layout-grid">
-          {/* Form Pane with Obsidian Glass Surface */}
-          <div className="contact-form-pane">
-            {submitted ? (
-              <div style={{ padding: '32px 0' }}>
-                <span className="contained-eyebrow">Transmission Confirmed</span>
-                <h3 style={{ color: 'var(--gold)', marginBottom: '14px', fontSize: '1.8rem' }}>Inquiry Received</h3>
-                <p style={{ color: 'var(--paper-muted)', marginBottom: '28px', fontSize: '1.05rem' }}>
-                  Thank you, <strong>{formState.name}</strong>. A Malas Electronics engineer will review your project requirements and follow up within one business day.
+        {/* 2-Column Apple Grid (NO GRADIENTS) */}
+        <div className="apple-contact-grid">
+          {/* Left Info Stack */}
+          <div className="apple-contact-info-stack">
+            <div className="apple-info-card">
+              <span className="apple-info-tag">Location</span>
+              <div className="apple-info-value">{SITE_DATA.company.location}</div>
+            </div>
+
+            <div className="apple-info-card">
+              <span className="apple-info-tag">Direct Phone</span>
+              <div className="apple-info-value">
+                {SITE_DATA.company.phoneLandline} · {SITE_DATA.company.phoneDirect}
+              </div>
+            </div>
+
+            <div className="apple-info-card">
+              <span className="apple-info-tag">Email Address</span>
+              <div className="apple-info-value">{SITE_DATA.company.emailSales}</div>
+            </div>
+
+            <div className="apple-info-card">
+              <span className="apple-info-tag">24/7 SLA Dispatch</span>
+              <div className="apple-info-value" style={{ fontSize: '0.86rem', color: '#86868B', lineHeight: 1.5 }}>
+                Active on-site engineer deployment within 2 hours across Dubai and Abu Dhabi for contract clients.
+              </div>
+            </div>
+          </div>
+
+          {/* Right Rounded Form Card */}
+          <div className="apple-form-card">
+            {sent ? (
+              <div style={{ textAlign: 'center', padding: '36px 12px' }}>
+                <div style={{ fontSize: '2.2rem', color: '#10B981', marginBottom: '12px' }}>✓</div>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', color: '#FFFFFF', marginBottom: '8px' }}>
+                  Thank you for reaching out
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: '#86868B' }}>
+                  A Malas Electronics systems engineer will review your project requirements and contact you shortly.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSubmitted(false);
-                    setFormState({ name: '', company: '', service: 'Audiovisual Systems', message: '' });
-                  }}
-                  className="btn btn-secondary"
-                >
-                  Send another inquiry
-                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
-                <div className="form-group-item">
-                  <label htmlFor="contact-name" className="form-field-label">Name *</label>
+                <div className="apple-form-row">
+                  <div className="apple-form-group">
+                    <label className="apple-label">Your Name</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Tariq Al Mansoori"
+                      className="apple-input"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="apple-form-group">
+                    <label className="apple-label">Phone Number</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+971 50 000 0000"
+                      className="apple-input"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="apple-form-group">
+                  <label className="apple-label">Email Address</label>
                   <input
-                    id="contact-name"
-                    name="name"
-                    type="text"
+                    type="email"
                     required
-                    placeholder="Your Full Name"
-                    value={formState.name}
-                    onChange={handleChange}
-                    className="form-control-input"
+                    placeholder="name@company.com"
+                    className="apple-input"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
 
-                <div className="form-group-item">
-                  <label htmlFor="contact-company" className="form-field-label">Organization / Company *</label>
-                  <input
-                    id="contact-company"
-                    name="company"
-                    type="text"
-                    required
-                    placeholder="Company Name"
-                    value={formState.company}
-                    onChange={handleChange}
-                    className="form-control-input"
-                  />
-                </div>
-
-                <div className="form-group-item">
-                  <label htmlFor="contact-service" className="form-field-label">Discipline of Interest</label>
+                <div className="apple-form-group">
+                  <label className="apple-label">Project Type</label>
                   <select
-                    id="contact-service"
-                    name="service"
-                    value={formState.service}
-                    onChange={handleChange}
-                    className="form-control-select"
+                    className="apple-select"
+                    value={formData.project}
+                    onChange={(e) => setFormData({ ...formData, project: e.target.value })}
                   >
-                    <option value="Audiovisual Systems">Audiovisual Systems</option>
-                    <option value="Robotics & Automation">Robotics & Automation</option>
-                    <option value="Computer Systems & Infrastructure">Computer Systems & Infrastructure</option>
-                    <option value="Control Systems">Control Systems</option>
-                    <option value="Hardware Procurement / Wholesale BOM">Hardware Procurement / Wholesale BOM</option>
-                    <option value="24/7 SLA Maintenance Contract">24/7 SLA Maintenance Contract</option>
+                    <optgroup label="15 Specialized AV Projects">
+                      {SITE_DATA.projects.map((p) => (
+                        <option key={p.id} value={p.title}>
+                          Project #{p.number}: {p.title}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="10 Core Activities">
+                      {SITE_DATA.activities.map((a) => (
+                        <option key={a.id} value={a.title}>
+                          Activity #{a.num}: {a.title}
+                        </option>
+                      ))}
+                    </optgroup>
                   </select>
                 </div>
 
-                <div className="form-group-item">
-                  <label htmlFor="contact-message" className="form-field-label">Project Requirements *</label>
+                <div className="apple-form-group">
+                  <label className="apple-label">Project Details / Scope</label>
                   <textarea
-                    id="contact-message"
-                    name="message"
-                    required
-                    rows={4}
-                    value={formState.message}
-                    onChange={handleChange}
-                    placeholder="Tell us about your facility space, project timeline, or specific hardware needed..."
-                    className="form-control-textarea"
-                  />
+                    rows={3}
+                    placeholder="Specify venue dimensions, acoustic requirements, or target timeline..."
+                    className="apple-textarea"
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  ></textarea>
                 </div>
 
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '12px' }}>
-                  Submit Engineering Inquiry
+                <button type="submit" className="btn-apple-solid" style={{ width: '100%', justifyContent: 'center' }}>
+                  Transmit AV Specification &rarr;
                 </button>
               </form>
             )}
-          </div>
-
-          {/* Details Pane */}
-          <div className="contact-details-pane">
-            <div>
-              <span className="detail-item-title">Registered Office</span>
-              <p className="detail-item-value">
-                {SITE_DATA.company.name}<br />
-                {SITE_DATA.company.location}
-              </p>
-            </div>
-
-            <div>
-              <span className="detail-item-title">Telephone</span>
-              <p className="detail-item-value">
-                Direct: <a href={`tel:${SITE_DATA.company.phoneDirect.replace(/\s+/g, '')}`} className="detail-link">{SITE_DATA.company.phoneDirect}</a><br />
-                Landline: <a href={`tel:${SITE_DATA.company.phoneLandline.replace(/\s+/g, '')}`} className="detail-link">{SITE_DATA.company.phoneLandline}</a>
-              </p>
-            </div>
-
-            <div>
-              <span className="detail-item-title">Email</span>
-              <p className="detail-item-value">
-                General: <a href={`mailto:${SITE_DATA.company.emailGeneral}`} className="detail-link">{SITE_DATA.company.emailGeneral}</a><br />
-                Sales: <a href={`mailto:${SITE_DATA.company.emailSales}`} className="detail-link">{SITE_DATA.company.emailSales}</a>
-              </p>
-            </div>
-
-            <div>
-              <span className="detail-item-title">Operating Schedule</span>
-              <p className="detail-item-value">
-                {SITE_DATA.company.hours}
-              </p>
-            </div>
-
-            <div>
-              <span className="detail-item-title">UAE Territory Coverage</span>
-              <p className="detail-item-value">
-                {SITE_DATA.company.coverage}
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,740 @@
+/* ============================================================
+   MALAS ELECTRONICS LLC — MINIMALIST WHITE & GOLD EDITION
+   Clean, Simple, Symmetrical Architectural Simplicity
+   Pure White (#FFFFFF) · Rich Black (#111827) · Warm Gold (#B48C36)
+   ============================================================ */
+
+.white-theme {
+  --w-bg: #FFFFFF;
+  --w-bg-subtle: #F9FAFB;
+  --w-bg-card: #FFFFFF;
+  
+  --w-black: #111827;
+  --w-black-soft: #1F2937;
+  --w-text-body: #4B5563;
+  --w-text-muted: #6B7280;
+  --w-text-light: #9CA3AF;
+  
+  --w-gold: #B48C36;
+  --w-gold-dark: #926E23;
+  --w-gold-light: #FBF8F1;
+  --w-gold-border: rgba(180, 140, 54, 0.3);
+  
+  --w-border: #E5E7EB;
+  --w-border-light: #F3F4F6;
+  
+  --w-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --w-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --w-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+  
+  --w-font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --w-font-heading: 'Space Grotesk', 'Poppins', sans-serif;
+  
+  background-color: var(--w-bg);
+  color: var(--w-text-body);
+  font-family: var(--w-font-sans);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Container */
+.white-theme .white-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ============================================================
+   SIMPLE NAVBAR
+   ============================================================ */
+.white-theme .white-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--w-border);
+  transition: all 0.25s ease;
+}
+
+.white-theme .white-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
+.white-theme .white-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.white-theme .white-brand-logo {
+  width: auto;
+  height: 38px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.white-theme .white-brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.white-theme .white-brand-title {
+  font-family: var(--w-font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--w-black);
+  letter-spacing: -0.01em;
+}
+
+.white-theme .white-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.white-theme .white-nav-a {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--w-text-body);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.white-theme .white-nav-a:hover {
+  color: var(--w-black);
+}
+
+.white-theme .white-header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--w-font-heading);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: 6px;
+  background: var(--w-black);
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.white-theme .white-header-cta:hover {
+  background: var(--w-gold-dark);
+}
+
+/* ============================================================
+   SIMPLE HERO SECTION
+   ============================================================ */
+.white-theme .simple-hero {
+  padding: 80px 0 60px 0;
+  text-align: center;
+  background: radial-gradient(circle at 50% 0%, rgba(180, 140, 54, 0.04) 0%, transparent 70%);
+}
+
+.white-theme .simple-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--w-gold-dark);
+  background: var(--w-gold-light);
+  border: 1px solid var(--w-gold-border);
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+
+.white-theme .simple-hero-title {
+  font-family: var(--w-font-heading);
+  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--w-black);
+  margin-bottom: 20px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.white-theme .simple-hero-title span {
+  color: var(--w-gold-dark);
+}
+
+.white-theme .simple-hero-desc {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--w-text-body);
+  max-width: 680px;
+  margin: 0 auto 32px auto;
+}
+
+.white-theme .simple-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 48px;
+}
+
+.white-theme .simple-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--w-font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 13px 28px;
+  border-radius: 6px;
+  background: var(--w-black);
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.white-theme .simple-btn-primary:hover {
+  background: var(--w-gold-dark);
+  transform: translateY(-1px);
+}
+
+.white-theme .simple-btn-secondary {
+  font-family: var(--w-font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 13px 24px;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: var(--w-black);
+  border: 1px solid var(--w-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.white-theme .simple-btn-secondary:hover {
+  border-color: var(--w-gold);
+  color: var(--w-gold-dark);
+}
+
+/* Single Framed Hero Image */
+.white-theme .simple-hero-media {
+  max-width: 1040px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--w-border);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.08);
+}
+
+.white-theme .simple-hero-media img {
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ============================================================
+   QUIET BRAND TRUST STRIP
+   ============================================================ */
+.white-theme .simple-brands {
+  padding: 36px 0;
+  border-top: 1px solid var(--w-border);
+  border-bottom: 1px solid var(--w-border);
+  background: var(--w-bg-subtle);
+}
+
+.white-theme .simple-brands-title {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--w-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.white-theme .simple-brands-track {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 36px;
+}
+
+.white-theme .simple-brand-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+}
+
+.white-theme .simple-brand-item svg {
+  height: 22px;
+  width: auto;
+  max-width: 90px;
+  filter: grayscale(100%);
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.white-theme .simple-brand-item:hover svg {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+/* ============================================================
+   SECTIONS GLOBAL
+   ============================================================ */
+.white-theme .simple-section {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--w-border);
+}
+
+.white-theme .simple-section.bg-subtle {
+  background-color: var(--w-bg-subtle);
+}
+
+.white-theme .simple-section-head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 48px auto;
+}
+
+.white-theme .simple-kicker {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--w-gold-dark);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.white-theme .simple-heading {
+  font-family: var(--w-font-heading);
+  font-size: clamp(1.8rem, 3vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--w-black);
+  margin-bottom: 12px;
+}
+
+.white-theme .simple-desc {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--w-text-body);
+}
+
+/* ============================================================
+   10 CORE AV ACTIVITIES (CLEAN, SIMPLE, DIRECT 2-COL GRID)
+   ============================================================ */
+.white-theme .simple-activities-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.white-theme .simple-activity-card {
+  background: #FFFFFF;
+  border: 1px solid var(--w-border);
+  border-radius: 8px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.white-theme .simple-activity-card:hover {
+  border-color: var(--w-gold);
+  box-shadow: var(--w-shadow-md);
+  transform: translateY(-2px);
+}
+
+.white-theme .simple-act-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.white-theme .simple-act-num {
+  font-family: var(--w-font-heading);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--w-gold-dark);
+  background: var(--w-gold-light);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.white-theme .simple-act-title {
+  font-family: var(--w-font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--w-black);
+}
+
+.white-theme .simple-act-sub {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--w-gold-dark);
+  margin-bottom: 10px;
+}
+
+.white-theme .simple-act-desc {
+  font-size: 0.88rem;
+  color: var(--w-text-body);
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+.white-theme .simple-act-gear {
+  font-size: 0.78rem;
+  color: var(--w-text-muted);
+  background: var(--w-bg-subtle);
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--w-border);
+}
+
+.white-theme .simple-act-gear strong {
+  color: var(--w-black);
+}
+
+/* ============================================================
+   15 AV PROJECTS (CLEAN & SIMPLE DIRECTORY)
+   ============================================================ */
+.white-theme .simple-filter-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 36px;
+}
+
+.white-theme .simple-filter-btn {
+  background: #FFFFFF;
+  border: 1px solid var(--w-border);
+  color: var(--w-text-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.white-theme .simple-filter-btn:hover {
+  border-color: var(--w-black);
+  color: var(--w-black);
+}
+
+.white-theme .simple-filter-btn.active {
+  background: var(--w-black);
+  border-color: var(--w-black);
+  color: #FFFFFF;
+}
+
+.white-theme .simple-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.white-theme .simple-project-card {
+  background: #FFFFFF;
+  border: 1px solid var(--w-border);
+  border-radius: 8px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.white-theme .simple-project-card:hover {
+  border-color: var(--w-gold);
+  box-shadow: var(--w-shadow-md);
+  transform: translateY(-2px);
+}
+
+.white-theme .simple-proj-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.white-theme .simple-proj-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--w-gold-dark);
+}
+
+.white-theme .simple-proj-cat {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--w-text-light);
+  text-transform: uppercase;
+}
+
+.white-theme .simple-proj-title {
+  font-family: var(--w-font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--w-black);
+  margin-bottom: 6px;
+}
+
+.white-theme .simple-proj-desc {
+  font-size: 0.85rem;
+  color: var(--w-text-body);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.white-theme .simple-proj-eq {
+  font-size: 0.76rem;
+  color: var(--w-text-muted);
+  background: var(--w-bg-subtle);
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  line-height: 1.45;
+}
+
+.white-theme .simple-proj-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--w-border);
+}
+
+.white-theme .simple-proj-link {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--w-black);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.white-theme .simple-proj-link:hover {
+  color: var(--w-gold-dark);
+}
+
+/* ============================================================
+   ABOUT & KEY METRICS (SIMPLE 2-COL)
+   ============================================================ */
+.white-theme .simple-about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.white-theme .simple-about-text h3 {
+  font-family: var(--w-font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--w-black);
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+
+.white-theme .simple-about-text p {
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--w-text-body);
+  margin-bottom: 16px;
+}
+
+.white-theme .simple-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.white-theme .simple-stat-box {
+  background: #FFFFFF;
+  border: 1px solid var(--w-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.white-theme .simple-stat-val {
+  font-family: var(--w-font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--w-black);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.white-theme .simple-stat-lbl {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--w-text-muted);
+}
+
+/* ============================================================
+   SIMPLE CONTACT SECTION
+   ============================================================ */
+.white-theme .simple-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 48px;
+}
+
+.white-theme .simple-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.white-theme .simple-info-block {
+  background: #FFFFFF;
+  border: 1px solid var(--w-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.white-theme .simple-info-lbl {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--w-gold-dark);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.white-theme .simple-info-val {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--w-black);
+  line-height: 1.4;
+}
+
+.white-theme .simple-form {
+  background: #FFFFFF;
+  border: 1px solid var(--w-border);
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.white-theme .simple-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.white-theme .simple-form-group {
+  margin-bottom: 14px;
+}
+
+.white-theme .simple-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--w-black);
+  margin-bottom: 6px;
+}
+
+.white-theme .simple-input,
+.white-theme .simple-select,
+.white-theme .simple-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--w-border);
+  border-radius: 6px;
+  font-family: var(--w-font-sans);
+  font-size: 0.88rem;
+  color: var(--w-black);
+  background: #FFFFFF;
+  transition: border-color 0.15s ease;
+}
+
+.white-theme .simple-input:focus,
+.white-theme .simple-select:focus,
+.white-theme .simple-textarea:focus {
+  outline: none;
+  border-color: var(--w-gold);
+}
+
+.white-theme .simple-submit-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  background: var(--w-black);
+  color: #FFFFFF;
+  border: none;
+  font-family: var(--w-font-heading);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.white-theme .simple-submit-btn:hover {
+  background: var(--w-gold-dark);
+}
+
+/* ============================================================
+   SIMPLE FOOTER
+   ============================================================ */
+.white-theme .simple-footer {
+  padding: 28px 0;
+  border-top: 1px solid var(--w-border);
+  background: #FFFFFF;
+}
+
+.white-theme .simple-footer-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--w-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .white-theme .simple-activities-grid,
+  .white-theme .simple-projects-grid,
+  .white-theme .simple-about-grid,
+  .white-theme .simple-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .white-theme .white-nav-links {
+    display: none;
+  }
+  .white-theme .simple-form-row {
+    grid-template-columns: 1fr;
+  }
+  .white-theme .simple-footer-flex {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}

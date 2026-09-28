@@ -3,35 +3,42 @@ import { SITE_DATA } from '../data/siteData';
 
 export default function AboutSection() {
   return (
-    <section id="about" className="section-wrapper" aria-labelledby="about-title">
+    <section id="about" className="section-wrapper bg-elevated">
       <div className="container">
-        <div className="about-showcase-grid">
-          {/* Left Text Block */}
-          <div>
-            <span className="service-category-tag">About Malas Electronics LLC</span>
-            <blockquote className="about-quote">
-              "At the forefront of technological innovation, delivering comprehensive solutions designed to power the future."
-            </blockquote>
-            <p style={{ color: 'var(--gold-bright)', fontSize: '1.05rem', fontWeight: 500, marginBottom: '16px', lineHeight: 1.6 }}>
-              {SITE_DATA.about.highlight}
+        <div className="apple-about-grid">
+          {/* Left Text */}
+          <div className="apple-about-narrative">
+            <span className="apple-kicker">About Malas Electronics</span>
+            <h3 className="apple-about-headline">
+              15+ Years of Systems Integration in Dubai & UAE.
+            </h3>
+            <p className="apple-about-paragraph">
+              Malas Electronics LLC is an established systems integrator delivering end-to-end Audio-Visual, acoustic engineering, and automation solutions. We operate across corporate, commercial, hospitality, education, and luxury residential sectors.
             </p>
-            <p className="about-desc">
-              {SITE_DATA.about.description}
+            <p className="apple-about-paragraph">
+              Every installation conforms to international Avixa performance standards, backed by certified brand hardware and active 24/7 emergency maintenance contracts.
             </p>
-            <div>
-              <a href="#contact" className="btn btn-primary">
-                Consult With Our Specialists
+            <div style={{ marginTop: '28px' }}>
+              <a href="#contact" className="btn-apple-solid">
+                Consult With Our Engineers &rarr;
               </a>
             </div>
           </div>
 
-          {/* Right Media Block with Real Facility Photo */}
-          <div className="about-media-wrap">
-            <img
-              src={SITE_DATA.about.image}
-              alt={SITE_DATA.about.imageAlt}
-              loading="lazy"
-            />
+          {/* Right Rounded Stat Cards (NO GRADIENTS) */}
+          <div className="apple-about-stats-stack">
+            <div className="apple-stat-card">
+              <div className="apple-stat-number">500+</div>
+              <div className="apple-stat-label">AV Projects Delivered Across UAE</div>
+            </div>
+            <div className="apple-stat-card">
+              <div className="apple-stat-number">15+</div>
+              <div className="apple-stat-label">Years Established in Dubai</div>
+            </div>
+            <div className="apple-stat-card">
+              <div className="apple-stat-number">&lt; 2h</div>
+              <div className="apple-stat-label">Emergency SLA On-Site Dispatch</div>
+            </div>
           </div>
         </div>
       </div>

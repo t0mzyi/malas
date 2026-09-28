@@ -3,55 +3,32 @@ import { SITE_DATA } from '../data/siteData';
 
 export default function ServicesSection() {
   return (
-    <section id="services" className="section-wrapper bg-elevated" aria-labelledby="services-title">
+    <section id="services" className="section-wrapper bg-elevated">
       <div className="container">
-        <div className="section-head-block">
-          <span className="contained-eyebrow">Engineering Disciplines</span>
-          <h2 id="services-title" className="section-title">
-            Specialized Technology Systems
-          </h2>
-          <p className="section-desc">
-            End-to-end engineering, hardware procurement, certified commissioning, and 24/7 SLA maintenance across four technical verticals.
+        {/* Section Header */}
+        <div className="apple-section-head">
+          <span className="apple-kicker">Core Disciplines</span>
+          <h2 className="apple-heading">Our 10 AV Activities</h2>
+          <p className="apple-desc">
+            Complete Audio-Visual capabilities designed, supplied, installed, and maintained by our engineering team across Dubai and the UAE.
           </p>
         </div>
 
-        <div className="services-showcase-grid">
-          {SITE_DATA.services.map((service, idx) => {
-            const isReverse = idx % 2 === 1;
-            return (
-              <div key={service.id} className={`service-item-row ${isReverse ? 'reverse' : ''}`}>
-                {/* Media Side */}
-                <div className="service-media-wrap">
-                  <img
-                    src={service.image}
-                    alt={service.imageAlt}
-                    loading="lazy"
-                  />
-                </div>
-
-                {/* Content Side */}
-                <div className="service-content-wrap">
-                  <span className="service-category-tag">Discipline 0{idx + 1}</span>
-                  <h3 className="service-title">{service.title}</h3>
-                  <p className="service-scope">{service.scope}</p>
-                  <p className="service-capabilities">
-                    <strong style={{ color: 'var(--paper)', fontWeight: 600 }}>Capabilities: </strong>
-                    {service.capabilities}
-                  </p>
-
-                  {/* Clean Two-Column Unboxed Spec Rows */}
-                  <div className="spec-sheet-rows">
-                    {service.specs.map((spec, sIdx) => (
-                      <div key={sIdx} className="spec-row">
-                        <span className="spec-row-label">{spec.label}</span>
-                        <span className="mono-val spec-row-value">{spec.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+        {/* 10 Clean Rounded Cards (NO GRADIENTS) */}
+        <div className="apple-activities-grid">
+          {SITE_DATA.activities.map((act) => (
+            <div key={act.id} className="apple-activity-card">
+              <div className="apple-act-header">
+                <span className="apple-act-pill">#{act.num}</span>
+                <h3 className="apple-act-title">{act.title}</h3>
               </div>
-            );
-          })}
+              <div className="apple-act-sub">{act.subtitle}</div>
+              <p className="apple-act-desc">{act.description}</p>
+              <div className="apple-act-gear">
+                <strong>Equipment:</strong> {act.equipmentList.join(', ')}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

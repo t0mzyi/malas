@@ -1,15 +1,15 @@
 import React from 'react';
-import { SITE_DATA } from '../data/siteData';
+import { SITE_DATA } from '../../data/siteData';
 
-export default function Footer() {
+export default function WhiteFooter() {
   return (
-    <footer className="site-footer">
-      <div className="container">
-        <div className="footer-flex-row">
-          <div className="footer-copy">
+    <footer className="simple-footer">
+      <div className="white-container">
+        <div className="simple-footer-flex">
+          <div>
             © {new Date().getFullYear()} {SITE_DATA.company.name}. All rights reserved.
           </div>
-          <div className="footer-meta">
+          <div>
             Dubai, United Arab Emirates · Authorized Systems Integrator
           </div>
         </div>

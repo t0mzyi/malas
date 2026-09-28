@@ -13,7 +13,7 @@ export default function ProcessSection() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <span className="contained-eyebrow">Methodology</span>
+          <span className="section-kicker">Methodology</span>
           <h2 id="process-title" className="section-title">
             The 4-Stage Execution Standard
           </h2>
