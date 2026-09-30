@@ -4,6 +4,7 @@ import { SITE_DATA } from '../data/siteData';
 export default function ServicesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef(null);
+  const stripRef = useRef(null);
   const pillRefs = useRef([]);
   const activities = SITE_DATA.activities;
   const total = activities.length;
@@ -45,13 +46,19 @@ export default function ServicesSection() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [total]);
 
-  // Auto-center the active pill on mobile as user changes slides
+  // Auto-center active pill inside its own container without scrolling the browser page
   useEffect(() => {
-    if (pillRefs.current[activeIndex] && window.innerWidth <= 768) {
-      pillRefs.current[activeIndex].scrollIntoView({
-        behavior: 'smooth',
-        inline: 'center',
-        block: 'nearest'
+    const strip = stripRef.current;
+    const pill = pillRefs.current[activeIndex];
+    if (strip && pill && window.innerWidth <= 768) {
+      const pillLeft = pill.offsetLeft;
+      const pillWidth = pill.offsetWidth;
+      const stripWidth = strip.offsetWidth;
+      const targetScrollLeft = pillLeft - (stripWidth / 2) + (pillWidth / 2);
+
+      strip.scrollTo({
+        left: targetScrollLeft,
+        behavior: 'smooth'
       });
     }
   }, [activeIndex]);
@@ -149,7 +156,7 @@ export default function ServicesSection() {
             </div>
 
             {/* Interactive Progress Strip (Desktop: pure pills; Mobile: prev/next + pills) */}
-            <div className="activities-progress-strip" role="tablist" aria-label="Activities Navigation">
+            <div ref={stripRef} className="activities-progress-strip" role="tablist" aria-label="Activities Navigation">
               {/* Prev button on left of Audio (mobile-only) */}
               <button
                 type="button"
