@@ -56,6 +56,37 @@ export default function ServicesSection() {
     }
   }, [activeIndex]);
 
+  // 2-second Auto-carousel on Mobile View Only (Cycles 1 to 10 automatically)
+  useEffect(() => {
+    let intervalId = null;
+
+    const updateTimer = () => {
+      if (typeof window === 'undefined') return;
+      if (window.innerWidth <= 768) {
+        if (!intervalId) {
+          intervalId = setInterval(() => {
+            if (window.innerWidth <= 768) {
+              setActiveIndex((prev) => (prev < total - 1 ? prev + 1 : 0));
+            }
+          }, 2000);
+        }
+      } else {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      }
+    };
+
+    updateTimer();
+    window.addEventListener('resize', updateTimer);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      window.removeEventListener('resize', updateTimer);
+    };
+  }, [total]);
+
   // Click on indicator dot to scroll straight to that activity
   const jumpToActivity = (index) => {
     setActiveIndex(index);

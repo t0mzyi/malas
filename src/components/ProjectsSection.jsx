@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SITE_DATA } from '../data/siteData';
 
 export default function ProjectsSection() {
@@ -26,6 +26,37 @@ export default function ProjectsSection() {
     }
     return true;
   });
+
+  // 2-second Auto-carousel on Mobile View Only
+  useEffect(() => {
+    let intervalId = null;
+
+    const updateTimer = () => {
+      if (typeof window === 'undefined') return;
+      if (window.innerWidth <= 768) {
+        if (!intervalId) {
+          intervalId = setInterval(() => {
+            if (window.innerWidth <= 768) {
+              setActiveMobileIdx((prev) => (prev < filteredProjects.length - 1 ? prev + 1 : 0));
+            }
+          }, 2000);
+        }
+      } else {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      }
+    };
+
+    updateTimer();
+    window.addEventListener('resize', updateTimer);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      window.removeEventListener('resize', updateTimer);
+    };
+  }, [filteredProjects.length]);
 
   const handleFilterChange = (id) => {
     setFilter(id);
