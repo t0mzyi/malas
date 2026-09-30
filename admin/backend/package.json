@@ -1,0 +1,29 @@
+{
+  "name": "malas-admin",
+  "version": "1.0.0",
+  "description": "Malas Electronics LLC — Enterprise Admin Portal & MariaDB Integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "init-db": "node scripts/init-db.js",
+    "seed-admin": "node scripts/seed-admin.js"
+  },
+  "keywords": [
+    "malas",
+    "admin",
+    "mariadb",
+    "av-integration"
+  ],
+  "author": "Malas Electronics LLC",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.9.7"
+  }
+}
