@@ -280,9 +280,22 @@ img {
   display: flex;
   align-items: center;
   gap: 14px;
-  opacity: 1;
-  visibility: visible;
   text-decoration: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+}
+
+.header-brand.is-scrolled-hidden {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.header-brand.is-scrolled-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  visibility: visible;
 }
 
 .header-logo-frame {
@@ -397,9 +410,9 @@ img {
   transform: scale(1.05);
 }
 
-/* Universal Hamburger Button (Desktop & Mobile) */
+/* Mobile-Only Animated Hamburger Button */
 .mobile-menu-btn {
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
