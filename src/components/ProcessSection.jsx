@@ -1,46 +1,34 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { SITE_DATA } from '../data/siteData';
 
 export default function ProcessSection() {
   return (
     <section id="process" className="section-wrapper bg-elevated" aria-labelledby="process-title">
       <div className="container">
-        <motion.div 
-          className="section-head-block"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-        >
-          <span className="section-kicker">Methodology</span>
+        <div className="section-head-block">
+          <span className="section-kicker">Delivery Standard</span>
           <h2 id="process-title" className="section-title">
-            The 4-Stage Execution Standard
+            Execution Standard
           </h2>
           <p className="section-desc">
-            Applied to every commercial and industrial installation across Dubai and the Northern Emirates.
+            A rigorous engineering methodology applied to every commercial, institutional, and residential deployment across the UAE.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Connected Horizontal Timeline */}
-        <div className="process-timeline">
+        <div className="process-stepper-grid">
           {SITE_DATA.process.map((step, idx) => (
-            <motion.div 
-              key={step.num} 
-              className="process-timeline-step"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.5, delay: idx * 0.15, ease: 'easeOut' }}
-            >
-              <div className="process-step-node">
-                {step.num}
+            <div key={step.title} className="process-step-column">
+              <div className="process-step-header">
+                <span className="process-step-number-badge">
+                  {idx + 1}
+                </span>
+                <span className="process-step-phase-tag">
+                  Phase {idx + 1}
+                </span>
               </div>
-              <div className="process-step-content">
-                <h3 className="process-step-title">{step.title}</h3>
-                <p className="process-step-desc">{step.description}</p>
-              </div>
-            </motion.div>
+              <h3 className="process-step-name">{step.title}</h3>
+              <p className="process-step-details">{step.description}</p>
+            </div>
           ))}
         </div>
       </div>

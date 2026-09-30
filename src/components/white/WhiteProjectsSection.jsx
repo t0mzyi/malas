@@ -67,9 +67,6 @@ export default function WhiteProjectsSection() {
               </div>
 
               <div className="simple-proj-footer">
-                <span style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 600 }}>
-                  ● Commissioned
-                </span>
                 <a href="#s-contact" className="simple-proj-link">
                   Inquire Scope &rarr;
                 </a>

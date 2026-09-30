@@ -453,7 +453,7 @@ export const SITE_DATA = {
     {
       num: '02',
       title: 'Engineering & CAD Design',
-      description: 'Single-line wiring diagrams, signal flow schematics, speaker dispersion heatmaps, CAD rack elevation, and verified brand hardware procurement.'
+      description: 'Single-line wiring diagrams, signal flow schematics, speaker dispersion heatmaps, CAD rack elevation, and authorized tier-1 brand hardware procurement.'
     },
     {
       num: '03',

@@ -3,41 +3,59 @@ import { SITE_DATA } from '../data/siteData';
 
 export default function AboutSection() {
   return (
-    <section id="about" className="section-wrapper bg-elevated">
+    <section id="about" className="section-wrapper" aria-labelledby="about-title">
       <div className="container">
-        <div className="apple-about-grid">
-          {/* Left Text */}
-          <div className="apple-about-narrative">
-            <span className="apple-kicker">About Malas Electronics</span>
-            <h3 className="apple-about-headline">
+        <div className="standards-split-layout">
+          {/* Narrative Column */}
+          <div className="standards-narrative">
+            <span className="section-kicker">Integrity & Heritage</span>
+            <h2 id="about-title" className="section-title">
               15+ Years of Systems Integration in Dubai & UAE.
-            </h3>
-            <p className="apple-about-paragraph">
-              Malas Electronics LLC is an established systems integrator delivering end-to-end Audio-Visual, acoustic engineering, and automation solutions. We operate across corporate, commercial, hospitality, education, and luxury residential sectors.
+            </h2>
+            <p>
+              Malas Electronics LLC is an authorized systems integrator delivering turnkey Audio-Visual, acoustic engineering, and automation solutions. We operate across corporate, commercial, hospitality, education, and luxury residential sectors.
             </p>
-            <p className="apple-about-paragraph">
+            <p>
               Every installation conforms to international Avixa performance standards, backed by certified brand hardware and active 24/7 emergency maintenance contracts.
             </p>
-            <div style={{ marginTop: '28px' }}>
-              <a href="#contact" className="btn-apple-solid">
-                Consult With Our Engineers &rarr;
+
+            <div className="standards-cert-pill-row">
+              <span className="standards-cert-pill">Avixa CTS-D & CTS-I Standards</span>
+              <span className="standards-cert-pill">Dante Network Certified</span>
+              <span className="standards-cert-pill">Authorized Tier-1 Hardware</span>
+            </div>
+
+            <div>
+              <a href="#contact" className="btn-primary">
+                Consult With Our Engineers
               </a>
             </div>
           </div>
 
-          {/* Right Rounded Stat Cards (NO GRADIENTS) */}
-          <div className="apple-about-stats-stack">
-            <div className="apple-stat-card">
-              <div className="apple-stat-number">500+</div>
-              <div className="apple-stat-label">AV Projects Delivered Across UAE</div>
+          {/* Telemetry Metric Stack */}
+          <div className="standards-telemetry-panel">
+            <div className="standards-metric-tile">
+              <span className="standards-metric-num">500+</span>
+              <div>
+                <div className="standards-metric-text">AV Projects Delivered</div>
+                <div className="standards-metric-sub">Commercial, corporate, and luxury venues across the UAE</div>
+              </div>
             </div>
-            <div className="apple-stat-card">
-              <div className="apple-stat-number">15+</div>
-              <div className="apple-stat-label">Years Established in Dubai</div>
+
+            <div className="standards-metric-tile">
+              <span className="standards-metric-num">15+</span>
+              <div>
+                <div className="standards-metric-text">Years UAE Experience</div>
+                <div className="standards-metric-sub">Continuous presence and licensed operations in Dubai</div>
+              </div>
             </div>
-            <div className="apple-stat-card">
-              <div className="apple-stat-number">&lt; 2h</div>
-              <div className="apple-stat-label">Emergency SLA On-Site Dispatch</div>
+
+            <div className="standards-metric-tile">
+              <span className="standards-metric-num">&lt; 2h</span>
+              <div>
+                <div className="standards-metric-text">Emergency SLA On-Site Dispatch</div>
+                <div className="standards-metric-sub">Rapid technical response active across Dubai and Abu Dhabi</div>
+              </div>
             </div>
           </div>
         </div>

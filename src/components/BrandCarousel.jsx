@@ -3,28 +3,27 @@ import { BRAND_ROWS } from '../data/brandsData';
 import { BRAND_SVGS } from '../data/brandLogos';
 
 export default function BrandCarousel() {
-  // Multiply items by 4 to ensure completely seamless, unending infinite loops
-  const row1Items = [...BRAND_ROWS.row1, ...BRAND_ROWS.row1, ...BRAND_ROWS.row1, ...BRAND_ROWS.row1];
-  const row2Items = [...BRAND_ROWS.row2, ...BRAND_ROWS.row2, ...BRAND_ROWS.row2, ...BRAND_ROWS.row2];
+  const row1Items = [...BRAND_ROWS.row1, ...BRAND_ROWS.row1, ...BRAND_ROWS.row1];
+  const row2Items = [...BRAND_ROWS.row2, ...BRAND_ROWS.row2, ...BRAND_ROWS.row2];
 
   return (
-    <section id="brands" className="brand-carousel-section" aria-label="Authorized partner brands">
-      <div className="container brand-carousel-header">
-        <span className="brand-carousel-title">Authorized Integration & Hardware Partners</span>
+    <section id="brands" className="brand-matrix-section" aria-label="Authorized Integration Partners">
+      <div className="container brand-matrix-header">
+        <span className="brand-matrix-label">Authorized Hardware & Integration Partners</span>
       </div>
 
-      <div className="marquee-wrapper-outer">
-        {/* Row 1: Left to Right Flow */}
-        <div className="marquee-row-wrapper">
-          <div className="marquee-track-ltr">
+      <div className="brand-marquee-container">
+        {/* Row 1: Flow Left */}
+        <div className="brand-marquee-row">
+          <div className="brand-marquee-track-left">
             {row1Items.map((brand, idx) => {
               const SvgComponent = BRAND_SVGS[brand.name];
               return (
-                <div key={`r1-${brand.name}-${idx}`} className="brand-pill-card">
+                <div key={`m1-${brand.name}-${idx}`} className="brand-faceplate-card">
                   {SvgComponent ? (
-                    <SvgComponent className="brand-svg-mark" />
+                    <SvgComponent className="brand-faceplate-svg" />
                   ) : (
-                    <span className="brand-text-mark">{brand.name}</span>
+                    <span className="brand-faceplate-text">{brand.name}</span>
                   )}
                 </div>
               );
@@ -32,17 +31,17 @@ export default function BrandCarousel() {
           </div>
         </div>
 
-        {/* Row 2: Right to Left Flow */}
-        <div className="marquee-row-wrapper">
-          <div className="marquee-track-rtl">
+        {/* Row 2: Flow Right */}
+        <div className="brand-marquee-row">
+          <div className="brand-marquee-track-right">
             {row2Items.map((brand, idx) => {
               const SvgComponent = BRAND_SVGS[brand.name];
               return (
-                <div key={`r2-${brand.name}-${idx}`} className="brand-pill-card">
+                <div key={`m2-${brand.name}-${idx}`} className="brand-faceplate-card">
                   {SvgComponent ? (
-                    <SvgComponent className="brand-svg-mark" />
+                    <SvgComponent className="brand-faceplate-svg" />
                   ) : (
-                    <span className="brand-text-mark">{brand.name}</span>
+                    <span className="brand-faceplate-text">{brand.name}</span>
                   )}
                 </div>
               );
@@ -53,4 +52,3 @@ export default function BrandCarousel() {
     </section>
   );
 }
-

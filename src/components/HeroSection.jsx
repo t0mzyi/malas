@@ -1,157 +1,84 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { SITE_DATA } from '../data/siteData';
 
 export default function HeroSection() {
-  // Stagger animation container
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.05
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 22 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
-    }
-  };
-
   return (
-    <section id="home" className="hero-apple-section">
-      <div className="container">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="hero-motion-wrapper"
-        >
-          {/* Brand Name & Brand Logo Showcase Centerpiece */}
-          <motion.div variants={itemVariants} className="hero-brand-centerpiece-wrap">
-            <motion.div
-              className="hero-brand-centerpiece"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Prominent Official Logo */}
-              <div className="hero-brand-logo-frame">
-                <img
-                  src="/logo.png"
-                  alt="Malas Electronics Official Logo"
-                  className="hero-brand-logo-img"
-                />
-              </div>
-
-              {/* Brand Typography & Verification */}
-              <div className="hero-brand-text-block">
-                <div className="hero-brand-name-row">
-                  <span className="hero-brand-title-large">MALAS ELECTRONICS</span>
-                  <span className="hero-official-badge">
-                    <span className="chip-dot-green pulse-dot"></span>
-                    VERIFIED
-                  </span>
-                </div>
-                <span className="hero-brand-spec-line">
-                  AUDIO-VISUAL SYSTEMS INTEGRATOR & EVENT TECHNOLOGY
-                </span>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Main Headline */}
-          <motion.h1 variants={itemVariants} className="hero-apple-title">
-            Next-Generation Audio-Visual <br />
-            Engineering & Integration.
-          </motion.h1>
-
-          {/* What They Do Description */}
-          <motion.p variants={itemVariants} className="hero-apple-desc">
-            {SITE_DATA.company.whatWeDo}
-          </motion.p>
-
-          {/* Core Capabilities Chips */}
-          <motion.div variants={itemVariants} className="hero-apple-chips-row">
-            {SITE_DATA.hero.capabilities.map((cap, idx) => (
-              <motion.span
-                key={idx}
-                className="hero-apple-chip"
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                <span className="chip-dot-green"></span>
-                {cap}
-              </motion.span>
-            ))}
-          </motion.div>
-
-          {/* Action Buttons */}
-          <motion.div variants={itemVariants} className="hero-apple-actions">
-            <motion.a
-              href="#contact"
-              className="btn-apple-solid"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Request an AV Proposal &rarr;
-            </motion.a>
-            <motion.a
-              href="#services"
-              className="btn-apple-translucent"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Explore 10 AV Activities
-            </motion.a>
-            <motion.a
-              href="#projects"
-              className="btn-apple-translucent"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              View 15 Projects
-            </motion.a>
-          </motion.div>
-
-          {/* 4 Apple Stat Pills */}
-          <motion.div variants={itemVariants} className="hero-apple-stats-grid">
-            {SITE_DATA.hero.stats.map((stat, idx) => (
-              <motion.div
-                key={idx}
-                className="hero-stat-pill-card"
-                whileHover={{ y: -3, borderColor: 'rgba(255, 255, 255, 0.2)' }}
-                transition={{ duration: 0.25 }}
-              >
-                <div className="hero-stat-pill-val">{stat.value}</div>
-                <div className="hero-stat-pill-lbl">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Single Framed Hero Image with 24px Rounded Corners & Motion Entrance */}
-          <motion.div
-            variants={itemVariants}
-            className="hero-apple-media-frame"
-          >
-            <div className="hero-media-wrapper-relative">
-              <img
-                src={SITE_DATA.hero.image}
-                alt={SITE_DATA.hero.imageAlt}
-                loading="eager"
-              />
-              <div className="hero-media-status-pill">
-                <span className="chip-dot-green pulse-dot"></span>
-                <span>COMMISSIONED AV AUDITORIUM · DUBAI, UAE</span>
-              </div>
+    <section id="home" className="hero-split-section">
+      <div className="container hero-split-container">
+        {/* Left Column: Brand Lockup, Headings, Mobile Visual, CTAs, Credibility */}
+        <div className="hero-left-column">
+          {/* Prominent Hero Brand Lockup */}
+          <div id="hero-brand-lockup" className="hero-brand-lockup">
+            <div className="hero-brand-logo-frame">
+              <img src="/logo.png" alt="Malas Electronics Official Logo" />
             </div>
-          </motion.div>
-        </motion.div>
+            <div className="hero-brand-text-stack">
+              <span className="hero-brand-name-lead">MALAS ELECTRONICS</span>
+              <span className="hero-brand-tag-lead">SYSTEMS INTEGRATOR · DUBAI</span>
+            </div>
+          </div>
+
+          {/* Simple, Authoritative Brand Headline */}
+          <h1 className="hero-display-headline">
+            Audio-Visual Systems.
+            <span className="brand-highlight">Engineered for Dubai & the UAE.</span>
+          </h1>
+
+          {/* Direct, Plain-Spoken Subline */}
+          <p className="hero-subline-text">
+            Turnkey commercial auditoriums, boardrooms, luxury residential automation, and comprehensive systems integration across the UAE.
+          </p>
+
+          {/* Mobile-Only Dedicated Visual Card (Clean, visual-first mobile experience) */}
+          <div className="hero-mobile-image-card">
+            <img
+              src="/images/hero-auditorium.jpg"
+              alt="High-Performance Audio-Visual Installation by Malas Electronics LLC"
+              className="hero-mobile-img"
+              loading="eager"
+            />
+          </div>
+
+          {/* Core Actions */}
+          <div className="hero-actions-group">
+            <a href="#contact" className="btn-primary">
+              Request Systems Proposal
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+            <a href="#services" className="btn-secondary">
+              Explore Activities
+            </a>
+          </div>
+
+          {/* Credibility Metric Strip */}
+          <div className="hero-credibility-strip">
+            {SITE_DATA.hero.stats.map((stat, idx) => (
+              <div key={idx} className="credibility-metric-card">
+                <span className="credibility-metric-val">{stat.value}</span>
+                <span className="credibility-metric-lbl">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Column: Faded Cinematic Image (Desktop Only) */}
+        <div className="hero-right-column desktop-hero-right">
+          <div className="hero-faded-image-wrapper">
+            <img
+              src="/images/hero-auditorium.jpg"
+              alt="High-Performance Audio-Visual Installation by Malas Electronics LLC"
+              className="hero-faded-image"
+              loading="eager"
+            />
+            {/* Left Edge Fade for seamless text legibility */}
+            <div className="hero-image-fade-left"></div>
+            <div className="hero-image-fade-bottom"></div>
+            <div className="hero-image-fade-top"></div>
+          </div>
+        </div>
       </div>
     </section>
   );

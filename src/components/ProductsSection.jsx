@@ -10,7 +10,7 @@ export default function ProductsSection() {
             Products
           </h2>
           <p className="section-desc">
-            Authorized hardware procurement, custom fabrication, and verified installation for commercial environments.
+            Authorized hardware procurement, custom fabrication, and certified installation for commercial environments.
           </p>
         </div>
 
