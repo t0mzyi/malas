@@ -18,9 +18,10 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="section-wrapper bg-elevated" aria-labelledby="contact-title">
+    <section id="contact" className="section-wrapper contact-section-lux" aria-labelledby="contact-title">
       <div className="container">
-        <div className="section-head-block">
+        {/* Section Header */}
+        <div className="section-head-block contact-head-center">
           <span className="section-kicker">Direct Consultation</span>
           <h2 id="contact-title" className="section-title">
             Initiate Systems Consultation
@@ -30,112 +31,162 @@ export default function ContactSection() {
           </p>
         </div>
 
-        <div className="contact-dossier-grid">
-          {/* Engineering Channels Dossier */}
-          <div className="contact-channels-column">
-            <div className="contact-card-box">
-              <div className="contact-card-label">Dubai Engineering Headquarters</div>
-              <div className="contact-card-value">{SITE_DATA.company.location}</div>
+        {/* Quick Contact Action Strip */}
+        <div className="contact-quick-strip">
+          <a href={`tel:${SITE_DATA.company.phoneLandline.replace(/\s+/g, '')}`} className="contact-quick-card">
+            <div className="contact-quick-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div className="contact-quick-info">
+              <span className="contact-quick-tag">Direct Engineering Telephony</span>
+              <span className="contact-quick-val">{SITE_DATA.company.phoneLandline}</span>
+            </div>
+            <span className="contact-quick-action">Call &rarr;</span>
+          </a>
+
+          <a href={`mailto:${SITE_DATA.company.emailSales}`} className="contact-quick-card">
+            <div className="contact-quick-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+            </div>
+            <div className="contact-quick-info">
+              <span className="contact-quick-tag">Official Proposals & RFPs</span>
+              <span className="contact-quick-val">{SITE_DATA.company.emailSales}</span>
+            </div>
+            <span className="contact-quick-action">Email &rarr;</span>
+          </a>
+
+          <div className="contact-quick-card static-card">
+            <div className="contact-quick-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div className="contact-quick-info">
+              <span className="contact-quick-tag">Engineering Headquarters</span>
+              <span className="contact-quick-val">{SITE_DATA.company.location}</span>
+            </div>
+            <span className="contact-quick-status">Active UAE</span>
+          </div>
+        </div>
+
+        {/* Main Consultation Studio Layout */}
+        <div className="contact-studio-layout">
+          {/* Left Column: Trust, SLA & Consultation Protocol */}
+          <div className="contact-studio-info-card">
+            <div className="studio-card-top">
+              <span className="studio-pill">Turnkey Engineering Protocol</span>
+              <h3 className="studio-title">Consultation Process</h3>
             </div>
 
-            <div className="contact-card-box">
-              <div className="contact-card-label">Direct Engineering Telephony</div>
-              <div className="contact-card-value">
-                <a href={`tel:${SITE_DATA.company.phoneLandline.replace(/\s+/g, '')}`}>
-                  {SITE_DATA.company.phoneLandline}
-                </a>
-                <span style={{ color: 'var(--text-muted)', margin: '0 8px' }}>·</span>
-                <a href={`tel:${SITE_DATA.company.phoneDirect.replace(/\s+/g, '')}`}>
-                  {SITE_DATA.company.phoneDirect}
-                </a>
+            <div className="studio-steps-list">
+              <div className="studio-step-item">
+                <div className="studio-step-num">01</div>
+                <div>
+                  <h4 className="studio-step-heading">CAD Single-Line Review</h4>
+                  <p className="studio-step-desc">A certified AV engineer analyzes your venue dimensions, acoustics, and display sightlines.</p>
+                </div>
+              </div>
+
+              <div className="studio-step-item">
+                <div className="studio-step-num">02</div>
+                <div>
+                  <h4 className="studio-step-heading">On-Site Technical Survey</h4>
+                  <p className="studio-step-desc">Comprehensive laser measurements and structural conduit verification across the UAE.</p>
+                </div>
+              </div>
+
+              <div className="studio-step-item">
+                <div className="studio-step-num">03</div>
+                <div>
+                  <h4 className="studio-step-heading">Itemized Commercial Proposal</h4>
+                  <p className="studio-step-desc">Transparent Bill of Quantities (BOQ) with authorized tier-1 hardware pricing and SLA guarantee.</p>
+                </div>
               </div>
             </div>
 
-            <div className="contact-card-box">
-              <div className="contact-card-label">Official RFP & Inquiries</div>
-              <div className="contact-card-value">
-                <a href={`mailto:${SITE_DATA.company.emailSales}`}>
-                  {SITE_DATA.company.emailSales}
-                </a>
+            <div className="studio-sla-footer">
+              <div className="sla-telemetry-dot" />
+              <div>
+                <span className="sla-telemetry-lead">Emergency 2-Hour SLA Dispatch</span>
+                <p className="sla-telemetry-sub">Guaranteed on-site deployment across Dubai, Abu Dhabi & Sharjah for contracted enterprise clients.</p>
               </div>
-            </div>
-
-            <div className="contact-sla-guarantee">
-              <div className="contact-card-label">2-Hour Emergency SLA Dispatch</div>
-              <p>
-                Active on-site engineer deployment guaranteed within 2 hours across Dubai, Abu Dhabi, and Sharjah for contracted clients.
-              </p>
             </div>
           </div>
 
-          {/* Proposal / RFP Form */}
-          <div className="rfp-form-card">
+          {/* Right Column: High-End Proposal Form */}
+          <div className="contact-studio-form-card">
             {submitted ? (
               <div className="rfp-success-banner">
                 <div className="rfp-success-icon">✓</div>
                 <h4>Proposal Specification Received</h4>
                 <p>
-                  Thank you, {formData.name || 'Valued Client'}. A Malas Electronics systems engineer is reviewing your inquiry regarding <strong>{formData.project}</strong> and will connect with technical documentation shortly.
+                  Thank you, <strong>{formData.name || 'Valued Client'}</strong>. A senior systems engineer is reviewing your inquiry regarding <strong>{formData.project}</strong> and will connect with technical documentation shortly.
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
-                <div className="rfp-form-grid-row">
-                  <div className="rfp-form-group">
-                    <label className="rfp-form-label">Full Name *</label>
+              <form onSubmit={handleSubmit} className="studio-form">
+                <div className="studio-form-row">
+                  <div className="studio-field">
+                    <label className="studio-label">Your Name *</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Tariq Al Mansoori"
-                      className="rfp-form-input"
+                      className="studio-input"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                   </div>
 
-                  <div className="rfp-form-group">
-                    <label className="rfp-form-label">Company / Organization</label>
+                  <div className="studio-field">
+                    <label className="studio-label">Company / Organization</label>
                     <input
                       type="text"
                       placeholder="e.g. Emirates Holdings"
-                      className="rfp-form-input"
+                      className="studio-input"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     />
                   </div>
                 </div>
 
-                <div className="rfp-form-grid-row">
-                  <div className="rfp-form-group">
-                    <label className="rfp-form-label">Contact Number *</label>
+                <div className="studio-form-row">
+                  <div className="studio-field">
+                    <label className="studio-label">Phone Number *</label>
                     <input
                       type="tel"
                       required
                       placeholder="+971 50 000 0000"
-                      className="rfp-form-input"
+                      className="studio-input"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     />
                   </div>
 
-                  <div className="rfp-form-group">
-                    <label className="rfp-form-label">Corporate Email *</label>
+                  <div className="studio-field">
+                    <label className="studio-label">Corporate Email *</label>
                     <input
                       type="email"
                       required
-                      placeholder="t.mansoori@company.ae"
-                      className="rfp-form-input"
+                      placeholder="name@company.ae"
+                      className="studio-input"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
                 </div>
 
-                <div className="rfp-form-group">
-                  <label className="rfp-form-label">Target AV Scope / Project Type</label>
+                <div className="studio-field">
+                  <label className="studio-label">Target Project Scope</label>
                   <select
                     name="project-type"
-                    className="rfp-form-select"
+                    className="studio-select"
                     value={formData.project}
                     onChange={(e) => setFormData({ ...formData, project: e.target.value })}
                   >
@@ -156,19 +207,19 @@ export default function ContactSection() {
                   </select>
                 </div>
 
-                <div className="rfp-form-group">
-                  <label className="rfp-form-label">Project Details / Venue Dimensions</label>
+                <div className="studio-field">
+                  <label className="studio-label">Project Details / Venue Dimensions</label>
                   <textarea
                     rows={4}
-                    placeholder="Describe venue capacity, acoustic requirements, target launch date, or specific brand hardware requested..."
-                    className="rfp-form-textarea"
+                    placeholder="Briefly describe venue size, acoustic constraints, seating capacity, or timeline..."
+                    className="studio-textarea"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  ></textarea>
+                  />
                 </div>
 
-                <button type="submit" className="btn-primary" style={{ width: '100%', padding: '14px', fontSize: '1rem' }}>
-                  Transmit AV Specification &rarr;
+                <button type="submit" className="btn-primary studio-submit-btn">
+                  Submit Systems Proposal Specification &rarr;
                 </button>
               </form>
             )}

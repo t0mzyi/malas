@@ -1799,172 +1799,461 @@ img {
   gap: 16px;
 }
 
-.contact-card-box {
+/* ============================================================
+   8. LUXURY CONTACT & CONSULTATION STUDIO
+   ============================================================ */
+.contact-section-lux {
+  position: relative;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.contact-head-center {
+  margin-bottom: 40px;
+}
+
+/* Quick Action Channels Strip */
+.contact-quick-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.contact-quick-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 20px 24px;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
-.contact-card-label {
-  font-size: 0.74rem;
+.contact-quick-card:not(.static-card):hover {
+  border-color: var(--accent-bronze-border);
+  background-color: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+}
+
+.contact-quick-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: var(--accent-bronze-dim);
+  border: 1px solid var(--accent-bronze-border);
+  color: var(--accent-bronze);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-quick-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-quick-tag {
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--accent-bronze);
   letter-spacing: 0.06em;
-  margin-bottom: 6px;
+  color: var(--accent-bronze);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.contact-card-value {
-  font-size: 0.98rem;
+.contact-quick-val {
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-pure);
-  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.contact-sla-guarantee {
-  background-color: rgba(16, 185, 129, 0.05);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: var(--radius-md);
-  padding: 20px 24px;
+.contact-quick-action {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-bronze);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: rgba(200, 155, 104, 0.1);
+  border: 1px solid var(--accent-bronze-border);
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
 }
 
-.contact-sla-guarantee .contact-card-label {
+.contact-quick-card:hover .contact-quick-action {
+  background-color: var(--accent-bronze);
+  color: #000000;
+}
+
+.contact-quick-status {
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--status-green);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: var(--status-green-dim);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  flex-shrink: 0;
 }
 
-.contact-sla-guarantee p {
-  font-size: 0.85rem;
-  color: var(--text-body);
-  line-height: 1.5;
-  margin-top: 4px;
+/* Consultation Studio Layout (2-Column) */
+.contact-studio-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 28px;
 }
 
-.rfp-form-card {
+.contact-studio-info-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 36px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.rfp-form-grid-row {
+.studio-card-top {
+  margin-bottom: 28px;
+}
+
+.studio-pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-bronze);
+  margin-bottom: 10px;
+}
+
+.studio-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--text-pure);
+  line-height: 1.25;
+}
+
+.studio-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-bottom: 32px;
+}
+
+.studio-step-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.studio-step-num {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--accent-bronze);
+  background-color: rgba(200, 155, 104, 0.12);
+  border: 1px solid var(--accent-bronze-border);
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.studio-step-heading {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-pure);
+  margin-bottom: 4px;
+}
+
+.studio-step-desc {
+  font-size: 0.85rem;
+  color: var(--text-body);
+  line-height: 1.55;
+}
+
+.studio-sla-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  background-color: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  border-radius: var(--radius-md);
+}
+
+.sla-telemetry-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--status-green);
+  box-shadow: 0 0 10px var(--status-green);
+  flex-shrink: 0;
+  margin-top: 4px;
+  animation: pulseGreen 2s infinite;
+}
+
+.sla-telemetry-lead {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--status-green);
+  margin-bottom: 2px;
+}
+
+.sla-telemetry-sub {
+  font-size: 0.78rem;
+  color: var(--text-body);
+  line-height: 1.45;
+}
+
+/* Right Column: Form Card */
+.contact-studio-form-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 36px 34px;
+}
+
+.studio-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.studio-form-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  margin-bottom: 18px;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-.rfp-form-group {
+.studio-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 18px;
 }
 
-.rfp-form-label {
+.studio-label {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-pure);
 }
 
-.rfp-form-input,
-.rfp-form-select,
-.rfp-form-textarea {
+.studio-input,
+.studio-select,
+.studio-textarea {
   background-color: var(--bg-panel);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
+  padding: 13px 18px;
   font-family: inherit;
   font-size: 0.92rem;
   color: var(--text-pure);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s ease;
   width: 100%;
 }
 
-.rfp-form-input:focus,
-.rfp-form-select:focus,
-.rfp-form-textarea:focus {
+.studio-input:focus,
+.studio-select:focus,
+.studio-textarea:focus {
   border-color: var(--accent-bronze);
   box-shadow: 0 0 0 3px rgba(200, 155, 104, 0.15);
+  background-color: #0b0b0e;
   outline: none;
 }
 
-.rfp-form-input::placeholder,
-.rfp-form-textarea::placeholder {
+.studio-input::placeholder,
+.studio-textarea::placeholder {
   color: var(--text-muted);
 }
 
-.rfp-form-select option {
-  background-color: var(--bg-card);
+.studio-select option {
+  background-color: #0c0c0e;
   color: var(--text-pure);
 }
 
-.rfp-success-banner {
-  padding: 48px 24px;
-  text-align: center;
-}
-
-.rfp-success-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background-color: var(--status-green-dim);
-  border: 1px solid var(--status-green);
-  color: var(--status-green);
-  display: flex;
-  align-items: center;
+.studio-submit-btn {
+  width: 100%;
+  padding: 15px 24px;
   justify-content: center;
-  font-size: 1.6rem;
-  margin: 0 auto 16px;
-}
-
-.rfp-success-banner h4 {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  color: var(--text-pure);
-  margin-bottom: 8px;
-}
-
-.rfp-success-banner p {
-  color: var(--text-body);
-  font-size: 0.92rem;
-  max-width: 440px;
-  margin: 0 auto;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-top: 6px;
 }
 
 /* ============================================================
-   9. FOOTER
+   9. PRESTIGE ARCHITECTURAL FOOTER
    ============================================================ */
-.site-footer {
-  background-color: #050608;
+.site-footer-lux {
+  background-color: #000000;
   border-top: 1px solid var(--border-subtle);
-  padding: 60px 0 32px;
+  position: relative;
 }
 
-.footer-top-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 40px;
-  padding-bottom: 48px;
+/* Pre-Footer Action Banner */
+.footer-pre-strip {
+  background: linear-gradient(180deg, rgba(200, 155, 104, 0.06) 0%, rgba(0, 0, 0, 0) 100%);
   border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 32px;
+  padding: 40px 0;
 }
 
-.footer-brand-bio p {
-  font-size: 0.88rem;
+.footer-pre-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.footer-pre-kicker {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-bronze);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.footer-pre-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.8vw, 1.85rem);
+  font-weight: 700;
+  color: var(--text-pure);
+  line-height: 1.2;
+}
+
+.footer-pre-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.footer-action-btn {
+  padding: 11px 22px !important;
+  font-size: 0.88rem !important;
+}
+
+/* Main Footer Grid */
+.footer-main-grid {
+  display: flex;
+  gap: 56px;
+  padding: 56px 0 44px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.footer-brand-col {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.footer-logo-frame {
+  height: 38px;
+  width: auto;
+  max-width: 85px;
+  display: flex;
+  align-items: center;
+}
+
+.footer-logo-frame img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(200, 155, 104, 0.4));
+}
+
+.footer-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-brand-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-pure);
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.footer-brand-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--accent-bronze);
+  letter-spacing: 0.06em;
+}
+
+.footer-brand-summary {
+  font-size: 0.85rem;
   color: var(--text-muted);
   line-height: 1.6;
-  margin-top: 12px;
-  max-width: 320px;
 }
 
-.footer-column-heading {
+.footer-trust-strip {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.footer-trust-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-pure);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  padding: 5px 12px;
+  border-radius: 9999px;
+}
+
+.footer-links-wrapper {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
+}
+
+.footer-nav-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-col-header {
   font-family: var(--font-display);
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--text-pure);
   letter-spacing: 0.04em;
-  margin-bottom: 16px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
 .footer-link-list {
@@ -1977,21 +2266,75 @@ img {
 .footer-link-list a {
   font-size: 0.85rem;
   color: var(--text-muted);
-  transition: color 0.2s ease;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
 }
 
 .footer-link-list a:hover {
   color: var(--text-pure);
+  transform: translateX(3px);
 }
 
-.footer-bottom-bar {
+.footer-ops-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+}
+
+.footer-ops-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-bronze);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.footer-ops-val {
+  color: var(--text-body);
+}
+
+.footer-ops-links a,
+.footer-email-link {
+  color: var(--text-pure) !important;
+  font-weight: 600;
+}
+
+/* Sub-Footer Bottom Bar */
+.footer-sub-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
+  padding: 24px 0 32px;
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.footer-sub-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-back-to-top-btn {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-pure);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.footer-back-to-top-btn:hover {
+  border-color: var(--accent-bronze);
+  color: var(--accent-bronze);
+  background-color: var(--accent-bronze-dim);
 }
 
 /* ============================================================
@@ -2549,12 +2892,77 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .rfp-form-grid-row {
+  /* Mobile Contact Styles */
+  .contact-quick-strip {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .footer-top-grid {
+  .contact-quick-card {
+    padding: 14px 16px;
+  }
+
+  .contact-studio-layout {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .contact-studio-info-card {
+    padding: 24px 20px;
+  }
+
+  .contact-studio-form-card {
+    padding: 24px 20px;
+  }
+
+  .studio-form-row {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Mobile Footer Styles */
+  .footer-pre-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .footer-pre-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-pre-actions .footer-action-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .footer-main-grid {
+    flex-direction: column;
+    gap: 32px;
+    padding: 36px 0 28px;
+  }
+
+  .footer-brand-col {
+    flex: auto;
+    width: 100%;
+  }
+
+  .footer-links-wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
+  }
+
+  .footer-ops-col {
+    grid-column: span 2;
+  }
+
+  .footer-sub-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .section-wrapper {
