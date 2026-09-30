@@ -69,7 +69,7 @@ export default function ContactSection() {
             </div>
             <div className="contact-quick-info">
               <span className="contact-quick-tag">Engineering Headquarters</span>
-              <span className="contact-quick-val">{SITE_DATA.company.location}</span>
+              <span className="contact-quick-val">Deira, Dubai · UAE</span>
             </div>
             <span className="contact-quick-status">Active UAE</span>
           </div>
@@ -107,14 +107,6 @@ export default function ContactSection() {
                   <h4 className="studio-step-heading">Itemized Commercial Proposal</h4>
                   <p className="studio-step-desc">Transparent Bill of Quantities (BOQ) with authorized tier-1 hardware pricing and SLA guarantee.</p>
                 </div>
-              </div>
-            </div>
-
-            <div className="studio-sla-footer">
-              <div className="sla-telemetry-dot" />
-              <div>
-                <span className="sla-telemetry-lead">Emergency 2-Hour SLA Dispatch</span>
-                <p className="sla-telemetry-sub">Guaranteed on-site deployment across Dubai, Abu Dhabi & Sharjah for contracted enterprise clients.</p>
               </div>
             </div>
           </div>
