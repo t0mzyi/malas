@@ -2,6 +2,25 @@ import React from 'react';
 
 // Authentic Vector Brand Marks with High-Contrast Vivid Official Colors
 export const BRAND_SVGS = {
+  Apple: (props) => (
+    <svg viewBox="0 0 85 26" {...props}>
+      <path
+        d="M14.6 13.7c-.02-2.54 2.07-3.76 2.16-3.82-1.18-1.72-3.01-1.96-3.66-1.99-1.56-.16-3.05.92-3.84.92-.8 0-2.02-.9-3.32-.88-1.71.03-3.29 1-4.17 2.53-1.78 3.09-.46 7.66 1.28 10.18.85 1.23 1.86 2.61 3.2 2.56 1.28-.05 1.77-.83 3.31-.83s2 .83 3.34.8c1.37-.02 2.25-1.25 3.09-2.48.97-1.43 1.38-2.82 1.4-2.89-.03-.01-2.69-1.03-2.71-4.1zM12.01 6.34c.7-.85 1.18-2.04 1.05-3.24-1.01.04-2.25.68-2.98 1.53-.63.74-.26 1.94-.12 3.1 1.13.09 2.28-.54 2.98-1.39z"
+        fill="#FFFFFF"
+      />
+      <text
+        x="22"
+        y="19"
+        fill="#FFFFFF"
+        fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif"
+        fontSize="17"
+        fontWeight="600"
+        letterSpacing="-0.02em"
+      >
+        Apple
+      </text>
+    </svg>
+  ),
   Bose: (props) => (
     <svg viewBox="0 0 100 26" fill="#FFFFFF" {...props}>
       <text x="0" y="20" fontFamily="var(--font-display)" fontSize="20" fontWeight="900" letterSpacing="3">BOSE</text>

@@ -66,7 +66,6 @@ export default function Header() {
 
             {/* Direct Contact & Mobile Actions */}
             <div className="header-actions">
-
               {/* Mobile Quick Call Button */}
               <a
                 href="tel:+97140000000"
