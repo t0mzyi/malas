@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Header({ theme = 'dark', onToggleTheme }) {
+export default function Header({ theme = 'white', onToggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showBrand, setShowBrand] = useState(false);
 
   // Local theme fallback if not passed from parent
   const [localTheme, setLocalTheme] = useState(() => {
-    return theme || localStorage.getItem('malas_theme') || 'dark';
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('/white') || window.location.search.toLowerCase().includes('white')) {
+        return 'white';
+      }
+    }
+    return theme || 'white';
   });
 
   const activeTheme = onToggleTheme ? theme : localTheme;
@@ -18,7 +24,10 @@ export default function Header({ theme = 'dark', onToggleTheme }) {
       const nextTheme = localTheme === 'white' ? 'dark' : 'white';
       setLocalTheme(nextTheme);
       document.documentElement.setAttribute('data-theme', nextTheme);
-      localStorage.setItem('malas_theme', nextTheme);
+      try {
+        localStorage.setItem('malas_theme_user_set', nextTheme);
+        localStorage.setItem('malas_theme', nextTheme);
+      } catch {}
     }
   };
 

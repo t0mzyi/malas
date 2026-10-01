@@ -6,6 +6,23 @@
   <meta name="description" content="Malas Electronics LLC — Authorized systems integrator for high-performance audiovisual, robotics, enterprise IT infrastructure, and building control systems across Dubai, Abu Dhabi, Sharjah, and the Northern Emirates.">
   <meta name="theme-color" content="#FFFFFF">
   <title>Malas Electronics LLC — Enterprise Systems Integrator | Dubai, UAE</title>
+  <script>
+    (function() {
+      try {
+        var isWhite = window.location.pathname.toLowerCase().includes('/white') || window.location.search.toLowerCase().includes('white');
+        if (isWhite) {
+          document.documentElement.setAttribute('data-theme', 'white');
+          try { localStorage.setItem('malas_theme_user_set', 'white'); } catch(e){}
+          return;
+        }
+        var saved = localStorage.getItem('malas_theme_user_set');
+        var theme = (saved === 'dark') ? 'dark' : 'white';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'white');
+      }
+    })();
+  </script>
   <link rel="icon" href="/logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

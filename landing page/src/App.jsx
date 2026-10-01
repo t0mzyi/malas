@@ -12,9 +12,22 @@ import Footer from './components/Footer';
 export default function App({ initialTheme }) {
   const [theme, setTheme] = useState(() => {
     if (initialTheme) return initialTheme;
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      const search = window.location.search.toLowerCase();
+      if (path.includes('/white') || search.includes('white')) {
+        try {
+          localStorage.setItem('malas_theme_user_set', 'white');
+          localStorage.removeItem('malas_theme');
+        } catch {}
+        return 'white';
+      }
+    }
     try {
-      const saved = localStorage.getItem('malas_theme');
+      const saved = localStorage.getItem('malas_theme_user_set');
       if (saved === 'white' || saved === 'dark') return saved;
+      // Remove legacy dev auto-seed
+      localStorage.removeItem('malas_theme');
     } catch {
       // ignore localStorage errors
     }
@@ -24,6 +37,7 @@ export default function App({ initialTheme }) {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     try {
+      localStorage.setItem('malas_theme_user_set', theme);
       localStorage.setItem('malas_theme', theme);
     } catch {
       // ignore localStorage errors
