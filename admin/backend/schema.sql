@@ -72,3 +72,8 @@ INSERT IGNORE INTO `site_settings` (`setting_key`, `setting_value`, `description
 ('contact_email', 'info@malaselectronics.com', 'Primary dispatch email'),
 ('contact_phone', '+971 4 000 0000', 'Official landline'),
 ('headquarters_city', 'Deira, Dubai · UAE', 'Engineering headquarters address');
+
+-- 5. Seed Initial Chief Administrator (admin / Admin@Malas2026!)
+INSERT IGNORE INTO `admins` (`id`, `username`, `email`, `password_hash`, `full_name`, `role`, `status`) VALUES
+(1, 'admin', 'admin@malaselectronics.com', '$2a$10$52/vgAEcXZmim2xUzfgW7.lriT.v1OaIVstCbRpotO0en5KR4UvJ6', 'Chief Systems Administrator', 'super_admin', 'active');
+

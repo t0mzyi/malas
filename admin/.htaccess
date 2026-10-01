@@ -1,0 +1,28 @@
+# ============================================================
+# MALAS ELECTRONICS LLC — ADMIN PORTAL APACHE CONFIGURATION
+# DirectAdmin / LiteSpeed / Apache 2.4+
+# ============================================================
+
+DirectoryIndex index.html index.php
+
+# Deny access to sensitive files
+<FilesMatch "^\.|\.env|config\.php|schema\.sql">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Optimize Browser Caching for Assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

@@ -12,6 +12,9 @@ const { testConnection } = require('./config/db');
 const authRoutes = require('./routes/auth');
 const inquiryRoutes = require('./routes/inquiries');
 const dashboardRoutes = require('./routes/dashboard');
+const employeeRoutes = require('./routes/employees');
+const categoryRoutes = require('./routes/categories');
+const productRoutes = require('./routes/products');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,6 +33,9 @@ app.use(express.static(frontendPath));
 app.use('/api/auth', authRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/products', productRoutes);
 
 // Fallback to Admin Single Page App for any other route
 app.get('*', (req, res) => {

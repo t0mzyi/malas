@@ -432,6 +432,18 @@ export const SITE_DATA = {
       image: '/images/commercial-audio-signage.jpg',
       imageAlt: 'Commercial background audio and public address system',
       tags: ['Commercial Audio', 'Background Music', 'Public Address (PA)', 'Multi-Zone']
+    },
+    {
+      id: 'turnkey-av-engineering',
+      number: '16',
+      title: 'Turnkey AV Engineering & SLA',
+      category: 'Corporate & Commercial',
+      scope: 'Enterprise facilities, corporate headquarters, and mission-critical venues.',
+      description: 'Bespoke end-to-end audiovisual systems design, Avixa-certified project installation, scheduled preventive maintenance, and 24/7 dedicated SLA engineering support.',
+      includedEquipment: 'Dedicated engineering director, quarterly system diagnostics, redundant hot-swap hardware, cloud health telemetry',
+      image: '/images/av-equipment-rack.jpg',
+      imageAlt: 'Turnkey AV engineering, equipment rack, and preventative maintenance',
+      tags: ['Turnkey SLA', 'Avixa CTS-D', '24/7 Support', 'Preventive Care']
     }
   ],
 

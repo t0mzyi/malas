@@ -1,27 +1,11 @@
 import React from 'react';
-import '../../styles/white-theme.css';
-import WhiteHeader from './WhiteHeader';
-import WhiteHeroSection from './WhiteHeroSection';
-import WhiteBrandCarousel from './WhiteBrandCarousel';
-import WhiteServicesSection from './WhiteServicesSection';
-import WhiteProjectsSection from './WhiteProjectsSection';
-import WhiteAboutSection from './WhiteAboutSection';
-import WhiteContactSection from './WhiteContactSection';
-import WhiteFooter from './WhiteFooter';
+import App from '../../App';
 
+/**
+ * WhiteApp renders the exact same flagship landing page in White (Light) mode.
+ * All 15 luxury projects with 3D flip card specs, 10 AV activities, brand marquee,
+ * engineering process roadmap, standards, and consultation engine are identical to dark mode.
+ */
 export default function WhiteApp() {
-  return (
-    <div className="white-theme">
-      <WhiteHeader />
-      <main id="white-main">
-        <WhiteHeroSection />
-        <WhiteBrandCarousel />
-        <WhiteServicesSection />
-        <WhiteProjectsSection />
-        <WhiteAboutSection />
-        <WhiteContactSection />
-      </main>
-      <WhiteFooter />
-    </div>
-  );
+  return <App initialTheme="white" />;
 }

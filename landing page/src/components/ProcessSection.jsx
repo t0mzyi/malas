@@ -15,6 +15,13 @@ export default function ProcessSection() {
           </p>
         </div>
 
+        {/* Centered Architectural Divider Line on Execution */}
+        <div className="execution-center-divider" aria-hidden="true">
+          <span className="execution-center-line"></span>
+          <span className="execution-center-diamond"></span>
+          <span className="execution-center-line reverse"></span>
+        </div>
+
         <div className="process-stepper-grid">
           {SITE_DATA.process.map((step, idx) => (
             <div key={step.title} className="process-step-column">

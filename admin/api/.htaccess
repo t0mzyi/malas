@@ -1,0 +1,43 @@
+# ============================================================
+# MALAS ELECTRONICS LLC — API REWRITE RULES & SECURITY
+# DirectAdmin / Apache / LiteSpeed Configuration
+# ============================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Prevent direct access to config.php
+    RewriteRule ^config\.php$ - [F,L]
+
+    # Handle Auth Routes
+    RewriteRule ^auth/login/?$ auth.php?action=login [L,QSA]
+    RewriteRule ^auth/logout/?$ auth.php?action=logout [L,QSA]
+    RewriteRule ^auth/me/?$ auth.php?action=me [L,QSA]
+
+    # Handle Inquiries Routes
+    RewriteRule ^inquiries/([0-9]+)/?$ inquiries.php?id=$1 [L,QSA]
+    RewriteRule ^inquiries/?$ inquiries.php [L,QSA]
+
+    # Handle Dashboard Routes
+    RewriteRule ^dashboard/stats/?$ dashboard.php?action=stats [L,QSA]
+    RewriteRule ^dashboard/health/?$ dashboard.php?action=health [L,QSA]
+
+    # Handle Employees Routes (CEO Only)
+    RewriteRule ^employees/([0-9]+)/?$ employees.php?id=$1 [L,QSA]
+    RewriteRule ^employees/?$ employees.php [L,QSA]
+
+    # Handle Categories Routes
+    RewriteRule ^categories/([0-9]+)/?$ categories.php?id=$1 [L,QSA]
+    RewriteRule ^categories/?$ categories.php [L,QSA]
+
+    # Handle Products Routes
+    RewriteRule ^products/([0-9]+)/?$ products.php?id=$1 [L,QSA]
+    RewriteRule ^products/?$ products.php [L,QSA]
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

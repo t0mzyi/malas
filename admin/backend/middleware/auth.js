@@ -32,6 +32,23 @@ function requireAuth(req, res, next) {
   }
 }
 
+/**
+ * Ensures authenticated user has the 'ceo' role
+ */
+function requireCeo(req, res, next) {
+  requireAuth(req, res, () => {
+    if (req.admin && (req.admin.role === 'ceo' || req.admin.role === 'super_admin')) {
+      next();
+    } else {
+      return res.status(403).json({
+        success: false,
+        error: 'Access restricted: Only the Chief Executive Officer (CEO) has authorization to manage employee accounts.'
+      });
+    }
+  });
+}
+
 module.exports = {
-  requireAuth
+  requireAuth,
+  requireCeo
 };

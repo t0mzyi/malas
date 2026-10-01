@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Header() {
+export default function Header({ theme = 'dark', onToggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showBrand, setShowBrand] = useState(false);
+
+  // Local theme fallback if not passed from parent
+  const [localTheme, setLocalTheme] = useState(() => {
+    return theme || localStorage.getItem('malas_theme') || 'dark';
+  });
+
+  const activeTheme = onToggleTheme ? theme : localTheme;
+
+  const handleToggle = () => {
+    if (onToggleTheme) {
+      onToggleTheme();
+    } else {
+      const nextTheme = localTheme === 'white' ? 'dark' : 'white';
+      setLocalTheme(nextTheme);
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      localStorage.setItem('malas_theme', nextTheme);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,6 +84,35 @@ export default function Header() {
 
             {/* Direct Contact & Mobile Actions */}
             <div className="header-actions">
+              {/* Theme Toggle Button (Dark / White) */}
+              <button
+                type="button"
+                className="theme-toggle-btn"
+                onClick={handleToggle}
+                aria-label={`Switch to ${activeTheme === 'white' ? 'Dark' : 'White'} Mode`}
+                title={`Switch to ${activeTheme === 'white' ? 'Dark' : 'White'} Mode`}
+              >
+                {activeTheme === 'white' ? (
+                  // Moon Icon for switching to Dark Mode
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                  </svg>
+                ) : (
+                  // Sun Icon for switching to White Mode
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                  </svg>
+                )}
+              </button>
+
               {/* Mobile Quick Call Button */}
               <a
                 href="tel:+97140000000"
@@ -180,6 +227,39 @@ export default function Header() {
               </svg>
               <span>Email Engineers</span>
             </a>
+          </div>
+
+          <div className="drawer-theme-toggle-row">
+            <span className="drawer-theme-label">Interface Appearance</span>
+            <button
+              type="button"
+              className="drawer-theme-toggle-btn"
+              onClick={handleToggle}
+            >
+              {activeTheme === 'white' ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                  </svg>
+                  <span>Dark Mode</span>
+                </>
+              ) : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                  </svg>
+                  <span>White Mode</span>
+                </>
+              )}
+            </button>
           </div>
 
           <a href="#contact" onClick={closeMenu} className="btn-primary drawer-rfp-btn">

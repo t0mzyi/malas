@@ -247,6 +247,39 @@ export default function ProjectsSection() {
               </div>
             );
           })}
+
+          {/* Always complete the last row if there is a remainder in filtered view */}
+          {filteredProjects.length % 4 !== 0 && (
+            <div
+              className="bespoke-cta-card"
+              style={{ gridColumn: `span ${4 - (filteredProjects.length % 4)}` }}
+            >
+              <div className="bespoke-card-inner">
+                <span className="portfolio-front-category" style={{ color: 'var(--accent-bronze)' }}>
+                  Custom Integration
+                </span>
+                <h3 className="bespoke-card-title">Have a Bespoke AV Architecture Requirement?</h3>
+                <p className="bespoke-card-desc">
+                  Our certified Avixa CTS engineers design, build, and support bespoke audiovisual and control ecosystems tailored to your unique architectural blueprints.
+                </p>
+                <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
+                  <a
+                    href="#contact"
+                    className="btn-primary"
+                    style={{ padding: '10px 22px', fontSize: '0.85rem' }}
+                    onClick={() => {
+                      const select = document.querySelector('select[name="project-type"]');
+                      if (select) {
+                        select.value = 'Custom AV Integration';
+                      }
+                    }}
+                  >
+                    Request Custom Consultation &rarr;
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
