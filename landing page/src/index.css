@@ -3881,9 +3881,9 @@ img {
     overflow: hidden !important;
     position: relative !important;
     margin-bottom: 20px !important;
-    border: 1px solid rgba(200, 155, 104, 0.35) !important;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.8) !important;
-    background-color: #060709 !important;
+    border: 1px solid var(--border-medium) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.20) !important;
+    background-color: var(--bg-card) !important;
   }
 
   .hero-mobile-img {
@@ -3946,9 +3946,10 @@ img {
 
   .hero-credibility-strip .credibility-metric-card {
     padding: 12px 14px !important;
-    background-color: rgba(20, 23, 32, 0.85) !important;
+    background-color: var(--bg-card) !important;
     border: 1px solid var(--border-subtle) !important;
     border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
   }
 
   .hero-credibility-strip .credibility-metric-val {
@@ -4048,8 +4049,8 @@ img {
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid var(--border-medium);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-    background-color: #060709;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
+    background-color: var(--bg-card);
   }
 
   /* 2-Second Moving Smooth In and Out Animation */
@@ -4283,6 +4284,54 @@ img {
   .section-wrapper {
     padding-top: 60px;
     padding-bottom: 60px;
+  }
+
+  /* Mobile White Theme Strict Fixes (Metric boxes & Clean Subtle Shadows) */
+  [data-theme="white"] .hero-credibility-strip .credibility-metric-card,
+  [data-theme="light"] .hero-credibility-strip .credibility-metric-card,
+  .white-theme .hero-credibility-strip .credibility-metric-card {
+    background-color: #EAECEF !important;
+    border: 1px solid rgba(0, 0, 0, 0.09) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  }
+
+  [data-theme="white"] .hero-credibility-strip .credibility-metric-val,
+  [data-theme="light"] .hero-credibility-strip .credibility-metric-val,
+  .white-theme .hero-credibility-strip .credibility-metric-val {
+    color: #0A0A0C !important;
+  }
+
+  [data-theme="white"] .hero-credibility-strip .credibility-metric-lbl,
+  [data-theme="light"] .hero-credibility-strip .credibility-metric-lbl,
+  .white-theme .hero-credibility-strip .credibility-metric-lbl {
+    color: #4B5563 !important;
+  }
+
+  [data-theme="white"] .hero-mobile-image-card,
+  [data-theme="light"] .hero-mobile-image-card,
+  .white-theme .hero-mobile-image-card {
+    background-color: #EAECEF !important;
+    border: 1px solid rgba(0, 0, 0, 0.10) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  [data-theme="white"] .mobile-carousel-photo-stage,
+  [data-theme="light"] .mobile-carousel-photo-stage,
+  .white-theme .mobile-carousel-photo-stage {
+    background-color: #EAECEF !important;
+    border: 1px solid rgba(0, 0, 0, 0.09) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  [data-theme="white"] .projects-mobile-carousel-card,
+  [data-theme="light"] .projects-mobile-carousel-card,
+  .white-theme .projects-mobile-carousel-card,
+  [data-theme="white"] .activities-mobile-carousel-card,
+  [data-theme="light"] .activities-mobile-carousel-card,
+  .white-theme .activities-mobile-carousel-card {
+    box-shadow: none !important;
+    background-color: transparent !important;
+    border: none !important;
   }
 }
 
