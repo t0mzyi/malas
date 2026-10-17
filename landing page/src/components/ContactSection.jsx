@@ -217,7 +217,7 @@ export default function ContactSection() {
                     <input
                       type="tel"
                       required
-                      placeholder="0507376012 or +971 56 742 4515"
+                      placeholder=""
                       className="studio-input"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
