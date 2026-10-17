@@ -24,14 +24,9 @@ if (!$pdo) {
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Handle method overrides for servers that don't support PATCH/DELETE natively
+// Only allow trusted HTTP method override via header (not query string)
 if ($method === 'POST' && isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
     $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
-} elseif ($method === 'POST' && isset($_GET['_method'])) {
-    $method = strtoupper($_GET['_method']);
-} elseif ($method === 'POST' && isset($_GET['action'])) {
-    if ($_GET['action'] === 'update') $method = 'PATCH';
-    if ($_GET['action'] === 'delete') $method = 'DELETE';
 }
 
 // Extract ID from query param or path
@@ -167,7 +162,13 @@ if ($method === 'PATCH') {
     $updates = [];
     $params = [];
 
+    $validStatuses = ['new', 'contacted', 'in_review', 'quoted', 'archived'];
     if (isset($body['status'])) {
+        if (!in_array($body['status'], $validStatuses, true)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Invalid status value. Allowed: ' . implode(', ', $validStatuses)]);
+            exit();
+        }
         $updates[] = "`status` = ?";
         $params[] = $body['status'];
     }

@@ -69,11 +69,11 @@ CREATE TABLE IF NOT EXISTS `site_settings` (
 INSERT IGNORE INTO `site_settings` (`setting_key`, `setting_value`, `description`) VALUES
 ('site_title', 'Malas Electronics LLC — Bespoke Architectural AV', 'Official Site Title'),
 ('maintenance_mode', 'false', 'Toggle maintenance state'),
-('contact_email', 'info@malaselectronics.com', 'Primary dispatch email'),
-('contact_phone', '+971 4 000 0000', 'Official landline'),
+('contact_email', 'Info@malaselectronics.ae', 'Primary dispatch email'),
+('contact_phone', '+971 56 742 4515', 'Official direct line'),
 ('headquarters_city', 'Deira, Dubai · UAE', 'Engineering headquarters address');
 
--- 5. Seed Initial Chief Administrator (admin / Admin@Malas2026!)
+-- 5. Seed Initial Chief Executive Officer (ceo@malaselectronics.ae / Ceo@Malas2026!)
 INSERT IGNORE INTO `admins` (`id`, `username`, `email`, `password_hash`, `full_name`, `role`, `status`) VALUES
-(1, 'admin', 'admin@malaselectronics.com', '$2a$10$52/vgAEcXZmim2xUzfgW7.lriT.v1OaIVstCbRpotO0en5KR4UvJ6', 'Chief Systems Administrator', 'super_admin', 'active');
+(1, 'ceo@malaselectronics.ae', 'ceo@malaselectronics.ae', '$2a$10$vnNtLu44ajeUqjibmSxtkevT7LMRBqu.2PyPRKkn3vGe8hgGX7CRi', 'Chief Executive Officer', 'ceo', 'active');
 

@@ -7,7 +7,7 @@ const { requireAuth } = require('../middleware/auth');
  * GET /api/products
  * List products with optional category and search filters
  */
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   const { category_id, search, status } = req.query;
 
   try {
@@ -57,6 +57,8 @@ router.post('/', requireAuth, async (req, res) => {
     description,
     specifications,
     image_url,
+    price = 0,
+    stock = 0,
     status = 'active'
   } = req.body;
 
@@ -65,16 +67,20 @@ router.post('/', requireAuth, async (req, res) => {
   }
 
   const creatorName = req.admin ? (req.admin.fullName || req.admin.username) : 'Staff';
+  const numericPrice = parseFloat(price) || 0;
+  const numericStock = parseInt(stock, 10) || 0;
 
   try {
     const [result] = await pool.query(
       `INSERT INTO \`products\` 
-       (category_id, name, model_number, tagline, description, specifications, image_url, status, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (category_id, name, model_number, price, stock, tagline, description, specifications, image_url, status, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         category_id ? parseInt(category_id, 10) : null,
         name.trim(),
         model_number ? model_number.trim() : null,
+        numericPrice,
+        numericStock,
         tagline ? tagline.trim() : null,
         description ? description.trim() : null,
         specifications ? specifications.trim() : null,
@@ -104,6 +110,8 @@ router.patch('/:id', requireAuth, async (req, res) => {
     category_id,
     name,
     model_number,
+    price,
+    stock,
     tagline,
     description,
     specifications,
@@ -126,6 +134,14 @@ router.patch('/:id', requireAuth, async (req, res) => {
     if (model_number !== undefined) {
       updates.push('`model_number` = ?');
       params.push(model_number ? model_number.trim() : null);
+    }
+    if (price !== undefined) {
+      updates.push('`price` = ?');
+      params.push(parseFloat(price) || 0);
+    }
+    if (stock !== undefined) {
+      updates.push('`stock` = ?');
+      params.push(parseInt(stock, 10) || 0);
     }
     if (tagline !== undefined) {
       updates.push('`tagline` = ?');
@@ -156,6 +172,34 @@ router.patch('/:id', requireAuth, async (req, res) => {
     await pool.query(`UPDATE \`products\` SET ${updates.join(', ')} WHERE id = ?`, params);
 
     return res.json({ success: true, message: 'Product updated successfully.' });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * PATCH /api/products/:id/stock
+ * Quick stock adjustment
+ */
+router.patch('/:id/stock', requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const { stock, delta } = req.body;
+
+  try {
+    if (stock !== undefined) {
+      const newStock = Math.max(0, parseInt(stock, 10) || 0);
+      await pool.query('UPDATE `products` SET stock = ? WHERE id = ?', [newStock, id]);
+      return res.json({ success: true, stock: newStock });
+    }
+
+    if (delta !== undefined) {
+      const deltaVal = parseInt(delta, 10) || 0;
+      await pool.query('UPDATE `products` SET stock = MAX(0, stock + ?) WHERE id = ?', [deltaVal, id]);
+      const [[updated]] = await pool.query('SELECT stock FROM `products` WHERE id = ?', [id]);
+      return res.json({ success: true, stock: updated.stock });
+    }
+
+    return res.status(400).json({ success: false, error: 'Provide stock or delta.' });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

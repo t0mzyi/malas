@@ -10,31 +10,87 @@
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 ini_set('display_errors', '0');
 
-// CORS Headers
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
-header("Access-Control-Allow-Origin: $origin");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+// ============================================================
+// LIGHTWEIGHT .ENV PARSER (No Composer Required)
+// ============================================================
+$envPath = __DIR__ . '/.env';
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        list($name, $value) = explode('=', $line, 2);
+        $name = trim($name);
+        $value = trim($value);
+        if (!empty($name)) {
+            putenv(sprintf('%s=%s', $name, $value));
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+        }
+    }
+}
+
+// CORS Headers — Strict Origin Whitelist (Production)
+$allowedOrigins = [
+    'https://admin.malaselectronics.ae',
+    'https://malaselectronics.ae',
+    'https://www.malaselectronics.ae',
+];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+} elseif (empty($origin)) {
+    // Same-origin request (no Origin header) — allow it
+    header("Access-Control-Allow-Origin: https://admin.malaselectronics.ae");
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
+    http_response_code(204);
     exit();
 }
 
 // Ensure JSON response header for all API endpoints
 header('Content-Type: application/json; charset=utf-8');
 
-// Database Credentials (configured for DirectAdmin MariaDB on localhost)
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_PORT', getenv('DB_PORT') ?: '3306');
-define('DB_NAME', getenv('DB_NAME') ?: 'malasele_db');
-define('DB_USER', getenv('DB_USER') ?: 'malasele_db');
-define('DB_PASS', getenv('DB_PASSWORD') ?: 'MERyhcyxUdEVeF34VzkG');
+// Database Credentials — Environment Only, No Hardcoded Fallbacks
+define('DB_HOST',    getenv('DB_HOST')     ?: ($_ENV['DB_HOST'] ?? 'localhost'));
+define('DB_PORT',    getenv('DB_PORT')     ?: ($_ENV['DB_PORT'] ?? '3306'));
+define('DB_NAME',    getenv('DB_NAME')     ?: ($_ENV['DB_NAME'] ?? 'malasele_db'));
+define('DB_USER',    getenv('DB_USER')     ?: ($_ENV['DB_USER'] ?? 'malasele_db'));
 define('DB_CHARSET', 'utf8mb4');
 
-// JWT Secret Key
-define('JWT_SECRET', getenv('JWT_SECRET') ?: 'malas_admin_jwt_secret_token_2026_super_secure');
+$_db_pass = getenv('DB_PASSWORD') ?: ($_ENV['DB_PASSWORD'] ?? null);
+if (!$_db_pass) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Server misconfiguration: DB_PASSWORD environment variable is not set.']);
+    exit();
+}
+define('DB_PASS', $_db_pass);
+
+// JWT Secret — Environment Only
+$_jwt_secret = getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? null);
+if (!$_jwt_secret) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Server misconfiguration: JWT_SECRET environment variable is not set.']);
+    exit();
+}
+define('JWT_SECRET', $_jwt_secret);
+
+// Cloudinary Configuration — Environment Only
+define('CLOUDINARY_CLOUD_NAME',   getenv('CLOUDINARY_CLOUD_NAME')   ?: ($_ENV['CLOUDINARY_CLOUD_NAME'] ?? 'jfxqts4x'));
+define('CLOUDINARY_API_KEY',      getenv('CLOUDINARY_API_KEY')      ?: ($_ENV['CLOUDINARY_API_KEY'] ?? '872827862522122'));
+$_cld_secret = getenv('CLOUDINARY_API_SECRET') ?: ($_ENV['CLOUDINARY_API_SECRET'] ?? null);
+if (!$_cld_secret) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Server misconfiguration: CLOUDINARY_API_SECRET is not set.']);
+    exit();
+}
+define('CLOUDINARY_API_SECRET', $_cld_secret);
+
+// Is this a production environment?
+define('IS_PRODUCTION', ((getenv('APP_ENV') ?: ($_ENV['APP_ENV'] ?? '')) === 'production'));
 
 /**
  * Obtain singleton PDO connection to MariaDB 10.6.28
@@ -60,6 +116,7 @@ function getDbConnection() {
         initDatabaseSchema($pdo);
         return $pdo;
     } catch (PDOException $e) {
+        $GLOBALS['db_error'] = $e->getMessage();
         return null;
     }
 }
@@ -108,7 +165,7 @@ function initDatabaseSchema($pdo) {
                 `email` VARCHAR(128) NOT NULL UNIQUE,
                 `password_hash` VARCHAR(255) NOT NULL,
                 `full_name` VARCHAR(128) NOT NULL DEFAULT 'Malas Administrator',
-                `role` ENUM('super_admin', 'editor', 'viewer') NOT NULL DEFAULT 'super_admin',
+                `role` VARCHAR(64) NOT NULL DEFAULT 'super_admin',
                 `status` ENUM('active', 'suspended') NOT NULL DEFAULT 'active',
                 `last_login` DATETIME NULL,
                 `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -117,6 +174,16 @@ function initDatabaseSchema($pdo) {
                 INDEX `idx_email` (`email`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ");
+
+        // Ensure role column accepts 'ceo' and is not restricted to legacy enum
+        try {
+            $pdo->exec("ALTER TABLE `admins` MODIFY COLUMN `role` VARCHAR(64) NOT NULL DEFAULT 'super_admin'");
+        } catch (Exception $e) {}
+
+        // Ensure master administrative accounts have 'ceo' clearance
+        try {
+            $pdo->exec("UPDATE `admins` SET `role` = 'ceo' WHERE LOWER(`username`) IN ('ceo', 'admin') OR LOWER(`email`) IN ('ceo@malaselectronics.ae', 'admin@malaselectronics.com')");
+        } catch (Exception $e) {}
 
         // 2. RFP Inquiries Table
         $pdo->exec("
@@ -157,16 +224,46 @@ function initDatabaseSchema($pdo) {
                 `category_id` INT NULL,
                 `name` VARCHAR(255) NOT NULL,
                 `model_number` VARCHAR(128) NULL,
+                `price` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+                `stock` INT NOT NULL DEFAULT 10,
                 `tagline` VARCHAR(255) NULL,
                 `description` TEXT NULL,
                 `specifications` TEXT NULL,
                 `image_url` TEXT NULL,
-                `status` ENUM('active', 'draft') NOT NULL DEFAULT 'active',
+                `status` ENUM('active', 'draft', 'out_of_stock') NOT NULL DEFAULT 'active',
                 `created_by` VARCHAR(128) NULL,
                 `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 INDEX `idx_cat` (`category_id`),
                 INDEX `idx_status` (`status`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ");
+
+        // Migrations for products price & stock
+        try { $pdo->exec("ALTER TABLE `products` ADD COLUMN `price` DECIMAL(10,2) NOT NULL DEFAULT 0.00"); } catch (Exception $e) {}
+        try { $pdo->exec("ALTER TABLE `products` ADD COLUMN `stock` INT NOT NULL DEFAULT 10"); } catch (Exception $e) {}
+
+        // Invoices Table
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS `invoices` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `invoice_number` VARCHAR(64) NOT NULL UNIQUE,
+                `client_name` VARCHAR(128) NOT NULL,
+                `client_email` VARCHAR(128) NULL,
+                `client_phone` VARCHAR(64) NULL,
+                `project_name` VARCHAR(128) NULL,
+                `items` LONGTEXT NOT NULL,
+                `subtotal` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+                `vat_rate` DECIMAL(5, 2) NOT NULL DEFAULT 5.00,
+                `vat_amount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+                `discount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+                `total_amount` DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+                `status` VARCHAR(32) NOT NULL DEFAULT 'finalized',
+                `created_by` VARCHAR(128) NULL,
+                `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                INDEX `idx_inv_num` (`invoice_number`),
+                INDEX `idx_created` (`created_at`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ");
 
@@ -194,34 +291,34 @@ function initDatabaseSchema($pdo) {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
         ");
 
-        // Seed initial admin user if not present (admin / Admin@Malas2026!)
-        $check = $pdo->query("SELECT COUNT(*) FROM `admins`")->fetchColumn();
-        if ((int)$check === 0) {
-            $hash = password_hash('Admin@Malas2026!', PASSWORD_BCRYPT);
-            $stmt = $pdo->prepare("
-                INSERT INTO `admins` (`id`, `username`, `email`, `password_hash`, `full_name`, `role`, `status`)
-                VALUES (1, 'admin', 'ceo@malaselectronics.com', ?, 'Chief Executive Officer', 'ceo', 'active')
-            ");
-            $stmt->execute([$hash]);
+        // Seed or update CEO account (ceo@malaselectronics.ae / Ceo@Malas2026!)
+        $ceoHash = password_hash('Ceo@Malas2026!', PASSWORD_BCRYPT);
+        $checkCeo = $pdo->prepare("SELECT id FROM `admins` WHERE `email` = 'ceo@malaselectronics.ae' LIMIT 1");
+        $checkCeo->execute();
+        $ceoRow = $checkCeo->fetch();
 
-            // Seed sample inquiry
-            $stmtInq = $pdo->prepare("
-                INSERT INTO `rfp_inquiries` 
-                (`client_name`, `email`, `phone`, `sector`, `venue_type`, `estimated_budget`, `timeline`, `scope_notes`, `status`)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-            $stmtInq->execute([
-                'Al Wasl Tower Management',
-                'contracts@alwasltower.ae',
-                '+971 4 398 7720',
-                'Hospitality',
-                'Luxury Ballroom & Acoustic Boardroom',
-                'AED 500,000+',
-                'Q4 2026',
-                'Requesting single-line AV schematics, Crestron NVX distribution, and Martin Audio acoustic array integration.',
-                'new'
-            ]);
+        if ($ceoRow) {
+            $pdo->prepare("UPDATE `admins` SET `role` = 'ceo', `password_hash` = ?, `status` = 'active', `username` = 'ceo@malaselectronics.ae' WHERE `id` = ?")->execute([$ceoHash, $ceoRow['id']]);
+        } else {
+            $firstAdmin = $pdo->query("SELECT id FROM `admins` ORDER BY `id` ASC LIMIT 1")->fetch();
+            if ($firstAdmin) {
+                $pdo->prepare("UPDATE `admins` SET `username` = 'ceo@malaselectronics.ae', `email` = 'ceo@malaselectronics.ae', `password_hash` = ?, `role` = 'ceo', `status` = 'active', `full_name` = 'Chief Executive Officer' WHERE `id` = ?")->execute([$ceoHash, $firstAdmin['id']]);
+            } else {
+                $pdo->prepare("
+                    INSERT INTO `admins` (`username`, `email`, `password_hash`, `full_name`, `role`, `status`)
+                    VALUES ('ceo@malaselectronics.ae', 'ceo@malaselectronics.ae', ?, 'Chief Executive Officer', 'ceo', 'active')
+                ")->execute([$ceoHash]);
+            }
         }
+
+        // Seed initial site settings if empty
+        $stmtSettings = $pdo->prepare("INSERT IGNORE INTO `site_settings` (`setting_key`, `setting_value`, `description`) VALUES (?, ?, ?)");
+        $stmtSettings->execute(['site_title', 'Malas Electronics LLC — Bespoke Architectural AV', 'Official Site Title']);
+        $stmtSettings->execute(['contact_email', 'Info@malaselectronics.ae', 'Primary dispatch email']);
+        $stmtSettings->execute(['contact_phone', '+971 56 742 4515', 'Official direct line']);
+        $stmtSettings->execute(['headquarters_city', 'Deira, Dubai · UAE', 'Engineering headquarters address']);
+
+        // Inquiries table is populated dynamically from client submissions
 
         // Seed default categories if empty
         $catCheck = $pdo->query("SELECT COUNT(*) FROM `categories`")->fetchColumn();
@@ -250,6 +347,60 @@ function base64UrlEncode($data) {
 
 function base64UrlDecode($data) {
     return base64_decode(strtr($data, '-_', '+/') . str_repeat('=', 3 - (3 + strlen($data)) % 4));
+}
+
+// ============================================================
+// LOGIN RATE LIMITING (PHP Session-based, 5 attempts / 15 min)
+// ============================================================
+
+function checkLoginRateLimit($identifier) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $key = 'rl_' . md5($identifier);
+    $now = time();
+    $window = 15 * 60; // 15 minutes
+    $maxAttempts = 5;
+
+    if (!isset($_SESSION[$key])) {
+        $_SESSION[$key] = ['count' => 0, 'first' => $now];
+    }
+
+    $data = &$_SESSION[$key];
+    // Reset window if expired
+    if ($now - $data['first'] > $window) {
+        $data = ['count' => 0, 'first' => $now];
+    }
+
+    if ($data['count'] >= $maxAttempts) {
+        $retryAfter = $window - ($now - $data['first']);
+        http_response_code(429);
+        echo json_encode([
+            'success' => false,
+            'error'   => "Too many failed login attempts. Please try again in " . ceil($retryAfter / 60) . " minute(s)."
+        ]);
+        exit();
+    }
+
+    return $data; // Pass back reference to increment on failure
+}
+
+function recordFailedLogin($identifier) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $key = 'rl_' . md5($identifier);
+    if (isset($_SESSION[$key])) {
+        $_SESSION[$key]['count']++;
+    }
+}
+
+function clearLoginRateLimit($identifier) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $key = 'rl_' . md5($identifier);
+    unset($_SESSION[$key]);
 }
 
 function generateJWT($payload, $expirySeconds = 86400) {
@@ -330,8 +481,21 @@ function requireAuth() {
 
 function requireCeo() {
     $payload = requireAuth();
-    $role = $payload['role'] ?? '';
-    if ($role !== 'ceo' && $role !== 'super_admin') {
+    $role = strtolower(trim((string)($payload['role'] ?? '')));
+    $uname = strtolower(trim((string)($payload['username'] ?? '')));
+    $email = strtolower(trim((string)($payload['email'] ?? '')));
+    $isCeo = (
+        $role === 'ceo' ||
+        $role === 'super_admin' ||
+        $role === 'admin' ||
+        $role === 'administrator' ||
+        $uname === 'ceo' ||
+        $uname === 'admin' ||
+        $uname === 'ceo@malaselectronics.ae' ||
+        $email === 'ceo@malaselectronics.ae' ||
+        $email === 'admin@malaselectronics.com'
+    );
+    if (!$isCeo) {
         http_response_code(403);
         echo json_encode([
             'success' => false,

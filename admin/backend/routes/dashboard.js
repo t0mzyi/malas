@@ -11,19 +11,24 @@ router.get('/stats', requireAuth, async (req, res) => {
     const [[totalInquiries]] = await pool.query('SELECT COUNT(*) as count FROM `rfp_inquiries`');
     const [[newInquiries]] = await pool.query("SELECT COUNT(*) as count FROM `rfp_inquiries` WHERE `status` = 'new'");
     const [[activeReviews]] = await pool.query("SELECT COUNT(*) as count FROM `rfp_inquiries` WHERE `status` = 'in_review'");
-    const [[totalAdmins]] = await pool.query('SELECT COUNT(*) as count FROM `admins`');
-
-    const dbHealth = await testConnection();
+    const [[totalAdmins]] = await pool.query("SELECT COUNT(*) as count FROM `admins` WHERE `role` NOT IN ('ceo', 'super_admin')");
+    const [[activeAdmins]] = await pool.query("SELECT COUNT(*) as count FROM `admins` WHERE `status` = 'active'");
+    const [[totalProducts]] = await pool.query('SELECT COUNT(*) as count FROM `products`');
+    const [[totalCategories]] = await pool.query('SELECT COUNT(*) as count FROM `categories`');
+    let totalInvoices = { count: 0 };
+    try {
+      const [[invCount]] = await pool.query('SELECT COUNT(*) as count FROM `invoices`');
+      if (invCount) totalInvoices = invCount;
+    } catch (e) {}
 
     return res.json({
       success: true,
       stats: {
         total: totalInquiries.count,
-        new: newInquiries.count,
-        inReview: activeReviews.count,
-        admins: totalAdmins.count
-      },
-      db: dbHealth
+        products: totalProducts.count,
+        invoices: totalInvoices.count,
+        employees: totalAdmins.count
+      }
     });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });

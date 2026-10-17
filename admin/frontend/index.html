@@ -4,10 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Malas Electronics — Enterprise Admin Portal</title>
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="shortcut icon" type="image/png" href="/logo.png">
+  <link rel="apple-touch-icon" href="/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/styles.css">
+  <!-- Client-side Excel & PDF Export Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Instant Authentication State Check (Prevents any login screen flicker on reload) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('malas_admin_token')) {
+          document.documentElement.classList.add('is-authenticated');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <div id="app" class="admin-wrapper">
@@ -62,99 +77,69 @@
     <!-- ============================================================
          2. DASHBOARD VIEW (PROTECTED)
          ============================================================ -->
-    <div id="dashboard-view" class="view-panel" style="display:none;">
-      
-      <!-- Top Navigation Bar -->
-      <header class="dash-header">
-        <div class="dash-header-inner">
-          <div class="dash-brand-block">
-            <div class="dash-logo-frame">
-              <img src="/logo.png" alt="Malas Logo">
+    <div id="dashboard-view" class="view-panel dash-layout" style="display:none;">
+
+        <!-- LEFT SIDEBAR NAVBAR -->
+        <aside class="dash-sidebar">
+          <!-- Brand Lockup -->
+          <div class="sidebar-brand">
+            <div class="sidebar-logo">
+              <img src="/logo.png" alt="Malas Logo" onerror="this.src='logo.png'">
             </div>
-            <div>
+            <div class="sidebar-brand-text">
               <span class="dash-brand-title">MALAS ELECTRONICS</span>
-              <span class="dash-brand-sub">CONTROL OPERATIONS</span>
+              <span class="dash-brand-sub" id="dash-portal-mode-label">EXECUTIVE SUITE</span>
             </div>
           </div>
 
-          <div class="dash-header-right">
-            <div class="dash-system-pill">
-              <span class="status-pulse-dot"></span>
-              <span id="dash-db-version">MariaDB 10.6.28</span>
-            </div>
+          <!-- Navigation Links -->
+          <nav class="sidebar-nav">
+            <button type="button" class="sidebar-nav-item active" data-tab="inquiries">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <span class="nav-label">Inquiries</span>
+              <span class="nav-badge" id="badge-inquiries-count">0</span>
+            </button>
 
-            <div class="dash-user-profile">
+            <button type="button" class="sidebar-nav-item" data-tab="products">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              <span class="nav-label">Products &amp; Stock</span>
+              <span class="nav-badge" id="badge-products-count">0</span>
+            </button>
+
+            <button type="button" class="sidebar-nav-item" data-tab="invoices">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"></rect><line x1="8" y1="8" x2="16" y2="8"></line><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="12" y2="16"></line></svg>
+              <span class="nav-label">Invoices &amp; Quotes</span>
+              <span class="nav-badge" id="badge-invoices-count">0</span>
+            </button>
+
+            <button type="button" class="sidebar-nav-item" data-tab="employees" id="tab-btn-employees">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <span class="nav-label">Employees</span>
+              <span class="nav-badge" id="badge-employees-count">0</span>
+            </button>
+          </nav>
+
+          <!-- User Profile & Sign Out Footer -->
+          <div class="sidebar-user-footer">
+            <div class="sidebar-user-info">
               <div class="user-avatar" id="user-avatar-initials">AD</div>
               <div class="user-meta">
                 <span class="user-name" id="dash-user-name">Administrator</span>
-                <span class="user-role" id="dash-user-role">Super Admin</span>
+                <span class="user-role" id="dash-user-role">Chief Executive</span>
               </div>
             </div>
-
-            <button type="button" id="logout-btn" class="dash-logout-btn" title="Sign Out">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-              <span>Logout</span>
+            <button type="button" id="logout-btn" class="sidebar-logout-btn" title="Sign Out">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             </button>
           </div>
-        </div>
-      </header>
+        </aside>
 
-      <!-- Main Dashboard Content -->
-      <main class="dash-main container">
-        
-        <!-- Metrics Bar -->
-        <section class="metrics-grid">
-          <div class="metric-card">
-            <span class="metric-label">Client Inquiries</span>
-            <span class="metric-value text-accent" id="stat-inquiries">0</span>
-            <span class="metric-sub" id="stat-inquiries-sub">0 Pending Review</span>
-          </div>
+        <!-- MAIN DASHBOARD CONTENT AREA -->
+        <div class="dash-content-area">
+          
 
-          <div class="metric-card">
-            <span class="metric-label">Hardware Catalog</span>
-            <span class="metric-value" id="stat-products">0</span>
-            <span class="metric-sub" id="stat-categories-count">0 AV Categories</span>
-          </div>
-
-          <div class="metric-card">
-            <span class="metric-label">Operations Personnel</span>
-            <span class="metric-value" id="stat-employees">0</span>
-            <span class="metric-sub" id="stat-role-status">Active Staff</span>
-          </div>
-
-          <div class="metric-card">
-            <span class="metric-label">Database Engine</span>
-            <span class="metric-value text-green" id="stat-db-status">Online</span>
-            <span class="metric-sub" id="stat-db-name">malasele_db</span>
-          </div>
-        </section>
-
-        <!-- Segmented Section Navigation Tabs -->
-        <nav class="dash-tabs-bar" role="tablist">
-          <button type="button" class="tab-nav-btn active" data-tab="inquiries">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>Client RFPs & Inquiries</span>
-            <span class="tab-badge" id="badge-inquiries-count">0</span>
-          </button>
-
-          <button type="button" class="tab-nav-btn" data-tab="products">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-            <span>Products Catalog</span>
-            <span class="tab-badge" id="badge-products-count">0</span>
-          </button>
-
-          <button type="button" class="tab-nav-btn" data-tab="categories">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-            <span>Categories</span>
-            <span class="tab-badge" id="badge-categories-count">0</span>
-          </button>
-
-          <button type="button" class="tab-nav-btn ceo-exclusive-tab" data-tab="employees" id="tab-btn-employees" style="display:none;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            <span>Staff & Personnel</span>
-            <span class="tab-badge ceo-badge">CEO</span>
-          </button>
-        </nav>
+          <main class="dash-main-scroll">
+            
 
         <!-- ============================================================
              TAB 1: INQUIRIES PANEL
@@ -162,8 +147,8 @@
         <section id="tab-inquiries" class="tab-panel active">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Client RFP & Systems Inquiries</h2>
-              <span class="panel-sub">Real-time consultation requests registered from the public portal</span>
+              <h2 class="panel-title">Client Inquiries</h2>
+              <span class="panel-sub">Real-time consultation requests registered from the website contact form</span>
             </div>
 
             <div class="panel-controls">
@@ -188,17 +173,17 @@
             </div>
           </div>
 
-          <div class="table-responsive">
+          <div class="table-responsive inquiries-table-responsive">
             <table class="inquiries-table">
               <thead>
                 <tr>
-                  <th>Client / Organization</th>
-                  <th>Contact Info</th>
-                  <th>Sector</th>
-                  <th>Venue Scope</th>
-                  <th>Status</th>
-                  <th>Received</th>
-                  <th style="text-align: right;">Action</th>
+                  <th class="col-client">Client / Organization</th>
+                  <th class="hide-on-mobile">Contact Info</th>
+                  <th class="hide-on-mobile">Sector</th>
+                  <th class="hide-on-mobile">Venue Scope</th>
+                  <th class="hide-on-mobile">Status</th>
+                  <th class="col-date">Received</th>
+                  <th class="col-action" style="text-align: right;">Action</th>
                 </tr>
               </thead>
               <tbody id="inquiries-table-body">
@@ -211,23 +196,159 @@
         </section>
 
         <!-- ============================================================
-             TAB 2: PRODUCTS CATALOG PANEL (ANYONE CAN ADD/MANAGE)
+             SUBPAGE: INQUIRY FULL DETAIL VIEW (DEDICATED PAGE)
+             ============================================================ -->
+        <section id="tab-inquiry-detail" class="tab-panel subpage-panel" style="display:none;">
+          <div class="subpage-nav-bar">
+            <button type="button" id="inquiry-back-btn" class="btn-subpage-back">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>&larr; Back to Inquiries</span>
+            </button>
+            <div id="inquiry-detail-status-pill" class="status-pill new">NEW</div>
+          </div>
+
+          <div class="detail-page-container">
+            <!-- Hero Card -->
+            <div class="detail-hero-card">
+              <div class="detail-hero-main">
+                <span class="detail-hero-tag" id="inq-page-tag">INQUIRY REF #000</span>
+                <h2 class="detail-hero-title" id="inq-page-client-name">Client Name</h2>
+                <div class="detail-hero-meta">
+                  <span id="inq-page-date" class="detail-hero-date">Received &mdash;</span>
+                </div>
+              </div>
+              <div class="detail-hero-actions">
+                <a href="#" id="inq-page-call-btn" class="btn-detail-action btn-call">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <span>Direct Call</span>
+                </a>
+                <a href="#" id="inq-page-mail-btn" class="btn-detail-action btn-mail">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                  <span>Dispatch Email</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="detail-sections-grid">
+              <!-- Contact Particulars -->
+              <div class="detail-card">
+                <h3 class="detail-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>Client &amp; Contact Particulars</span>
+                </h3>
+                <div class="detail-kv-list">
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Client / Representative</span>
+                    <span class="detail-kv-value" id="inq-page-contact-name">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Corporate Email</span>
+                    <a href="#" id="inq-page-email" class="detail-kv-link">&mdash;</a>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Direct Phone</span>
+                    <a href="#" id="inq-page-phone" class="detail-kv-link font-mono">&mdash;</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project & Commercial Scope -->
+              <div class="detail-card">
+                <h3 class="detail-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                  <span>Project &amp; Commercial Scope</span>
+                </h3>
+                <div class="detail-kv-list">
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Industry Sector</span>
+                    <span class="detail-kv-value" id="inq-page-sector">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Venue Type</span>
+                    <span class="detail-kv-value" id="inq-page-venue">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Estimated Budget</span>
+                    <span class="detail-kv-value font-mono text-accent" id="inq-page-budget">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Target Delivery Timeline</span>
+                    <span class="detail-kv-value" id="inq-page-timeline">&mdash;</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Scope Description & Technical Notes -->
+              <div class="detail-card full-width">
+                <h3 class="detail-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <span>Scope Description &amp; Specifications</span>
+                </h3>
+                <div class="detail-notes-box" id="inq-page-scope">
+                  No additional scope notes provided.
+                </div>
+              </div>
+
+              <!-- Processing Status & Workflow -->
+              <div class="detail-card full-width">
+                <h3 class="detail-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                  <span>Processing Status &amp; Administrative Actions</span>
+                </h3>
+                <div class="detail-action-bar">
+                  <div class="detail-status-change-group">
+                    <label for="inq-page-status-select" class="detail-action-label">Update Status:</label>
+                    <select id="inq-page-status-select" class="filter-select">
+                      <option value="new">New (Unassigned)</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="in_review">In Review</option>
+                      <option value="quoted">Proposal Quoted</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                    <button type="button" id="inq-page-save-status-btn" class="btn-primary-action">
+                      Save Status
+                    </button>
+                  </div>
+                  <button type="button" id="inq-page-delete-btn" class="btn-delete-danger">
+                    Delete Inquiry
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================
+             TAB 2: PRODUCTS CATALOG PANEL (WITH LIVE STOCK & INVOICE CART)
              ============================================================ -->
         <section id="tab-products" class="tab-panel" style="display:none;">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">Bespoke Hardware & Product Catalog</h2>
-              <span class="panel-sub">Fine-pitch LED walls, architectural luminaires, Dante audio, and automation</span>
+              <h2 class="panel-title">Stock Management</h2>
             </div>
 
             <div class="panel-controls">
               <div class="search-box">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" id="product-search" placeholder="Search product, model code...">
+                <input type="text" id="product-search" placeholder="Search products...">
               </div>
 
-              <select id="product-category-filter" class="filter-select">
-                <option value="all">All Categories</option>
+              <select id="product-sort-select" class="filter-select" title="Sort products">
+                <option value="newest">Sort: Newest First</option>
+                <option value="name_asc">Sort: Name (A &rarr; Z)</option>
+                <option value="name_desc">Sort: Name (Z &rarr; A)</option>
+                <option value="price_asc">Sort: Price (Low &rarr; High)</option>
+                <option value="price_desc">Sort: Price (High &rarr; Low)</option>
+                <option value="stock_desc">Sort: Stock (High &rarr; Low)</option>
+                <option value="stock_asc">Sort: Stock (Low &rarr; High)</option>
+              </select>
+
+              <select id="product-stock-filter" class="filter-select" title="Filter by stock status">
+                <option value="all">All Inventory</option>
+                <option value="in_stock">In Stock (&gt; 5)</option>
+                <option value="low_stock">Low Stock (1 - 5)</option>
+                <option value="out_of_stock">Out of Stock (0)</option>
               </select>
 
               <button type="button" id="add-product-btn" class="btn-primary-action btn-add-new">
@@ -243,73 +364,212 @@
         </section>
 
         <!-- ============================================================
-             TAB 3: CATEGORIES PANEL (ANYONE CAN ADD/MANAGE)
+             TAB: INVOICES & ORDERS HISTORY
              ============================================================ -->
-        <section id="tab-categories" class="tab-panel" style="display:none;">
+        <section id="tab-invoices" class="tab-panel" style="display:none;">
           <div class="panel-header">
             <div>
-              <h2 class="panel-title">AV Systems & Technology Categories</h2>
-              <span class="panel-sub">Taxonomy classifications for client proposals and catalog organization</span>
+              <h2 class="panel-title">Invoice Generation</h2>
             </div>
 
             <div class="panel-controls">
-              <button type="button" id="add-category-btn" class="btn-primary-action btn-add-new">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                <span>Add Category</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="categories-grid" id="categories-grid-container">
-            <!-- Dynamic category cards render here -->
-          </div>
-        </section>
-
-        <!-- ============================================================
-             TAB 4: EMPLOYEES PANEL (STRICTLY CEO ACCESS ONLY)
-             ============================================================ -->
-        <section id="tab-employees" class="tab-panel" style="display:none;">
-          <div class="panel-header">
-            <div>
-              <div class="ceo-restricted-lockup">
-                <h2 class="panel-title">Staff Personnel & Dispatch Access</h2>
-                <span class="ceo-badge-pill">CEO AUTHORIZED ONLY</span>
+              <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="invoice-search" placeholder="Search invoice #, client, project...">
               </div>
-              <span class="panel-sub">Manage enterprise personnel credentials, dispatch staff, and system access rights</span>
-            </div>
 
-            <div class="panel-controls">
-              <button type="button" id="add-employee-btn" class="btn-primary-action btn-add-new">
+              <select id="invoice-status-filter" class="filter-select">
+                <option value="all">All Invoices</option>
+                <option value="finalized">Finalized</option>
+                <option value="paid">Paid</option>
+                <option value="draft">Draft</option>
+              </select>
+
+              <button type="button" id="new-invoice-from-tab-btn" class="btn-primary-action btn-add-new">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                <span>Add Employee</span>
+                <span>Create Invoice</span>
               </button>
             </div>
           </div>
 
-          <div class="table-responsive">
-            <table class="inquiries-table employees-table">
+          <div class="table-responsive invoices-table-wrap">
+            <table class="invoices-table">
               <thead>
                 <tr>
-                  <th>Employee / Dispatch Staff</th>
-                  <th>Username</th>
-                  <th>Official Dispatch Email</th>
-                  <th>Access Role</th>
-                  <th>Status</th>
-                  <th>Last Authentication</th>
-                  <th style="text-align: right;">Action</th>
+                  <th class="col-inv-num">Invoice #</th>
+                  <th class="col-inv-client">Client / Organization</th>
+                  <th class="col-inv-proj">Project / Venue</th>
+                  <th class="col-inv-date">Date Issued</th>
+                  <th class="col-inv-total" style="text-align: right;">Total Amount (AED)</th>
+                  <th class="col-inv-action" style="text-align: right;">Actions</th>
                 </tr>
               </thead>
-              <tbody id="employees-table-body">
+              <tbody id="invoices-table-body">
                 <tr>
-                  <td colspan="7" class="empty-state">Loading operations personnel...</td>
+                  <td colspan="6" class="empty-state">Loading invoices...</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-      </main>
+        <!-- ============================================================
+             TAB: EMPLOYEES (CEO ONLY)
+             ============================================================ -->
+        <section id="tab-employees" class="tab-panel" style="display:none;">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Employees</h2>
+            </div>
 
+            <div class="panel-controls">
+              <div class="search-box">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="employee-search" class="search-input" placeholder="Search staff members...">
+              </div>
+              <select id="employee-status-filter" class="filter-select">
+                <option value="all">All Statuses</option>
+                <option value="active">Active Only</option>
+                <option value="suspended">Suspended Only</option>
+              </select>
+              <button type="button" id="add-employee-btn" class="btn-primary-action btn-add-new">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>+ Onboard Employee</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive employees-table-responsive">
+            <table class="data-table employees-table">
+              <thead>
+                <tr>
+                  <th class="col-emp-name">Employee Name</th>
+                  <th class="hide-on-mobile">Corporate Email</th>
+                  <th class="hide-on-mobile">Username</th>
+                  <th class="hide-on-mobile">Status</th>
+                  <th class="hide-on-mobile">Last Active</th>
+                  <th class="col-emp-actions" style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="employees-table-body">
+                <tr><td colspan="6" class="empty-state">Loading staff directory...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ============================================================
+             SUBPAGE: EMPLOYEE FULL DETAIL VIEW (DEDICATED PAGE)
+             ============================================================ -->
+        <section id="tab-employee-detail" class="tab-panel subpage-panel" style="display:none;">
+          <div class="subpage-nav-bar">
+            <button type="button" id="employee-back-btn" class="btn-subpage-back">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>&larr; Back to Employees</span>
+            </button>
+            <div id="employee-detail-status-pill" class="status-pill new">ACTIVE</div>
+          </div>
+
+          <div class="detail-page-container">
+            <!-- Hero Card -->
+            <div class="detail-hero-card">
+              <div class="detail-hero-avatar-wrap">
+                <span class="detail-hero-avatar" id="emp-page-avatar">ST</span>
+                <div>
+                  <h2 class="detail-hero-title" id="emp-page-name">Employee Name</h2>
+                  <div class="detail-hero-meta">
+                    <span id="emp-page-role-label" class="detail-hero-role">Field Engineer</span>
+                    <span class="meta-dot">&middot;</span>
+                    <span id="emp-page-username" class="font-mono text-muted">@username</span>
+                  </div>
+                </div>
+              </div>
+              <div class="detail-hero-actions">
+                <a href="#" id="emp-page-mail-btn" class="btn-detail-action btn-mail">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                  <span>Dispatch Email</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="detail-sections-grid">
+              <!-- Credentials & Role -->
+              <div class="detail-card">
+                <h3 class="detail-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  <span>Identity &amp; Authentication Particulars</span>
+                </h3>
+                <div class="detail-kv-list">
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Full Legal Name</span>
+                    <span class="detail-kv-value" id="emp-page-fullname">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Login Username</span>
+                    <span class="detail-kv-value font-mono" id="emp-page-login-user">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Corporate Email</span>
+                    <a href="#" id="emp-page-email" class="detail-kv-link font-mono">&mdash;</a>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Assigned Role</span>
+                    <span class="detail-kv-value" id="emp-page-role-text">Field Staff</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Telemetry -->
+              <div class="detail-card">
+                <h3 class="detail-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span>Activity &amp; Telemetry Status</span>
+                </h3>
+                <div class="detail-kv-list">
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Access Status</span>
+                    <span class="detail-kv-value" id="emp-page-status-text">Active</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Member Since</span>
+                    <span class="detail-kv-value font-mono" id="emp-page-created-at">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Last Active Session</span>
+                    <span class="detail-kv-value font-mono" id="emp-page-last-login">&mdash;</span>
+                  </div>
+                  <div class="detail-kv-item">
+                    <span class="detail-kv-label">Internal Account ID</span>
+                    <span class="detail-kv-value font-mono text-muted" id="emp-page-id">&mdash;</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Security & Access Controls -->
+              <div class="detail-card full-width">
+                <h3 class="detail-card-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <span>Security &amp; Account Access Controls</span>
+                </h3>
+                <div class="detail-action-bar">
+                  <div class="detail-status-change-group">
+                    <button type="button" id="emp-page-toggle-block-btn" class="btn-primary-action btn-block-toggle">
+                      Block Employee Access
+                    </button>
+                    <span class="detail-field-hint" id="emp-page-block-hint">Suspended staff are immediately prevented from logging into the portal.</span>
+                  </div>
+                  <button type="button" id="emp-page-delete-btn" class="btn-delete-danger">
+                    Delete Employee Permanently
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+          </main>
+        </div>
     </div>
 
     <!-- ============================================================
@@ -391,155 +651,485 @@
         <form id="product-form" class="modal-form">
           <input type="hidden" id="product-id" value="">
 
-          <div class="form-row-2">
-            <div class="form-group">
-              <label for="product-name" class="form-label">Product Name *</label>
-              <input type="text" id="product-name" class="form-input" placeholder="e.g. Onyx-0.9 DirectView MicroLED" required>
-            </div>
-
-            <div class="form-group">
-              <label for="product-category" class="form-label">Category *</label>
-              <select id="product-category" class="form-input filter-select" required>
-                <!-- Populated dynamically -->
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label for="product-model" class="form-label">Model Code / SKU</label>
-              <input type="text" id="product-model" class="form-input" placeholder="e.g. ME-LED-ONX09">
-            </div>
-
-            <div class="form-group">
-              <label for="product-tagline" class="form-label">Short Tagline</label>
-              <input type="text" id="product-tagline" class="form-input" placeholder="e.g. 0.9mm Pixel Pitch Executive Wall">
-            </div>
-          </div>
-
-          <div class="form-row-2">
-            <div class="form-group">
-              <label for="product-image" class="form-label">Image URL</label>
-              <input type="url" id="product-image" class="form-input" placeholder="https://example.com/asset.jpg">
-            </div>
-
-            <div class="form-group">
-              <label for="product-status" class="form-label">Catalog Status</label>
-              <select id="product-status" class="form-input filter-select">
-                <option value="active">Active (Visible)</option>
-                <option value="draft">Draft (Internal)</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label for="product-name" class="form-label">Product Name *</label>
+            <input type="text" id="product-name" class="form-input" placeholder="e.g. Onyx-0.9 DirectView MicroLED" required>
           </div>
 
           <div class="form-group">
-            <label for="product-specs" class="form-label">Technical Specifications (Key Highlights)</label>
-            <input type="text" id="product-specs" class="form-input" placeholder="e.g. Brightness: 1200 nits | Dante AES67 | Ingress: IP67">
+            <label for="product-tagline" class="form-label">Short Tagline / Subtitle</label>
+            <input type="text" id="product-tagline" class="form-input" placeholder="e.g. 0.9mm Pixel Pitch Executive Wall">
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="product-price" class="form-label">Unit Price (AED)</label>
+              <input type="number" id="product-price" class="form-input" min="0" step="0.01" placeholder="0.00">
+            </div>
+
+            <div class="form-group">
+              <label for="product-stock" class="form-label">Inventory Stock Quantity *</label>
+              <input type="number" id="product-stock" class="form-input" min="0" step="1" placeholder="e.g. 15" required>
+            </div>
           </div>
 
+          <!-- Product Image Upload Dropzone -->
           <div class="form-group">
-            <label for="product-desc" class="form-label">Full Engineering Scope / Description</label>
-            <textarea id="product-desc" class="form-input form-textarea" rows="3" placeholder="Provide detailed architectural application, hardware features, and installation requirements..."></textarea>
+            <label class="form-label">Product Image</label>
+            <input type="hidden" id="product-image" value="">
+
+            <div class="image-upload-dropzone" id="image-upload-dropzone">
+              <!-- Empty State -->
+              <div class="dropzone-empty" id="dropzone-empty-state">
+                <div class="dropzone-icon-circle">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <div class="dropzone-text">
+                  <strong>Click to upload product image</strong> or drag &amp; drop
+                </div>
+                <span class="dropzone-hint">PNG, JPG, WebP, GIF up to 15MB</span>
+                <button type="button" class="btn-browse-file" id="btn-trigger-file">Choose Image File</button>
+              </div>
+
+              <!-- Uploading State -->
+              <div class="dropzone-uploading" id="dropzone-uploading-state" style="display: none;">
+                <div class="upload-spinner-ring"></div>
+                <div class="uploading-info">
+                  <strong>Uploading image...</strong>
+                  <span class="uploading-sub">Please wait while the image is uploaded</span>
+                </div>
+              </div>
+
+              <!-- Active Preview State -->
+              <div class="dropzone-preview" id="dropzone-preview-state" style="display: none;">
+                <div class="dropzone-thumb-container">
+                  <img id="cloudinary-img-preview" src="" alt="Product Preview">
+                  <div class="dropzone-cloud-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>Image Attached</span>
+                  </div>
+                </div>
+                <div class="dropzone-preview-actions">
+                  <button type="button" class="btn-replace-img" id="btn-replace-img">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>Replace Image</span>
+                  </button>
+                  <button type="button" class="btn-remove-img" id="remove-img-btn" title="Remove attached image">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Remove</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Hidden real file input -->
+              <input type="file" id="cloudinary-file-input" accept="image/*" style="display: none;">
+            </div>
+
+            <!-- Optional Direct URL fallback toggle -->
+            <div class="direct-url-toggle-wrap">
+              <button type="button" class="btn-link-toggle" id="btn-toggle-url-input">
+                🔗 Or paste an existing image URL
+              </button>
+              <div id="direct-url-input-container" style="display: none; margin-top: 8px;">
+                <input type="url" id="product-image-url-input" class="form-input" placeholder="https://example.com/image.jpg">
+              </div>
+            </div>
           </div>
 
-          <div class="modal-footer">
-            <button type="button" id="cancel-product-btn" class="btn-secondary-action">Cancel</button>
-            <button type="submit" id="save-product-btn" class="btn-primary-action">Save Product</button>
+          <div class="modal-footer modal-footer-between">
+            <button type="button" id="delete-modal-product-btn" class="btn-delete-danger" style="display: none;">
+              Delete Product
+            </button>
+            <div style="display: flex; gap: 10px; margin-left: auto;">
+              <button type="button" id="cancel-product-btn" class="btn-secondary-action">Cancel</button>
+              <button type="submit" id="save-product-btn" class="btn-primary-action">Save Product</button>
+            </div>
           </div>
         </form>
       </div>
     </div>
 
+
+
+
     <!-- ============================================================
-         MODAL: ADD / EDIT CATEGORY (ANY STAFF CAN USE)
+         MODAL: INVOICE CART (ADD MULTIPLE PRODUCTS & FINALIZE)
          ============================================================ -->
-    <div id="category-modal" class="modal-backdrop" style="display:none;">
-      <div class="modal-card">
+    <div id="invoice-cart-modal" class="modal-backdrop" style="display:none;">
+      <div class="modal-card modal-card-xl">
         <div class="modal-header">
           <div>
-            <span class="modal-tag">AV CLASSIFICATION</span>
-            <h3 class="modal-title" id="category-modal-title">Add AV Category</h3>
+            <span class="modal-tag">COMMERCIAL BILLING &amp; QUOTATIONS</span>
+            <h3 class="modal-title" id="invoice-modal-title">Create Commercial Invoice</h3>
           </div>
-          <button type="button" id="close-category-modal-btn" class="modal-close-btn">&times;</button>
+          <button type="button" id="close-cart-modal-btn" class="modal-close-btn">&times;</button>
         </div>
 
-        <form id="category-form" class="modal-form">
-          <input type="hidden" id="category-id" value="">
+        <div class="modal-body modal-cart-layout">
+          <!-- Left side: Items Table -->
+          <div class="cart-items-section">
+            <div class="cart-section-title-row">
+              <h4 class="cart-section-title">Selected Products (<span id="cart-item-distinct-count">0</span>)</h4>
+              <button type="button" id="cart-clear-all-btn" class="btn-text-danger" style="font-size:0.75rem;">Clear All Items</button>
+            </div>
 
-          <div class="form-group">
-            <label for="category-name" class="form-label">Category Name *</label>
-            <input type="text" id="category-name" class="form-input" placeholder="e.g. Architectural & Facade Lighting" required>
+            <!-- Quick Add Product Bar with Live Search -->
+            <div class="invoice-add-product-bar">
+              <div class="invoice-search-picker-wrap">
+                <div class="invoice-search-input-box">
+                  <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" id="invoice-product-search-input" class="form-input invoice-search-input" placeholder="Search product to add (by name, model, SKU)..." autocomplete="off">
+                  <input type="hidden" id="invoice-product-picker-val" value="">
+                  <button type="button" id="invoice-search-clear-btn" class="invoice-search-clear" style="display:none;" title="Clear selection">&times;</button>
+                </div>
+                <div id="invoice-search-results-dropdown" class="invoice-search-results-dropdown" style="display:none;"></div>
+              </div>
+              <div class="invoice-picker-qty-wrap">
+                <button type="button" id="invoice-picker-qty-dec" class="btn-qty invoice-qty-btn" aria-label="Decrease quantity">-</button>
+                <input type="number" id="invoice-picker-qty" class="form-input invoice-picker-qty-input" min="1" value="1" placeholder="1" title="Quantity">
+                <button type="button" id="invoice-picker-qty-inc" class="btn-qty invoice-qty-btn" aria-label="Increase quantity">+</button>
+              </div>
+              <button type="button" id="invoice-add-item-btn" class="btn-primary-action">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>+ Add</span>
+              </button>
+            </div>
+
+            <div class="cart-items-table-wrap">
+              <table class="cart-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Unit Price (AED)</th>
+                    <th style="width: 140px; text-align: center;">Quantity</th>
+                    <th style="text-align: right;">Total (AED)</th>
+                    <th style="width: 40px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="cart-table-body">
+                  <tr>
+                    <td colspan="5" class="empty-state">No products added to invoice yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right side: Client & Quotation Details & Totals -->
+          <div class="cart-checkout-section">
+            <h4 class="cart-section-title">Invoice &amp; Client Details</h4>
+            
+            <form id="invoice-finalize-form" class="cart-client-form">
+              <div class="form-group">
+                <label for="cart-client-name" class="form-label">Client or Company Name *</label>
+                <input type="text" id="cart-client-name" class="form-input" placeholder="e.g. Emaar Hospitality Group" required>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="cart-client-email" class="form-label">Client Email</label>
+                  <input type="email" id="cart-client-email" class="form-input" placeholder="procurement@emaar.ae">
+                </div>
+                <div class="form-group">
+                  <label for="cart-client-phone" class="form-label">Client Phone</label>
+                  <input type="text" id="cart-client-phone" class="form-input" placeholder="+971 4 367 3333">
+                </div>
+              </div>
+
+
+
+              <input type="hidden" id="cart-vat-rate" value="5">
+
+              <!-- Live Cost Summary Box -->
+              <div class="cart-cost-summary">
+                <div class="summary-line">
+                  <span>Invoice Subtotal</span>
+                  <span id="summary-subtotal" class="font-mono">AED 0.00</span>
+                </div>
+                <div class="summary-line">
+                  <span>UAE Standard VAT (5%)</span>
+                  <span id="summary-vat" class="font-mono">AED 0.00</span>
+                </div>
+                <div class="summary-line total-line">
+                  <span>Grand Total (AED)</span>
+                  <span id="summary-grand-total" class="font-mono text-accent">AED 0.00</span>
+                </div>
+              </div>
+
+              <div class="cart-actions-row">
+                <button type="button" id="cart-continue-shopping-btn" class="btn-secondary-action">Select Products</button>
+                <button type="submit" id="finalize-invoice-btn" class="btn-primary-action">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span id="finalize-btn-text">Finalize &amp; Issue Invoice</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: INVOICE VIEWER & EXPORT (PDF & EXCEL .XLSX)
+         ============================================================ -->
+    <div id="invoice-view-modal" class="modal-backdrop" style="display:none;">
+      <div class="modal-card modal-card-xl invoice-modal-container">
+        <!-- Top Action Bar -->
+        <div class="invoice-action-bar">
+          <div class="invoice-bar-info">
+            <span class="invoice-badge-pill" id="view-modal-number">TAX INVOICE</span>
+          </div>
+
+          <div class="invoice-export-buttons">
+            <button type="button" id="edit-invoice-from-view-btn" class="btn-inv-action btn-inv-edit" title="Edit this invoice">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              <span>Edit</span>
+            </button>
+            <button type="button" id="export-excel-btn" class="btn-inv-action btn-export-excel" title="Download Excel Spreadsheet (.xlsx)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span class="lbl-desktop">Export Excel (.xlsx)</span>
+              <span class="lbl-mobile">Excel</span>
+            </button>
+
+            <button type="button" id="export-pdf-btn" class="btn-inv-action btn-export-pdf" title="Generate & Download PDF Document">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span class="lbl-desktop">Download PDF</span>
+              <span class="lbl-mobile">PDF</span>
+            </button>
+
+            <button type="button" id="print-invoice-btn" class="btn-inv-action btn-inv-print" title="Print Document">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              <span>Print</span>
+            </button>
+          </div>
+
+          <button type="button" id="close-invoice-view-btn" class="modal-close-btn" aria-label="Close">&times;</button>
+        </div>
+
+        <!-- Scrollable Printable Paper Container -->
+        <div class="invoice-printable-wrapper">
+          <div id="invoice-printable-template" class="invoice-sheet">
+            <!-- Centered Corporate Logo Watermark -->
+            <div class="inv-watermark-overlay" aria-hidden="true">
+              <img src="logo.png" alt="Malas Watermark" class="inv-watermark-img">
+            </div>
+
+            <!-- Sheet Header -->
+            <div class="inv-sheet-header">
+              <div class="inv-brand-info">
+                <div class="inv-brand-logo-wrap" style="display: flex; align-items: center; gap: 15px;">
+                  <h1 class="inv-brand-name" style="margin: 0;">MALAS ELECTRONICS L.L.C</h1>
+                  <img src="logo.png" alt="Malas Logo" style="height: 38px; width: auto; object-fit: contain;">
+                </div>
+                <p class="inv-company-sub">AV Systems Design · Architectural Luminaires · Integrated Engineering</p>
+                <div class="inv-legal-details">
+                  <p><strong>Tax Registration No (TRN):</strong> 100482910300003</p>
+                  <p><strong>Address:</strong> Al Quoz Industrial Area 3, Dubai, United Arab Emirates</p>
+                  <p><strong>Dispatch Email:</strong> Info@malaselectronics.ae &nbsp;|&nbsp; <strong>Web:</strong> malaselectronics.ae</p>
+                </div>
+              </div>
+
+              <div class="inv-meta-block">
+                <span class="inv-type-badge">TAX INVOICE</span>
+                <table class="inv-meta-table">
+                  <tr>
+                    <td class="lbl">Issue Date:</td>
+                    <td class="val" id="print-inv-date">03 Oct 2026</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+            <!-- Client Details -->
+            <div class="inv-billed-section">
+              <div class="inv-billed-box">
+                <span class="inv-section-tag">BILLED TO:</span>
+                <h3 class="inv-client-name" id="print-client-name">Emaar Hospitality Group</h3>
+                <div class="inv-client-contacts">
+                  <span id="print-client-email">procurement@emaar.ae</span>
+                  <span class="contact-sep">·</span>
+                  <span id="print-client-phone">+971 4 367 3333</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Items Table -->
+            <table class="inv-items-table">
+              <thead>
+                <tr>
+                  <th style="width: 36px; text-align: center;">#</th>
+                  <th>Item Description</th>
+                  <th style="width: 125px; text-align: right;">Unit Price (AED)</th>
+                  <th style="width: 55px; text-align: center;">Qty</th>
+                  <th style="width: 130px; text-align: right;">Total (AED)</th>
+                </tr>
+              </thead>
+              <tbody id="print-items-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+
+            <!-- Totals (Right Aligned) -->
+            <div class="inv-totals-row">
+              <div class="inv-totals-box">
+                <table class="inv-calc-table">
+                  <tr>
+                    <td class="lbl">Subtotal (Excl. VAT):</td>
+                    <td class="val font-mono" id="print-subtotal">AED 0.00</td>
+                  </tr>
+                  <tr>
+                    <td class="lbl">UAE VAT (5% Standard):</td>
+                    <td class="val font-mono" id="print-vat">AED 0.00</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td class="lbl">TOTAL AMOUNT DUE:</td>
+                    <td class="val font-mono" id="print-total">AED 0.00</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+            <!-- Official Stamp (Left) & Signature (Right) — Text Only on Opposite Sides -->
+            <div class="inv-auth-bottom">
+              <!-- Left Side: Company Stamp -->
+              <div class="inv-stamp-zone">
+                <div class="stamp-space-placeholder"></div>
+                <div class="stamp-text-area">
+                  <span class="stamp-text-title">Company Stamp</span>
+                  <span class="stamp-text-sub">Malas Electronics L.L.C</span>
+                </div>
+              </div>
+
+              <!-- Right Side: Authorized Signature -->
+              <div class="inv-sign-zone">
+                <div class="sign-block">
+                  <div class="sign-space-placeholder"></div>
+                  <div class="sign-line"></div>
+                  <span class="sign-text-title">Authorized Signatory</span>
+                  <span class="sign-text-sub">For Malas Electronics L.L.C</span>
+                </div>
+                <div class="sign-date-row">
+                  <span class="sign-date-label">Date:</span>
+                  <span class="sign-date-dots">____________________</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer note -->
+            <div class="inv-sheet-footer">
+              <p>Thank you for partnering with Malas Electronics LLC. This is an official computer-generated Tax Invoice issued in compliance with UAE Federal Decree-Law No. (8) on Value Added Tax.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: QUICK STOCK ADJUSTMENT
+         ============================================================ -->
+    <div id="stock-modal" class="modal-backdrop" style="display:none;">
+      <div class="modal-card modal-card-sm">
+        <div class="modal-header">
+          <div>
+            <span class="modal-tag">INVENTORY ALLOCATION</span>
+            <h3 class="modal-title">Adjust Product Stock</h3>
+          </div>
+          <button type="button" id="close-stock-modal-btn" class="modal-close-btn">&times;</button>
+        </div>
+
+        <form id="stock-form" class="modal-form">
+          <input type="hidden" id="stock-adjust-product-id" value="">
+          
+          <div style="margin-bottom: 14px;">
+            <span id="stock-adjust-product-name" style="font-weight: 700; color: var(--text-pure); font-size: 1rem; display: block; margin-bottom: 4px;"></span>
+            <span id="stock-adjust-sku" style="font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-muted);"></span>
           </div>
 
           <div class="form-group">
-            <label for="category-desc" class="form-label">Category Description</label>
-            <textarea id="category-desc" class="form-input form-textarea" rows="3" placeholder="Describe the AV scope and technology included under this classification..."></textarea>
+            <label for="stock-adjust-qty" class="form-label">Available Inventory Units *</label>
+            <div class="stock-stepper-control">
+              <button type="button" class="btn-stepper" id="stock-qty-dec">-</button>
+              <input type="number" id="stock-adjust-qty" class="form-input text-center font-mono" min="0" step="1" required style="text-align: center; font-size: 1.1rem; font-weight: 700;">
+              <button type="button" class="btn-stepper" id="stock-qty-inc">+</button>
+            </div>
           </div>
 
           <div class="modal-footer">
-            <button type="button" id="cancel-category-btn" class="btn-secondary-action">Cancel</button>
-            <button type="submit" id="save-category-btn" class="btn-primary-action">Save Category</button>
+            <button type="button" id="cancel-stock-modal-btn" class="btn-secondary-action">Cancel</button>
+            <button type="submit" id="save-stock-modal-btn" class="btn-primary-action">Update Stock</button>
           </div>
         </form>
       </div>
     </div>
 
     <!-- ============================================================
-         MODAL: ADD EMPLOYEE (CEO EXCLUSIVE)
+         MODAL: ONBOARD / EDIT EMPLOYEE (CEO ONLY)
          ============================================================ -->
     <div id="employee-modal" class="modal-backdrop" style="display:none;">
       <div class="modal-card">
         <div class="modal-header">
           <div>
-            <span class="modal-tag ceo-badge-pill">CEO AUTHORIZATION</span>
-            <h3 class="modal-title">Onboard Operations Employee</h3>
+            <span class="modal-tag">HUMAN RESOURCES &amp; ACCESS CONTROL</span>
+            <h3 class="modal-title" id="employee-modal-title">Onboard New Employee</h3>
           </div>
           <button type="button" id="close-employee-modal-btn" class="modal-close-btn">&times;</button>
         </div>
 
         <form id="employee-form" class="modal-form">
+          <input type="hidden" id="employee-id" value="">
+
           <div class="form-group">
-            <label for="emp-name" class="form-label">Full Name *</label>
-            <input type="text" id="emp-name" class="form-input" placeholder="e.g. Tariq Al Mansoor" required>
+            <label for="employee-name" class="form-label">Full Name *</label>
+            <input type="text" id="employee-name" class="form-input" placeholder="e.g. Rashid Al Nuaimi" required>
           </div>
 
           <div class="form-row-2">
             <div class="form-group">
-              <label for="emp-username" class="form-label">Username *</label>
-              <input type="text" id="emp-username" class="form-input" placeholder="e.g. tariq.av" required>
+              <label for="employee-email" class="form-label">Corporate Email *</label>
+              <input type="email" id="employee-email" class="form-input" placeholder="name@malaselectronics.ae" required>
             </div>
-
             <div class="form-group">
-              <label for="emp-email" class="form-label">Dispatch Email *</label>
-              <input type="email" id="emp-email" class="form-input" placeholder="e.g. tariq@malaselectronics.com" required>
+              <label for="employee-username" class="form-label">Username</label>
+              <input type="text" id="employee-username" class="form-input" placeholder="e.g. rashid">
             </div>
           </div>
 
-          <div class="form-row-2">
-            <div class="form-group">
-              <label for="emp-password" class="form-label">Temporary Password *</label>
-              <input type="password" id="emp-password" class="form-input" placeholder="Min. 6 characters" minlength="6" required>
-            </div>
-
-            <div class="form-group">
-              <label for="emp-role" class="form-label">Access Role *</label>
-              <select id="emp-role" class="form-input filter-select" required>
-                <option value="employee">Staff Engineer / Dispatch</option>
-                <option value="ceo">Chief Executive Officer (CEO)</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label for="employee-password" class="form-label" id="employee-password-label">Password *</label>
+            <input type="password" id="employee-password" class="form-input" placeholder="Minimum 6 characters" required>
           </div>
 
           <div class="modal-footer">
             <button type="button" id="cancel-employee-btn" class="btn-secondary-action">Cancel</button>
-            <button type="submit" id="save-employee-btn" class="btn-primary-action">Create Employee</button>
+            <button type="submit" id="save-employee-btn" class="btn-primary-action">Save Employee</button>
           </div>
         </form>
       </div>
     </div>
 
+    <!-- ============================================================
+         MODAL: UNIVERSAL CONFIRMATION & DELETION MODAL
+         ============================================================ -->
+    <div id="confirm-modal" class="modal-backdrop confirm-modal-backdrop" style="display:none; z-index: 9999;">
+      <div class="modal-card confirm-modal-card">
+        <div class="confirm-modal-content">
+          <h3 class="confirm-modal-title" id="confirm-modal-title">Are you sure you want to delete this item?</h3>
+          <p class="confirm-modal-message" id="confirm-modal-message" style="display:none;"></p>
+        </div>
+        <div class="confirm-modal-actions">
+          <button type="button" id="confirm-modal-cancel-btn" class="btn-secondary-action btn-confirm-cancel">No</button>
+          <button type="button" id="confirm-modal-action-btn" class="btn-delete-danger btn-confirm-action">Yes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TOAST CONTAINER: REPLACES BROWSER ALERTS WITH LUXURY FLOATING TOASTS
+         ============================================================ -->
+    <div id="app-toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
   </div>
 
-  <script src="app.js"></script>
+  <script src="/app.js"></script>
 </body>
 </html>
+

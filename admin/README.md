@@ -57,8 +57,8 @@ Navigate in your browser to:
 **`https://malaselectronics.ae/admin/`**
 
 ### Step 4: Login Credentials
-- **Username**: `admin` (or `admin@malaselectronics.com`)
-- **Initial Password**: `Admin@Malas2026!`
+- **Username / Email**: `ceo@malaselectronics.ae`
+- **Initial Password**: `Ceo@Malas2026!`
 
 ---
 

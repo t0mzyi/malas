@@ -11,10 +11,59 @@ export default function ContactSection() {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [inquiryId, setInquiryId] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setErrorMsg('');
+
+    const payload = {
+      client_name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      sector: formData.company.trim() || 'Commercial Enterprise',
+      venue_type: formData.project,
+      scope_notes: formData.message.trim()
+        ? `[Company: ${formData.company.trim() || 'N/A'}] ${formData.message.trim()}`
+        : `Consultation request for ${formData.project}`
+    };
+
+    // Determine target API endpoint (Local dev port 3000 -> 5000; Production -> PHP inquiries API)
+    const apiUrl = (window.location.port === '3000')
+      ? 'http://localhost:5000/api/inquiries'
+      : '/api/inquiries.php';
+
+    try {
+      let res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      // Fallback if local /api/inquiries.php is not found
+      if (res.status === 404 && apiUrl === '/api/inquiries.php') {
+        res = await fetch('https://admin.malaselectronics.ae/api/inquiries.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setInquiryId(data.inquiryId || null);
+        setSubmitted(true);
+      } else {
+        setErrorMsg(data.error || 'Unable to register consultation inquiry. Please contact us directly.');
+      }
+    } catch (err) {
+      setErrorMsg('Network connection issue. Please check your connection or contact us directly at +971 4 227 8898.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,7 +82,7 @@ export default function ContactSection() {
 
         {/* Quick Contact Action Strip */}
         <div className="contact-quick-strip">
-          <a href={`tel:${SITE_DATA.company.phoneLandline.replace(/\s+/g, '')}`} className="contact-quick-card">
+          <a href={`tel:${SITE_DATA.company.phoneDirect.replace(/\s+/g, '')}`} className="contact-quick-card">
             <div className="contact-quick-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -41,7 +90,10 @@ export default function ContactSection() {
             </div>
             <div className="contact-quick-info">
               <span className="contact-quick-tag">Direct Engineering Telephony</span>
-              <span className="contact-quick-val">{SITE_DATA.company.phoneLandline}</span>
+              <span className="contact-quick-val">{SITE_DATA.company.phoneDirect}</span>
+              <span style={{ fontSize: '0.78rem', color: '#94A3B8', display: 'block', marginTop: '2px' }}>
+                Alt: {SITE_DATA.company.phoneSecondary}
+              </span>
             </div>
             <span className="contact-quick-action">Call &rarr;</span>
           </a>
@@ -118,8 +170,19 @@ export default function ContactSection() {
                 <div className="rfp-success-icon">✓</div>
                 <h4>Proposal Specification Received</h4>
                 <p>
-                  Thank you, <strong>{formData.name || 'Valued Client'}</strong>. A senior systems engineer is reviewing your inquiry regarding <strong>{formData.project}</strong> and will connect with technical documentation shortly.
+                  Thank you, <strong>{formData.name || 'Valued Client'}</strong>. Your consultation scope {inquiryId ? `(Reference #${inquiryId})` : ''} has been registered directly in our engineering dispatch system. A senior AV systems engineer will review your venue parameters for <strong>{formData.project}</strong> and reach out shortly.
                 </p>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  style={{ marginTop: '16px' }}
+                  onClick={() => {
+                    setSubmitted(false);
+                    setFormData({ name: '', email: '', phone: '', company: '', project: 'Auditorium AV Installation', message: '' });
+                  }}
+                >
+                  Submit Another Project Scope
+                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="studio-form">
@@ -154,7 +217,7 @@ export default function ContactSection() {
                     <input
                       type="tel"
                       required
-                      placeholder="+971 50 000 0000"
+                      placeholder="+971 56 742 4515"
                       className="studio-input"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -210,8 +273,14 @@ export default function ContactSection() {
                   />
                 </div>
 
-                <button type="submit" className="btn-primary studio-submit-btn">
-                  Submit Systems Proposal Specification &rarr;
+                {errorMsg && (
+                  <div style={{ color: '#EF4444', fontSize: '0.85rem', marginBottom: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '10px 14px', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                    {errorMsg}
+                  </div>
+                )}
+
+                <button type="submit" className="btn-primary studio-submit-btn" disabled={loading}>
+                  {loading ? 'Registering Systems Specification...' : 'Submit Systems Proposal Specification →'}
                 </button>
               </form>
             )}

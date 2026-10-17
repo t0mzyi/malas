@@ -30,14 +30,23 @@
     RewriteRule ^categories/([0-9]+)/?$ categories.php?id=$1 [L,QSA]
     RewriteRule ^categories/?$ categories.php [L,QSA]
 
+    # Handle Invoices Routes
+    RewriteRule ^invoices/([0-9]+)/?$ invoices.php?id=$1 [L,QSA]
+    RewriteRule ^invoices/?$ invoices.php [L,QSA]
+
     # Handle Products Routes
     RewriteRule ^products/([0-9]+)/?$ products.php?id=$1 [L,QSA]
     RewriteRule ^products/?$ products.php [L,QSA]
+
+    # Handle Cloudinary Upload Route
+    RewriteRule ^upload/?$ upload.php [L,QSA]
 </IfModule>
 
 # Security Headers
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-Frame-Options "DENY"
     Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Content-Security-Policy "default-src 'none'"
 </IfModule>

@@ -1,15 +1,21 @@
 const jwt = require('jsonwebtoken');
 
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('[FATAL] JWT_SECRET environment variable is not set. Refusing to start.');
+  process.exit(1);
+}
+
 function requireAuth(req, res, next) {
   let token = null;
 
   // 1. Check Authorization header
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.substring(7);
+    token = authHeader.substring(7).trim();
   } else if (req.cookies && req.cookies.admin_token) {
-    // 2. Check HTTP-only cookie
-    token = req.cookies.admin_token;
+    // 2. Check cookie — never from query string (security risk)
+    token = String(req.cookies.admin_token).trim();
   }
 
   if (!token) {
@@ -20,8 +26,7 @@ function requireAuth(req, res, next) {
   }
 
   try {
-    const secret = process.env.JWT_SECRET || 'malas_admin_jwt_secret_token_2026';
-    const decoded = jwt.verify(token, secret);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.admin = decoded;
     next();
   } catch (err) {
@@ -37,7 +42,21 @@ function requireAuth(req, res, next) {
  */
 function requireCeo(req, res, next) {
   requireAuth(req, res, () => {
-    if (req.admin && (req.admin.role === 'ceo' || req.admin.role === 'super_admin')) {
+    const role = (req.admin?.role || '').toString().toLowerCase().trim();
+    const uname = (req.admin?.username || '').toString().toLowerCase().trim();
+    const email = (req.admin?.email || '').toString().toLowerCase().trim();
+    const isCeo = (
+      role === 'ceo' ||
+      role === 'super_admin' ||
+      role === 'admin' ||
+      role === 'administrator' ||
+      uname === 'ceo' ||
+      uname === 'admin' ||
+      uname === 'ceo@malaselectronics.ae' ||
+      email === 'ceo@malaselectronics.ae' ||
+      email === 'admin@malaselectronics.com'
+    );
+    if (isCeo) {
       next();
     } else {
       return res.status(403).json({
@@ -50,5 +69,6 @@ function requireCeo(req, res, next) {
 
 module.exports = {
   requireAuth,
-  requireCeo
+  requireCeo,
+  JWT_SECRET
 };

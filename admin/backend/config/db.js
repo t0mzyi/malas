@@ -206,6 +206,8 @@ function initSqliteSchema(db) {
       category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
       name TEXT NOT NULL,
       model_number TEXT,
+      price REAL NOT NULL DEFAULT 0,
+      stock INTEGER NOT NULL DEFAULT 10,
       tagline TEXT,
       description TEXT,
       specifications TEXT,
@@ -217,7 +219,33 @@ function initSqliteSchema(db) {
     );
   `);
 
-  // 6. Site Settings Table
+  // Migrations for products price & stock
+  try { db.exec("ALTER TABLE products ADD COLUMN price REAL DEFAULT 0"); } catch (e) {}
+  try { db.exec("ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 10"); } catch (e) {}
+
+  // 6. Invoices Table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS invoices (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      invoice_number TEXT NOT NULL UNIQUE,
+      client_name TEXT NOT NULL,
+      client_email TEXT,
+      client_phone TEXT,
+      project_name TEXT,
+      items TEXT NOT NULL,
+      subtotal REAL NOT NULL DEFAULT 0,
+      vat_rate REAL NOT NULL DEFAULT 5,
+      vat_amount REAL NOT NULL DEFAULT 0,
+      discount REAL NOT NULL DEFAULT 0,
+      total_amount REAL NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'finalized',
+      created_by TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // 7. Site Settings Table
   db.exec(`
     CREATE TABLE IF NOT EXISTS site_settings (
       setting_key TEXT PRIMARY KEY,
@@ -227,33 +255,46 @@ function initSqliteSchema(db) {
     );
   `);
 
+
+
   // Update existing admins with super_admin to ceo role
   try {
     db.prepare("UPDATE admins SET role = 'ceo' WHERE role = 'super_admin'").run();
   } catch (e) {}
 
-  // Seed default admin if table is empty
-  const countRow = db.prepare('SELECT COUNT(*) as count FROM admins').get();
-  if (countRow.count === 0) {
-    const defaultHash = '$2a$10$52/vgAEcXZmim2xUzfgW7.lriT.v1OaIVstCbRpotO0en5KR4UvJ6';
-    db.prepare(`
-      INSERT INTO admins (username, email, password_hash, full_name, role, status)
-      VALUES (?, ?, ?, 'Chief Executive Officer', 'ceo', 'active')
-    `).run('admin', 'ceo@malaselectronics.com', defaultHash);
-
-    // Initial site settings
-    db.prepare(`
-      INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description)
-      VALUES ('site_title', 'Malas Electronics LLC — Bespoke Architectural AV', 'Official Site Title'),
-             ('headquarters_city', 'Deira, Dubai · UAE', 'Engineering headquarters address')
-    `).run();
-
-    // Sample inquiry for testing
-    db.prepare(`
-      INSERT INTO rfp_inquiries (client_name, email, phone, sector, venue_type, estimated_budget, timeline, scope_notes, status)
-      VALUES ('Al Wasl Tower Management', 'projects@alwasl.ae', '+971 4 332 9988', 'Commercial', 'Corporate Boardroom & Auditorium', 'AED 250k - 500k', 'Q4 2026', 'Turnkey 4K LED Wall, Shure wireless microphone system, and Crestron automated control.', 'new')
-    `).run();
+  // Ensure CEO account exists with ceo@malaselectronics.ae and password Ceo@Malas2026!
+  const ceoHash = '$2a$10$vnNtLu44ajeUqjibmSxtkevT7LMRBqu.2PyPRKkn3vGe8hgGX7CRi'; // Ceo@Malas2026!
+  try {
+    const existingCeo = db.prepare("SELECT id FROM admins WHERE email = 'ceo@malaselectronics.ae'").get();
+    if (existingCeo) {
+      db.prepare("UPDATE admins SET role = 'ceo', password_hash = ?, status = 'active' WHERE id = ?").run(ceoHash, existingCeo.id);
+    } else {
+      const firstAdmin = db.prepare("SELECT id FROM admins ORDER BY id ASC LIMIT 1").get();
+      if (firstAdmin) {
+        db.prepare(`
+          UPDATE admins 
+          SET username = 'ceo@malaselectronics.ae', email = 'ceo@malaselectronics.ae', password_hash = ?, full_name = 'Chief Executive Officer', role = 'ceo', status = 'active'
+          WHERE id = ?
+        `).run(ceoHash, firstAdmin.id);
+      } else {
+        db.prepare(`
+          INSERT INTO admins (username, email, password_hash, full_name, role, status)
+          VALUES ('ceo@malaselectronics.ae', 'ceo@malaselectronics.ae', ?, 'Chief Executive Officer', 'ceo', 'active')
+        `).run(ceoHash);
+      }
+    }
+  } catch (err) {
+    console.error('Error ensuring CEO account:', err);
   }
+
+  // Initial site settings
+  db.prepare(`
+    INSERT OR IGNORE INTO site_settings (setting_key, setting_value, description)
+    VALUES ('site_title', 'Malas Electronics LLC — Bespoke Architectural AV', 'Official Site Title'),
+           ('headquarters_city', 'Deira, Dubai · UAE', 'Engineering headquarters address')
+  `).run();
+
+  // Inquiries table starts completely clean; populated dynamically from client submissions
 
   // Seed default categories if empty
   const catCount = db.prepare('SELECT COUNT(*) as count FROM categories').get();
@@ -266,44 +307,7 @@ function initSqliteSchema(db) {
     insertCat.run('Smart Control & Automation', 'smart-automation', 'Unified touchscreen environmental controllers, Crestron NVX switching, and automated shading.');
   }
 
-  // Seed default products if empty
-  const prodCount = db.prepare('SELECT COUNT(*) as count FROM products').get();
-  if (prodCount.count === 0) {
-    const insertProd = db.prepare(`
-      INSERT INTO products (category_id, name, model_number, tagline, description, specifications, image_url, status, created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'active', 'CEO')
-    `);
-
-    insertProd.run(
-      1,
-      'Malas Onyx-0.9 DirectView MicroLED Display',
-      'ME-LED-ONX09',
-      'Ultra Fine-Pitch 0.9mm Architectural Display Wall',
-      'Engineered for executive Dubai corporate boardrooms and luxury command centers. Features true HDR10+ calibration, 16-bit greyscale depth, and zero-bezel alignment.',
-      'Pixel Pitch: 0.93mm | Brightness: 1,200 nits calibrated | Refresh Rate: 3,840 Hz | Contrast: 10,000:1 | IP Rating: Front IP54',
-      'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'
-    );
-
-    insertProd.run(
-      2,
-      'AuraLux Linear DMX512 Facade Beam',
-      'AL-FAC-RGBW',
-      'High-Output Architectural Grazing Luminaire',
-      'Exterior IP67 architectural luminaire designed for continuous Dubai tower facade illumination with seamless RGBW color blending and Art-Net control.',
-      'Power: 48W/meter | Beam Angle: 15°x45° asymmetric | Control: DMX512 / RDM | Ingress: IP67 Marine Grade Aluminum | Operating Temp: -20°C to +55°C',
-      'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80'
-    );
-
-    insertProd.run(
-      3,
-      'Centrum Beamforming Dante Ceiling Array',
-      'CM-BF360-D',
-      'Steerable Multi-Lobe Acoustic Ceiling Microphone',
-      'Invisible in-ceiling microphone array utilizing adaptive beam tracking algorithms to capture speech across boardrooms without boundary mics.',
-      'Coverage: 360° up to 10m radius | Audio Network: Dante / AES67 | DSP: Built-in acoustic echo cancellation (AEC) & noise reduction | Power: PoE+',
-      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80'
-    );
-  }
+  // Products table is clean; populated dynamically from admin catalog manager
 }
 
 module.exports = {

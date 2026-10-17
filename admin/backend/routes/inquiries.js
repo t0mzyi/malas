@@ -99,7 +99,14 @@ router.patch('/:id', requireAuth, async (req, res) => {
     const updates = [];
     const params = [];
 
+    const validStatuses = ['new', 'contacted', 'in_review', 'quoted', 'archived'];
     if (status) {
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          error: `Invalid status. Allowed values: ${validStatuses.join(', ')}`
+        });
+      }
       updates.push('`status` = ?');
       params.push(status);
     }

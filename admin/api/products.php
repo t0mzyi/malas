@@ -21,14 +21,9 @@ if (!$pdo) {
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Handle method overrides
+// Only allow trusted HTTP method override via header (not query string)
 if ($method === 'POST' && isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
     $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
-} elseif ($method === 'POST' && isset($_GET['_method'])) {
-    $method = strtoupper($_GET['_method']);
-} elseif ($method === 'POST' && isset($_GET['action'])) {
-    if ($_GET['action'] === 'update') $method = 'PATCH';
-    if ($_GET['action'] === 'delete') $method = 'DELETE';
 }
 
 $id = $_GET['id'] ?? null;
@@ -109,6 +104,8 @@ if ($method === 'POST') {
     $description = trim($body['description'] ?? '');
     $specs       = trim($body['specifications'] ?? '');
     $imageUrl    = trim($body['image_url'] ?? '');
+    $price       = (float)($body['price'] ?? 0);
+    $stock       = (int)($body['stock'] ?? 10);
     $status      = in_array($body['status'] ?? '', ['active', 'draft']) ? $body['status'] : 'active';
     $createdBy   = $auth['fullName'] ?? $auth['username'] ?? 'Staff';
 
@@ -121,13 +118,15 @@ if ($method === 'POST') {
     try {
         $stmt = $pdo->prepare("
             INSERT INTO `products` 
-            (category_id, name, model_number, tagline, description, specifications, image_url, status, created_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (category_id, name, model_number, price, stock, tagline, description, specifications, image_url, status, created_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $catId,
             $name,
             $modelNumber ?: null,
+            $price,
+            $stock,
             $tagline ?: null,
             $description ?: null,
             $specs ?: null,
@@ -176,6 +175,14 @@ if ($method === 'PATCH') {
     if (isset($body['model_number'])) {
         $updates[] = "`model_number` = ?";
         $params[] = trim($body['model_number']) ?: null;
+    }
+    if (isset($body['price'])) {
+        $updates[] = "`price` = ?";
+        $params[] = (float)$body['price'];
+    }
+    if (isset($body['stock'])) {
+        $updates[] = "`stock` = ?";
+        $params[] = (int)$body['stock'];
     }
     if (isset($body['tagline'])) {
         $updates[] = "`tagline` = ?";

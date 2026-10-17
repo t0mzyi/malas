@@ -25,14 +25,9 @@ if (!$pdo) {
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Handle method overrides
+// Only allow trusted HTTP method override via header (not query string)
 if ($method === 'POST' && isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
     $method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
-} elseif ($method === 'POST' && isset($_GET['_method'])) {
-    $method = strtoupper($_GET['_method']);
-} elseif ($method === 'POST' && isset($_GET['action'])) {
-    if ($_GET['action'] === 'update') $method = 'PATCH';
-    if ($_GET['action'] === 'delete') $method = 'DELETE';
 }
 
 $id = $_GET['id'] ?? null;
@@ -75,32 +70,48 @@ if ($method === 'POST') {
     $body = getJsonInput();
     if (empty($body)) $body = $_POST;
 
-    $username = trim($body['username'] ?? '');
     $email    = trim(strtolower($body['email'] ?? ''));
     $password = $body['password'] ?? '';
-    $fullName = trim($body['full_name'] ?? 'Malas Staff Member');
-    $role     = in_array($body['role'] ?? '', ['employee', 'ceo']) ? $body['role'] : 'employee';
 
-    if (empty($username) || empty($email) || empty($password)) {
+    if (empty($email) || empty($password)) {
         http_response_code(400);
         echo json_encode([
             'success' => false,
-            'error'   => 'Username, Email, and Initial Password are required.'
+            'error'   => 'Corporate Email and Initial Password are required.'
         ]);
         exit();
     }
 
+    $username = trim($body['username'] ?? '');
+    if (empty($username)) {
+        $parts = explode('@', $email);
+        $username = $parts[0] ?: 'staff';
+    }
+
+    $fullName = trim($body['full_name'] ?? '');
+    if (empty($fullName)) {
+        $fullName = ucwords(str_replace(['.', '_', '-'], ' ', $username));
+    }
+    $role = 'employee';
+
     try {
-        // Check uniqueness
-        $check = $pdo->prepare("SELECT id FROM `admins` WHERE username = ? OR email = ? LIMIT 1");
-        $check->execute([$username, $email]);
-        if ($check->fetch()) {
+        // Check uniqueness of email
+        $checkEmail = $pdo->prepare("SELECT id FROM `admins` WHERE email = ? LIMIT 1");
+        $checkEmail->execute([$email]);
+        if ($checkEmail->fetch()) {
             http_response_code(409);
             echo json_encode([
                 'success' => false,
-                'error'   => 'An account with this username or email already exists.'
+                'error'   => 'An employee account with this corporate email already exists.'
             ]);
             exit();
+        }
+
+        // If username exists, append a random number
+        $checkUser = $pdo->prepare("SELECT id FROM `admins` WHERE username = ? LIMIT 1");
+        $checkUser->execute([$username]);
+        if ($checkUser->fetch()) {
+            $username .= '_' . rand(100, 999);
         }
 
         $hash = password_hash($password, PASSWORD_BCRYPT);
@@ -112,7 +123,7 @@ if ($method === 'POST') {
 
         echo json_encode([
             'success'    => true,
-            'message'    => "Employee account created successfully with {$role} privileges.",
+            'message'    => "Operations employee account created successfully for {$email}.",
             'employeeId' => (int)$pdo->lastInsertId()
         ]);
         exit();

@@ -16,7 +16,7 @@ router.use(requireCeo);
 router.get('/', async (req, res) => {
   try {
     const [rows] = await pool.query(
-      'SELECT id, username, email, full_name, role, status, last_login, created_at FROM `admins` ORDER BY `role` ASC, `created_at` DESC'
+      "SELECT id, username, email, full_name, role, status, last_login, created_at FROM `admins` WHERE LOWER(role) NOT IN ('ceo', 'super_admin', 'admin') ORDER BY `created_at` DESC"
     );
     return res.json({ success: true, count: rows.length, employees: rows });
   } catch (err) {
@@ -29,31 +29,41 @@ router.get('/', async (req, res) => {
  * Add a new employee (Only CEO can do this)
  */
 router.post('/', async (req, res) => {
-  const { username, email, password, full_name, role = 'employee' } = req.body;
+  const rawEmail = (req.body.email || '').trim().toLowerCase();
+  const password = req.body.password;
 
-  if (!username || !email || !password) {
+  if (!rawEmail || !password) {
     return res.status(400).json({
       success: false,
-      error: 'Username, Email, and Initial Password are required.'
+      error: 'Corporate Email and Initial Password are required.'
     });
   }
 
-  // Validate role (CEO can create either another CEO or Employee)
-  const validRoles = ['employee', 'ceo'];
-  const assignedRole = validRoles.includes(role) ? role : 'employee';
+  // Auto-generate username from email if not provided
+  let username = (req.body.username || rawEmail.split('@')[0] || 'staff').trim();
+  // Auto-generate full name from username if not provided
+  let fullName = req.body.full_name
+    ? req.body.full_name.trim()
+    : username.replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+  const assignedRole = 'employee';
 
   try {
-    // Check if username or email already exists
+    // Check if email or username already exists
     const [existing] = await pool.query(
-      'SELECT id FROM `admins` WHERE username = ? OR email = ? LIMIT 1',
-      [username.trim(), email.trim().toLowerCase()]
+      'SELECT id FROM `admins` WHERE email = ? OR username = ? LIMIT 1',
+      [rawEmail, username]
     );
 
     if (existing.length > 0) {
-      return res.status(409).json({
-        success: false,
-        error: 'An account with this username or email already exists.'
-      });
+      // If username collided but email didn't, append random suffix
+      if (existing[0].email === rawEmail) {
+        return res.status(409).json({
+          success: false,
+          error: 'An employee account with this corporate email already exists.'
+        });
+      }
+      username = `${username}_${Math.floor(100 + Math.random() * 900)}`;
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -64,10 +74,10 @@ router.post('/', async (req, res) => {
        (username, email, password_hash, full_name, role, status)
        VALUES (?, ?, ?, ?, ?, 'active')`,
       [
-        username.trim(),
-        email.trim().toLowerCase(),
+        username,
+        rawEmail,
         passwordHash,
-        full_name ? full_name.trim() : 'Malas Staff Member',
+        fullName || 'Malas Staff Member',
         assignedRole
       ]
     );

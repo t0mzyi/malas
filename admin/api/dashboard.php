@@ -42,18 +42,22 @@ if ($action === 'stats' && $method === 'GET') {
         $newInq   = (int)$pdo->query("SELECT COUNT(*) FROM `rfp_inquiries` WHERE `status` = 'new'")->fetchColumn();
         $inReview = (int)$pdo->query("SELECT COUNT(*) FROM `rfp_inquiries` WHERE `status` = 'in_review'")->fetchColumn();
         $admins   = (int)$pdo->query("SELECT COUNT(*) FROM `admins`")->fetchColumn();
-
-        $dbHealth = testConnection();
+        $activeAdmins = (int)$pdo->query("SELECT COUNT(*) FROM `admins` WHERE `status` = 'active'")->fetchColumn();
+        $products = (int)$pdo->query("SELECT COUNT(*) FROM `products`")->fetchColumn();
+        $categories = (int)$pdo->query("SELECT COUNT(*) FROM `categories`")->fetchColumn();
+        $invoices = 0;
+        try {
+            $invoices = (int)$pdo->query("SELECT COUNT(*) FROM `invoices`")->fetchColumn();
+        } catch (Exception $e) {}
 
         echo json_encode([
             'success' => true,
             'stats'   => [
-                'total'    => $totalInq,
-                'new'      => $newInq,
-                'inReview' => $inReview,
-                'admins'   => $admins
-            ],
-            'db'      => $dbHealth
+                'total'        => $totalInq,
+                'products'     => $products,
+                'categories'   => $categories,
+                'invoices'     => $invoices
+            ]
         ]);
         exit();
     } catch (PDOException $e) {

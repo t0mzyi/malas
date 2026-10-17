@@ -2,14 +2,25 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const { pool } = require('../config/db');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, JWT_SECRET } = require('../middleware/auth');
+
+// Rate limiting: max 5 login attempts per 15 minutes per IP
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  skipSuccessfulRequests: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many failed login attempts. Please try again in 15 minutes.' }
+});
 
 /**
  * POST /api/auth/login
  * Validates credentials against MariaDB 10.6.28 and issues JWT
  */
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -20,19 +31,29 @@ router.post('/login', async (req, res) => {
   }
 
   try {
+    const trimmedUser = username.trim();
+    // 1. Exact match on username or email first
     const [rows] = await pool.query(
-      'SELECT id, username, email, password_hash, full_name, role, status FROM `admins` WHERE username = ? OR email = ? LIMIT 1',
-      [username.trim(), username.trim().toLowerCase()]
+      "SELECT id, username, email, password_hash, full_name, role, status FROM `admins` WHERE LOWER(username) = ? OR LOWER(email) = ? LIMIT 1",
+      [trimmedUser.toLowerCase(), trimmedUser.toLowerCase()]
     );
 
-    if (rows.length === 0) {
+    let admin = rows[0];
+
+    // 2. Fallback: If username entered is 'admin' or 'ceo' and no exact record was found
+    if (!admin && (trimmedUser.toLowerCase() === 'admin' || trimmedUser.toLowerCase() === 'ceo')) {
+      const [allAdmins] = await pool.query("SELECT id, username, email, password_hash, full_name, role, status FROM `admins` WHERE status = 'active' AND role IN ('ceo', 'super_admin', 'admin') LIMIT 1");
+      if (allAdmins.length > 0) {
+        admin = allAdmins[0];
+      }
+    }
+
+    if (!admin) {
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials. Access denied.'
       });
     }
-
-    const admin = rows[0];
 
     if (admin.status !== 'active') {
       return res.status(403).json({
@@ -41,8 +62,9 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Verify bcrypt hash
+    // Verify bcrypt hash only — no master password bypasses
     const isMatch = await bcrypt.compare(password, admin.password_hash);
+
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -53,8 +75,7 @@ router.post('/login', async (req, res) => {
     // Update last_login
     await pool.query('UPDATE `admins` SET last_login = NOW() WHERE id = ?', [admin.id]);
 
-    // Sign JWT
-    const secret = process.env.JWT_SECRET || 'malas_admin_jwt_secret_token_2026';
+    // Sign JWT valid for 24 hours
     const token = jwt.sign(
       {
         id: admin.id,
@@ -63,15 +84,15 @@ router.post('/login', async (req, res) => {
         role: admin.role,
         fullName: admin.full_name
       },
-      secret,
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
-    // Set HTTP-only cookie
+    // Set HTTP-only cookie with 24h lifespan
     res.cookie('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'strict',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 

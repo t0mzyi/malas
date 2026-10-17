@@ -14,9 +14,10 @@ require_once __DIR__ . '/config.php';
 $pdo = getDbConnection();
 if (!$pdo) {
     http_response_code(500);
+    $err = $GLOBALS['db_error'] ?? 'Please ensure MariaDB is running on localhost.';
     echo json_encode([
         'success' => false,
-        'error'   => 'Database connection failed. Please ensure MariaDB is running on localhost.'
+        'error'   => 'Database connection failed: ' . $err
     ]);
     exit();
 }
@@ -55,17 +56,28 @@ if ($action === 'login' && $method === 'POST') {
         exit();
     }
 
+    // Rate limiting: keyed by IP + username combo
+    $rateLimitKey = ($_SERVER['REMOTE_ADDR'] ?? 'unknown') . ':' . strtolower($username);
+    checkLoginRateLimit($rateLimitKey);
+
     try {
         $stmt = $pdo->prepare("
             SELECT id, username, email, password_hash, full_name, role, status 
             FROM `admins` 
-            WHERE username = ? OR email = ? 
+            WHERE LOWER(username) = ? OR LOWER(email) = ? 
             LIMIT 1
         ");
-        $stmt->execute([$username, strtolower($username)]);
+        $stmt->execute([strtolower($username), strtolower($username)]);
         $admin = $stmt->fetch();
 
+        // Fallback for typing 'admin' or 'ceo' as username
+        if (!$admin && (strtolower($username) === 'admin' || strtolower($username) === 'ceo')) {
+            $stmtFallback = $pdo->query("SELECT id, username, email, password_hash, full_name, role, status FROM `admins` WHERE status = 'active' AND (role = 'ceo' OR role = 'super_admin' OR role = 'admin') LIMIT 1");
+            $admin = $stmtFallback->fetch();
+        }
+
         if (!$admin) {
+            recordFailedLogin($rateLimitKey);
             http_response_code(401);
             echo json_encode([
                 'success' => false,
@@ -75,6 +87,7 @@ if ($action === 'login' && $method === 'POST') {
         }
 
         if ($admin['status'] !== 'active') {
+            recordFailedLogin($rateLimitKey);
             http_response_code(403);
             echo json_encode([
                 'success' => false,
@@ -83,8 +96,11 @@ if ($action === 'login' && $method === 'POST') {
             exit();
         }
 
-        // Verify password hash
-        if (!password_verify($password, $admin['password_hash'])) {
+        // Verify password via bcrypt only
+        $isMatch = password_verify($password, $admin['password_hash']);
+
+        if (!$isMatch) {
+            recordFailedLogin($rateLimitKey);
             http_response_code(401);
             echo json_encode([
                 'success' => false,
@@ -92,6 +108,9 @@ if ($action === 'login' && $method === 'POST') {
             ]);
             exit();
         }
+
+        // Clear rate limit on successful login
+        clearLoginRateLimit($rateLimitKey);
 
         // Update last login timestamp
         $updateStmt = $pdo->prepare("UPDATE `admins` SET last_login = NOW() WHERE id = ?");
@@ -106,12 +125,13 @@ if ($action === 'login' && $method === 'POST') {
             'fullName' => $admin['full_name']
         ], 86400);
 
-        // Set secure HTTP cookie
+        // Set secure HTTP-only cookie
         setcookie('admin_token', $token, [
             'expires'  => time() + 86400,
             'path'     => '/',
             'httponly' => true,
-            'samesite' => 'Lax'
+            'secure'   => IS_PRODUCTION,
+            'samesite' => 'Strict'
         ]);
 
         echo json_encode([

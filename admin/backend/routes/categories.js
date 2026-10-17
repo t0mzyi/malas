@@ -7,7 +7,7 @@ const { requireAuth } = require('../middleware/auth');
  * GET /api/categories
  * List all categories (with product count)
  */
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   try {
     const [rows] = await pool.query(`
       SELECT c.*, COUNT(p.id) as product_count

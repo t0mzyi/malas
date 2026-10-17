@@ -38,7 +38,7 @@ export default function WhiteContactSection() {
             <div className="simple-info-block">
               <span className="simple-info-lbl">Direct Phone</span>
               <div className="simple-info-val">
-                {SITE_DATA.company.phoneLandline} · {SITE_DATA.company.phoneDirect}
+                {SITE_DATA.company.phoneDirect} (Direct) · {SITE_DATA.company.phoneSecondary} (WhatsApp)
               </div>
             </div>
 
@@ -88,7 +88,7 @@ export default function WhiteContactSection() {
                     <input
                       type="tel"
                       required
-                      placeholder="+971 50 000 0000"
+                      placeholder="+971 56 742 4515"
                       className="simple-input"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}

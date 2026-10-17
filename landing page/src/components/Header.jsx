@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SITE_DATA } from '../data/siteData';
 
 export default function Header({ theme = 'white', onToggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -124,7 +125,7 @@ export default function Header({ theme = 'white', onToggleTheme }) {
 
               {/* Mobile Quick Call Button */}
               <a
-                href="tel:+97140000000"
+                href={`tel:${SITE_DATA.company.phoneDirect.replace(/\s+/g, '')}`}
                 className="mobile-quick-call-btn"
                 aria-label="Call Malas Electronics Dubai"
                 title="Call Malas Electronics"
@@ -223,18 +224,18 @@ export default function Header({ theme = 'white', onToggleTheme }) {
         <div className="mobile-drawer-footer">
 
           <div className="drawer-contact-cards">
-            <a href="tel:+97140000000" className="drawer-contact-pill">
+            <a href={`tel:${SITE_DATA.company.phoneDirect.replace(/\s+/g, '')}`} className="drawer-contact-pill">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
               </svg>
-              <span>+971 4 000 0000</span>
+              <span>{SITE_DATA.company.phoneDirect}</span>
             </a>
-            <a href="mailto:info@malaselectronics.com" className="drawer-contact-pill">
+            <a href={`mailto:${SITE_DATA.company.emailGeneral}`} className="drawer-contact-pill">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
               </svg>
-              <span>Email Engineers</span>
+              <span>{SITE_DATA.company.emailGeneral}</span>
             </a>
           </div>
 
