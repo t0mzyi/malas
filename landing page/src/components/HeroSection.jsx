@@ -26,7 +26,7 @@ export default function HeroSection() {
 
           {/* Direct, Plain-Spoken Subline */}
           <p className="hero-subline-text">
-            Turnkey commercial auditoriums, boardrooms, luxury residential automation, and comprehensive systems integration across the UAE.
+            Bespoke sound reinforcement, luxury home theatres, LED video walls, stage productions, and turnkey audio-visual engineering for private clients and venues across the UAE.
           </p>
 
           {/* Mobile-Only Dedicated Visual Card (Clean, visual-first mobile experience) */}

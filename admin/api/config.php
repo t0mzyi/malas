@@ -315,7 +315,7 @@ function initDatabaseSchema($pdo) {
         $stmtSettings = $pdo->prepare("INSERT IGNORE INTO `site_settings` (`setting_key`, `setting_value`, `description`) VALUES (?, ?, ?)");
         $stmtSettings->execute(['site_title', 'Malas Electronics LLC — Bespoke Architectural AV', 'Official Site Title']);
         $stmtSettings->execute(['contact_email', 'Info@malaselectronics.ae', 'Primary dispatch email']);
-        $stmtSettings->execute(['contact_phone', '+971 56 742 4515', 'Official direct line']);
+        $stmtSettings->execute(['contact_phone', '0507376012, +971 56 742 4515', 'Official direct line']);
         $stmtSettings->execute(['headquarters_city', 'Deira, Dubai · UAE', 'Engineering headquarters address']);
 
         // Inquiries table is populated dynamically from client submissions

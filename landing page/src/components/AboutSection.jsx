@@ -13,7 +13,7 @@ export default function AboutSection() {
               15+ Years of Systems Integration in Dubai & UAE.
             </h2>
             <p>
-              Malas Electronics LLC is an authorized systems integrator delivering turnkey Audio-Visual, acoustic engineering, and automation solutions. We operate across corporate, commercial, hospitality, education, and luxury residential sectors.
+              Malas Electronics LLC is an authorized systems integrator delivering turnkey Audio-Visual, acoustic engineering, and automation solutions. We deliver customized systems for private clients, luxury residences, entertainment venues, and bespoke architectural spaces.
             </p>
             <p>
               Every installation conforms to international Avixa performance standards, backed by certified brand hardware and active 24/7 emergency maintenance contracts.
@@ -38,7 +38,7 @@ export default function AboutSection() {
               <span className="standards-metric-num">500+</span>
               <div>
                 <div className="standards-metric-text">AV Projects Delivered</div>
-                <div className="standards-metric-sub">Commercial, corporate, and luxury venues across the UAE</div>
+                <div className="standards-metric-sub">Private residences, luxury estates, and landmark venues across the UAE</div>
               </div>
             </div>
 

@@ -6,21 +6,21 @@ export default function WhiteProjectsSection() {
 
   const filterTabs = [
     { id: 'All', label: 'All Projects (15)' },
-    { id: 'Corporate', label: 'Corporate & Education' },
+    { id: 'Workspaces', label: 'Workspaces & Studios' },
     { id: 'Venues', label: 'Venues & Events' },
-    { id: 'Residential', label: 'Residential & Automation' }
+    { id: 'Residential', label: 'Residential & Luxury' }
   ];
 
   const filteredProjects = SITE_DATA.projects.filter((p) => {
     if (filter === 'All') return true;
-    if (filter === 'Corporate') {
-      return ['Corporate', 'Education & Training', 'Commercial'].some(c => p.category.includes(c));
+    if (filter === 'Workspaces') {
+      return ['Workspaces & Studios', 'Education & Training', 'Display & Visuals', 'Corporate', 'Commercial'].some(c => p.category.includes(c));
     }
     if (filter === 'Venues') {
-      return ['Venues & Stages', 'Media & Production', 'Enterprise & Security'].some(c => p.category.includes(c));
+      return ['Venues & Stages', 'Venues & Hospitality', 'Media & Production', 'Operations & Security', 'Enterprise & Security'].some(c => p.category.includes(c));
     }
     if (filter === 'Residential') {
-      return ['Luxury Residential', 'Venues & Luxury', 'Automation'].some(c => p.category.includes(c));
+      return ['Luxury Residential', 'Venues & Luxury', 'Automation', 'Venues & Residences'].some(c => p.category.includes(c));
     }
     return true;
   });
@@ -33,7 +33,7 @@ export default function WhiteProjectsSection() {
           <span className="simple-kicker">Project Portfolio</span>
           <h2 className="simple-heading">Our 15 AV Project Types</h2>
           <p className="simple-desc">
-            Explore our verified systems integrations across corporate boardrooms, public venues, and residential spaces.
+            Explore our verified systems integrations across private residences, auditoriums, broadcast studios, and bespoke spaces.
           </p>
         </div>
 

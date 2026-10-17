@@ -88,7 +88,7 @@ export default function WhiteContactSection() {
                     <input
                       type="tel"
                       required
-                      placeholder="+971 56 742 4515"
+                      placeholder="0507376012 or +971 56 742 4515"
                       className="simple-input"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -101,7 +101,7 @@ export default function WhiteContactSection() {
                   <input
                     type="email"
                     required
-                    placeholder="name@company.com"
+                    placeholder="name@email.com"
                     className="simple-input"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}

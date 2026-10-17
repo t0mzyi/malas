@@ -8,21 +8,21 @@ export default function ProjectsSection() {
 
   const filterTabs = [
     { id: 'All', label: 'All Projects' },
-    { id: 'Corporate', label: 'Corporate & Education' },
+    { id: 'Workspaces', label: 'Workspaces & Studios' },
     { id: 'Venues', label: 'Venues & Stages' },
-    { id: 'Residential', label: 'Residential & Automation' }
+    { id: 'Residential', label: 'Residential & Luxury' }
   ];
 
   const filteredProjects = SITE_DATA.projects.filter((p) => {
     if (filter === 'All') return true;
-    if (filter === 'Corporate') {
-      return ['Corporate', 'Education & Training', 'Commercial'].some(c => p.category.includes(c));
+    if (filter === 'Workspaces') {
+      return ['Workspaces & Studios', 'Education & Training', 'Display & Visuals', 'Corporate', 'Commercial'].some(c => p.category.includes(c));
     }
     if (filter === 'Venues') {
-      return ['Venues & Stages', 'Media & Production', 'Enterprise & Security'].some(c => p.category.includes(c));
+      return ['Venues & Stages', 'Venues & Hospitality', 'Media & Production', 'Operations & Security', 'Enterprise & Security'].some(c => p.category.includes(c));
     }
     if (filter === 'Residential') {
-      return ['Luxury Residential', 'Venues & Luxury', 'Automation'].some(c => p.category.includes(c));
+      return ['Luxury Residential', 'Venues & Luxury', 'Automation', 'Venues & Residences'].some(c => p.category.includes(c));
     }
     return true;
   });
@@ -104,7 +104,7 @@ export default function ProjectsSection() {
             Engineered Projects
           </h2>
           <p className="section-desc">
-            Proven implementations across high-stakes corporate boardrooms, public auditoriums, broadcasting studios, and bespoke residential sanctuaries.
+            Proven implementations across private residences, auditoriums, broadcast studios, performance venues, and bespoke spaces.
           </p>
         </div>
 

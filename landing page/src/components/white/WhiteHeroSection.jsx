@@ -17,7 +17,7 @@ export default function WhiteHeroSection() {
 
         {/* Clear Description of What They Do */}
         <p className="simple-hero-desc">
-          We design, install, and support professional sound systems, LED video walls, live streaming production, smart meeting rooms, and corporate event technology across Dubai and the UAE.
+          We design, install, and support professional sound systems, LED video walls, home theatres, live streaming, smart rooms, and event technology for clients across Dubai and the UAE.
         </p>
 
         {/* Action Buttons */}

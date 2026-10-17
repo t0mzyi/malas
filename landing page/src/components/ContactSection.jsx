@@ -24,10 +24,10 @@ export default function ContactSection() {
       client_name: formData.name.trim(),
       email: formData.email.trim(),
       phone: formData.phone.trim(),
-      sector: formData.company.trim() || 'Commercial Enterprise',
+      sector: formData.company.trim() || 'Direct Client',
       venue_type: formData.project,
       scope_notes: formData.message.trim()
-        ? `[Company: ${formData.company.trim() || 'N/A'}] ${formData.message.trim()}`
+        ? (formData.company.trim() ? `[Property/Entity: ${formData.company.trim()}] ${formData.message.trim()}` : formData.message.trim())
         : `Consultation request for ${formData.project}`
     };
 
@@ -60,7 +60,7 @@ export default function ContactSection() {
         setErrorMsg(data.error || 'Unable to register consultation inquiry. Please contact us directly.');
       }
     } catch (err) {
-      setErrorMsg('Network connection issue. Please check your connection or contact us directly at +971 4 227 8898.');
+      setErrorMsg('Network connection issue. Please check your connection or contact us directly at 0507376012 or +971 56 742 4515.');
     } finally {
       setLoading(false);
     }
@@ -89,10 +89,10 @@ export default function ContactSection() {
               </svg>
             </div>
             <div className="contact-quick-info">
-              <span className="contact-quick-tag">Direct Engineering Telephony</span>
-              <span className="contact-quick-val">{SITE_DATA.company.phoneDirect}</span>
+              <span className="contact-quick-tag">Direct Lines & WhatsApp</span>
+              <span className="contact-quick-val">0507376012</span>
               <span style={{ fontSize: '0.78rem', color: '#94A3B8', display: 'block', marginTop: '2px' }}>
-                Alt: {SITE_DATA.company.phoneSecondary}
+                Alt: +971 56 742 4515
               </span>
             </div>
             <span className="contact-quick-action">Call &rarr;</span>
@@ -200,10 +200,10 @@ export default function ContactSection() {
                   </div>
 
                   <div className="studio-field">
-                    <label className="studio-label">Company / Organization</label>
+                    <label className="studio-label">Property / Venue / Entity (Optional)</label>
                     <input
                       type="text"
-                      placeholder="e.g. Emirates Holdings"
+                      placeholder="e.g. Private Villa, Studio, or Venue"
                       className="studio-input"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
@@ -217,7 +217,7 @@ export default function ContactSection() {
                     <input
                       type="tel"
                       required
-                      placeholder="+971 56 742 4515"
+                      placeholder="0507376012 or +971 56 742 4515"
                       className="studio-input"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -225,11 +225,11 @@ export default function ContactSection() {
                   </div>
 
                   <div className="studio-field">
-                    <label className="studio-label">Corporate Email *</label>
+                    <label className="studio-label">Email Address *</label>
                     <input
                       type="email"
                       required
-                      placeholder="name@company.ae"
+                      placeholder="name@email.com"
                       className="studio-input"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}

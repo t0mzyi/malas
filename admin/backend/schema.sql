@@ -70,7 +70,7 @@ INSERT IGNORE INTO `site_settings` (`setting_key`, `setting_value`, `description
 ('site_title', 'Malas Electronics LLC — Bespoke Architectural AV', 'Official Site Title'),
 ('maintenance_mode', 'false', 'Toggle maintenance state'),
 ('contact_email', 'Info@malaselectronics.ae', 'Primary dispatch email'),
-('contact_phone', '+971 56 742 4515', 'Official direct line'),
+('contact_phone', '0507376012, +971 56 742 4515', 'Official direct line'),
 ('headquarters_city', 'Deira, Dubai · UAE', 'Engineering headquarters address');
 
 -- 5. Seed Initial Chief Executive Officer (ceo@malaselectronics.ae / Ceo@Malas2026!)

@@ -44,7 +44,7 @@ export default function Footer() {
               </div>
             </a>
             <p className="footer-brand-summary">
-              Turnkey engineering contractor delivering broadcast-grade auditoriums, luxury residential automation, and corporate conferencing environments across the UAE.
+              Turnkey engineering contractor delivering luxury home theatres, concert sound, private cinema, and bespoke AV engineering for clients across the UAE.
             </p>
 
             <div className="footer-trust-strip">
@@ -73,7 +73,7 @@ export default function Footer() {
               <h4 className="footer-col-header">Projects</h4>
               <ul className="footer-link-list">
                 <li><a href="#projects">Auditorium Installations</a></li>
-                <li><a href="#projects">Corporate Boardrooms</a></li>
+                <li><a href="#projects">Smart Meeting Spaces</a></li>
                 <li><a href="#projects">Control Rooms</a></li>
                 <li><a href="#projects">Luxury Home Theatres</a></li>
                 <li><a href="#projects">Broadcast Studios</a></li>
@@ -93,10 +93,10 @@ export default function Footer() {
                   <span className="footer-ops-label">Direct Lines</span>
                   <div className="footer-ops-links">
                     <a href={`tel:${SITE_DATA.company.phoneDirect.replace(/\s+/g, '')}`}>
-                      {SITE_DATA.company.phoneDirect} (Direct)
+                      {SITE_DATA.company.phoneDirect} (Direct / WhatsApp)
                     </a>
                     <a href={`tel:${SITE_DATA.company.phoneSecondary.replace(/\s+/g, '')}`} style={{ marginTop: '4px' }}>
-                      {SITE_DATA.company.phoneSecondary} (WhatsApp)
+                      {SITE_DATA.company.phoneSecondary} (Support / Inquiries)
                     </a>
                   </div>
                 </li>
