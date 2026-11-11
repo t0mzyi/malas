@@ -74,6 +74,21 @@ app.use(express.static(frontendPath));
 app.use(['/admin', '/products', '/prodcuts', '/inquiries', '/invoices', '/employees'], express.static(frontendPath));
 
 // API Routes
+app.get('/api/health', async (req, res) => {
+  const dbStatus = await testConnection();
+  res.json({
+    status: 'online',
+    timestamp: new Date().toISOString(),
+    db: dbStatus,
+    env: {
+      db_client: process.env.DB_CLIENT || '(not set)',
+      has_database_url: Boolean(process.env.DATABASE_URL),
+      has_supabase_url: Boolean(process.env.SUPABASE_DB_URL || process.env.SUPABASE_URL),
+      node_env: process.env.NODE_ENV || 'development'
+    }
+  });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/dashboard', dashboardRoutes);

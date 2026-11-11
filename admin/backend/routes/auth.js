@@ -112,7 +112,7 @@ router.post('/login', loginLimiter, async (req, res) => {
     console.error('Login error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Database communication error. Please ensure MariaDB is connected.'
+      error: `Database communication error: ${error.message || 'Check database connection.'}`
     });
   }
 });
