@@ -9,6 +9,30 @@ import { showToast, showConfirmModal, escapeHtml } from '../components/notificat
 import { updateNavBadge } from '../components/navigation.js';
 import { loadDashboardStats } from './dashboard.js';
 
+const PRODUCT_VIEW_STORAGE_KEY = 'malas_products_view_mode';
+
+function getProductViewMode() {
+  try {
+    return localStorage.getItem(PRODUCT_VIEW_STORAGE_KEY) === 'list' ? 'list' : 'grid';
+  } catch (e) {
+    return 'grid';
+  }
+}
+
+function setProductViewMode(mode) {
+  const normalized = mode === 'list' ? 'list' : 'grid';
+  try {
+    localStorage.setItem(PRODUCT_VIEW_STORAGE_KEY, normalized);
+  } catch (e) {}
+
+  const gridBtn = document.getElementById('products-view-grid-btn');
+  const listBtn = document.getElementById('products-view-list-btn');
+  if (gridBtn) gridBtn.classList.toggle('active', normalized === 'grid');
+  if (listBtn) listBtn.classList.toggle('active', normalized === 'list');
+
+  filterProductsLocal();
+}
+
 export async function loadProducts() {
   const productsGrid = document.getElementById('products-grid-container');
   const badgeProducts = document.getElementById('badge-products-count');
@@ -26,7 +50,7 @@ export async function loadProducts() {
       state.products = data.products || [];
       updateNavBadge(badgeProducts, state.products.length);
       if (statProducts) statProducts.textContent = state.products.length;
-      renderProductsGrid(state.products);
+      filterProductsLocal();
     } else {
       if (productsGrid) {
         productsGrid.innerHTML = `<div class="empty-state" style="color:var(--status-red);">${data.error}</div>`;
@@ -53,7 +77,8 @@ export function filterProductsLocal() {
   if (term) {
     filtered = filtered.filter(p =>
       (p.name && p.name.toLowerCase().includes(term)) ||
-      (p.tagline && p.tagline.toLowerCase().includes(term))
+      (p.tagline && p.tagline.toLowerCase().includes(term)) ||
+      (p.model_number && p.model_number.toLowerCase().includes(term))
     );
   }
 
@@ -81,9 +106,48 @@ export function filterProductsLocal() {
   renderProductsGrid(filtered);
 }
 
+function getStockMeta(rawStock) {
+  const stock = parseInt(rawStock !== undefined && rawStock !== null ? rawStock : 0, 10);
+  const isOut = stock <= 0;
+  const badgeClass = isOut ? 'stock-badge-out' : (stock <= 5 ? 'stock-badge-low' : 'stock-badge-ok');
+  const label = isOut ? 'Out of stock' : (stock <= 5 ? `Low stock (${stock})` : `${stock} in stock`);
+  return { stock, badgeClass, label };
+}
+
+function buildProductMediaHtml(p, imgClass) {
+  const hasImage = Boolean(p.image_url && p.image_url.trim());
+  return `
+    ${hasImage ? `<img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" class="${imgClass}" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">` : ''}
+    <div class="product-modern-placeholder" style="${hasImage ? 'display:none;' : 'display:flex;'}">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    </div>
+  `;
+}
+
+function buildProductActionsHtml(p) {
+  return `
+    <div class="product-modern-actions">
+      <button type="button" class="btn-modern-edit" onclick="window.malasEditProduct(${p.id})" title="Edit product specs and price">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        <span>Edit</span>
+      </button>
+      <button type="button" class="btn-modern-delete" onclick="window.malasDeleteProduct(${p.id}, '${escapeHtml(p.name)}')" title="Delete product" aria-label="Delete ${escapeHtml(p.name)}">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      </button>
+    </div>
+  `;
+}
+
 export function renderProductsGrid(products) {
   const productsGrid = document.getElementById('products-grid-container');
   if (!productsGrid) return;
+
+  const viewMode = getProductViewMode();
+  productsGrid.classList.toggle('view-list', viewMode === 'list');
 
   if (!products || products.length === 0) {
     productsGrid.innerHTML = `
@@ -101,58 +165,77 @@ export function renderProductsGrid(products) {
     return;
   }
 
+  if (viewMode === 'list') {
+    productsGrid.innerHTML = products.map(p => {
+      const priceFormatted = parseFloat(p.price || 0).toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const { badgeClass, label } = getStockMeta(p.stock);
+      const subMeta = p.tagline || p.model_number || p.category_name || 'AV Hardware Unit';
+
+      return `
+        <div class="product-list-row" data-id="${p.id}">
+          <div class="product-list-thumb" onclick="window.malasEditProduct(${p.id})">
+            ${buildProductMediaHtml(p, 'product-list-img')}
+          </div>
+
+          <div class="product-list-info">
+            <div class="product-list-heading">
+              <h3 class="product-modern-title" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</h3>
+              ${p.model_number ? `<span class="product-sku-chip font-mono">${escapeHtml(p.model_number)}</span>` : ''}
+            </div>
+            <p class="product-modern-tagline" title="${escapeHtml(subMeta)}">${escapeHtml(subMeta)}</p>
+          </div>
+
+          <div class="product-list-stock">
+            <span class="product-stock-pill ${badgeClass}" onclick="window.malasOpenStockModal(${p.id})" title="Click to adjust inventory stock">
+              <span class="stock-dot"></span>
+              ${label}
+            </span>
+          </div>
+
+          <div class="product-list-price">
+            <span class="product-modern-price font-mono"><small>AED</small> ${priceFormatted}</span>
+          </div>
+
+          ${buildProductActionsHtml(p)}
+        </div>
+      `;
+    }).join('');
+    return;
+  }
+
   productsGrid.innerHTML = products.map(p => {
     const priceFormatted = parseFloat(p.price || 0).toLocaleString('en-AE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const stock = parseInt(p.stock !== undefined && p.stock !== null ? p.stock : 0, 10);
-    const isOutOfStock = stock <= 0;
-    const stockBadgeClass = isOutOfStock ? 'stock-badge-out' : (stock <= 5 ? 'stock-badge-low' : 'stock-badge-ok');
-    const stockLabel = isOutOfStock ? 'Out of stocks' : (stock <= 5 ? `Low stocks (${stock})` : `${stock} in stocks`);
-    const hasImage = Boolean(p.image_url && p.image_url.trim());
+    const { badgeClass, label } = getStockMeta(p.stock);
 
     return `
-      <div class="product-card product-card-immersive" data-id="${p.id}">
-        <div class="product-immersive-media">
-          ${hasImage ? `
-            <img src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.name)}" class="product-immersive-img" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
-          ` : ''}
-          <div class="product-placeholder-icon-wrap" style="${hasImage ? 'display:none;' : 'display:flex;'}">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            <span class="product-placeholder-label">Hardware Item</span>
+      <article class="product-modern-card" data-id="${p.id}">
+        <div class="product-modern-media" onclick="window.malasEditProduct(${p.id})" title="Click to inspect or edit ${escapeHtml(p.name)}">
+          ${buildProductMediaHtml(p, 'product-modern-img')}
+          <div class="product-modern-badges">
+            ${p.category_name ? `<span class="product-cat-badge">${escapeHtml(p.category_name)}</span>` : '<span></span>'}
+            <span class="product-stock-pill ${badgeClass}" onclick="event.stopPropagation(); window.malasOpenStockModal(${p.id})" title="Click to adjust inventory stock">
+              <span class="stock-dot"></span>
+              ${label}
+            </span>
           </div>
         </div>
 
-        <div class="product-top-bar">
-          <span class="product-stock-pill ${stockBadgeClass}" onclick="window.malasOpenStockModal(${p.id})" title="Click to adjust inventory stock" style="cursor: pointer;">
-            <span class="stock-dot"></span>
-            ${stockLabel}
-          </span>
-        </div>
-
-        <div class="product-immersive-overlay">
-          <div class="product-immersive-meta">
-            <h3 class="product-title" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</h3>
-            ${p.tagline ? `<p class="product-tagline" title="${escapeHtml(p.tagline)}">${escapeHtml(p.tagline)}</p>` : ''}
+        <div class="product-modern-body">
+          <div class="product-modern-meta">
+            ${p.model_number ? `<span class="product-sku-chip font-mono">${escapeHtml(p.model_number)}</span>` : ''}
+            <h3 class="product-modern-title" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</h3>
+            ${p.tagline ? `<p class="product-modern-tagline" title="${escapeHtml(p.tagline)}">${escapeHtml(p.tagline)}</p>` : ''}
           </div>
 
-          <div class="product-price-display">
-            <span class="product-price-val font-mono"><small>AED</small> ${priceFormatted}</span>
-          </div>
-
-          <div class="product-card-footer">
-            <button type="button" class="btn-product-edit" onclick="window.malasEditProduct(${p.id})" title="Edit Product Specs & Price">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              <span>Edit</span>
-            </button>
-            <button type="button" class="btn-product-delete" onclick="window.malasDeleteProduct(${p.id}, '${escapeHtml(p.name)}')" title="Delete Product">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            </button>
+          <div class="product-modern-footer">
+            <div class="product-modern-price-wrap">
+              <span class="product-price-caption">Unit Price</span>
+              <span class="product-modern-price font-mono"><small>AED</small> ${priceFormatted}</span>
+            </div>
+            ${buildProductActionsHtml(p)}
           </div>
         </div>
-      </div>
+      </article>
     `;
   }).join('');
 }
@@ -485,6 +568,18 @@ export function initProductsPage() {
   if (productSearch) productSearch.addEventListener('input', filterProductsLocal);
   if (productStockFilter) productStockFilter.addEventListener('change', filterProductsLocal);
   if (productSortSelect) productSortSelect.addEventListener('change', filterProductsLocal);
+
+  const gridViewBtn = document.getElementById('products-view-grid-btn');
+  const listViewBtn = document.getElementById('products-view-list-btn');
+  const initialMode = getProductViewMode();
+  if (gridViewBtn) {
+    gridViewBtn.classList.toggle('active', initialMode === 'grid');
+    gridViewBtn.addEventListener('click', () => setProductViewMode('grid'));
+  }
+  if (listViewBtn) {
+    listViewBtn.classList.toggle('active', initialMode === 'list');
+    listViewBtn.addEventListener('click', () => setProductViewMode('list'));
+  }
 
   // File picker bindings
   if (btnTriggerFile && cloudinaryFileInput) {
