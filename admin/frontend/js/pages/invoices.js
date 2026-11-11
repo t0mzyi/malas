@@ -625,23 +625,6 @@ export function openInvoiceViewModal(inv) {
   if (printInvDate) printInvDate.textContent = formattedDate;
   if (printSignDate) printSignDate.textContent = formattedDate;
   if (printInvAuthor) printInvAuthor.textContent = inv.created_by || 'Operations Dispatch';
-  const printClientName = document.getElementById('print-client-name');
-  const printClientEmail = document.getElementById('print-client-email');
-  const printClientPhone = document.getElementById('print-client-phone');
-  const printProjectName = document.getElementById('print-project-name');
-  const printItemsTbody = document.getElementById('print-items-tbody');
-
-  const printSubtotal = document.getElementById('print-subtotal');
-  const printDiscount = document.getElementById('print-discount');
-  const printTaxable = document.getElementById('print-taxable');
-  const printVat = document.getElementById('print-vat');
-  const printTotal = document.getElementById('print-total');
-  const invoiceViewModal = document.getElementById('invoice-view-modal');
-
-  if (viewModalNumber) viewModalNumber.textContent = 'TAX INVOICE';
-  if (printInvNum) printInvNum.textContent = inv.invoice_number || '';
-  if (printInvDate) printInvDate.textContent = inv.created_at ? new Date(inv.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-GB');
-  if (printInvAuthor) printInvAuthor.textContent = inv.created_by || 'Operations Dispatch';
 
   if (printClientName) printClientName.textContent = inv.client_name || 'Valued Client';
   if (printClientEmail) printClientEmail.textContent = inv.client_email || '';
