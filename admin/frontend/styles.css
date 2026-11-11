@@ -3906,19 +3906,27 @@ body:not(.is-authenticated) #login-view {
    INVOICE CART MODAL LAYOUT
    ============================================================ */
 .modal-card-xl {
-  max-width: 1050px;
+  width: 95vw;
+  max-width: 1100px;
 }
 
 .modal-cart-layout {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
   gap: 24px;
   padding: 24px 28px;
   max-height: calc(85vh - 90px);
   overflow-y: auto;
 }
 
-@media (max-width: 900px) {
+.cart-items-section,
+.cart-checkout-section {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 960px) {
   .modal-cart-layout {
     grid-template-columns: 1fr;
   }
@@ -3943,19 +3951,22 @@ body:not(.is-authenticated) #login-view {
 .invoice-add-product-bar {
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
   margin-bottom: 14px;
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
   padding: 8px 10px;
   position: relative;
-  z-index: 25;
+  z-index: 40;
 }
 
 .invoice-search-picker-wrap {
   position: relative;
-  flex: 1;
+  flex: 1 1 0%;
   min-width: 0;
 }
 
@@ -3975,6 +3986,7 @@ body:not(.is-authenticated) #login-view {
 
 .invoice-search-input {
   width: 100%;
+  min-width: 0;
   height: 38px;
   padding-left: 32px;
   padding-right: 28px;
@@ -3983,6 +3995,7 @@ body:not(.is-authenticated) #login-view {
   border-radius: var(--radius-xs);
   color: var(--text-pure);
   font-size: 0.82rem;
+  box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -4247,7 +4260,9 @@ body:not(.is-authenticated) #login-view {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
 }
 
 .cart-table {
