@@ -310,17 +310,50 @@ router.put('/:id', requireAuth, async (req, res) => {
 
 /**
  * DELETE /api/invoices/:id
- * Delete an invoice record
+ * Delete an invoice record and restore product stock quantities
  */
 router.delete('/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   try {
-    const [rows] = await pool.query('SELECT id FROM `invoices` WHERE id = ? LIMIT 1', [id]);
+    const [rows] = await pool.query('SELECT id, invoice_number, items FROM `invoices` WHERE id = ? LIMIT 1', [id]);
     if (rows.length === 0) {
       return res.status(404).json({ success: false, error: 'Invoice not found.' });
     }
-    await pool.query('DELETE FROM `invoices` WHERE id = ?', [id]);
-    return res.json({ success: true, message: `Invoice deleted successfully.` });
+
+    const invoice = rows[0];
+    let parsedItems = [];
+    try {
+      parsedItems = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : (invoice.items || []);
+    } catch (e) {
+      parsedItems = [];
+    }
+
+    const [delRes] = await pool.query('DELETE FROM `invoices` WHERE id = ?', [id]);
+    if (!delRes || delRes.affectedRows === 0) {
+      return res.status(404).json({ success: false, error: 'Invoice not found or already deleted.' });
+    }
+
+    // Restore stock for all inventory products in the deleted invoice
+    if (Array.isArray(parsedItems)) {
+      for (const item of parsedItems) {
+        const qty = parseInt(item.quantity, 10) || 0;
+        if (item.id && qty > 0) {
+          await pool.query(
+            'UPDATE `products` SET stock = GREATEST(0, stock + ?) WHERE id = ?',
+            [qty, item.id]
+          );
+          await pool.query(
+            "UPDATE `products` SET status = 'active' WHERE id = ? AND stock > 0 AND status = 'out_of_stock'",
+            [item.id]
+          );
+        }
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: `Invoice ${invoice.invoice_number || ''} deleted and product stock restored.`
+    });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }

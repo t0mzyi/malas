@@ -518,7 +518,7 @@ export function renderInvoicesTable(invoices) {
 export async function deleteInvoice(id, invNum) {
   const ok = await showConfirmModal({
     title: `Delete Invoice ${invNum || ''}?`,
-    message: 'This will permanently remove this invoice record from the database. Are you sure?',
+    message: 'This will remove the invoice record and restore its product quantities back to stock.',
     confirmText: 'Yes, Delete',
     cancelText: 'Cancel',
     type: 'danger'
@@ -529,9 +529,10 @@ export async function deleteInvoice(id, invNum) {
     const res = await authFetch(ENDPOINTS.invoiceDetail(id), { method: 'DELETE' });
     const data = await res.json();
     if (data.success) {
-      showToast(`Invoice ${invNum || ''} deleted successfully.`, 'success', 'Deleted');
+      showToast(`Invoice ${invNum || ''} deleted and product stock restored.`, 'success', 'Deleted');
       closeInvoiceViewModal();
       loadInvoices();
+      loadProducts();
       loadDashboardStats();
     } else {
       showToast(data.error || 'Failed to delete invoice.', 'error');
