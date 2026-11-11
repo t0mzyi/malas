@@ -76,7 +76,8 @@ router.post('/', requireAuth, async (req, res) => {
     items,
     discount = 0,
     vat_rate = 5,
-    status = 'finalized'
+    status = 'finalized',
+    issue_date
   } = req.body;
 
   if (!client_name || !client_name.trim()) {
@@ -140,11 +141,13 @@ router.post('/', requireAuth, async (req, res) => {
     const seq = String((countRow ? countRow.count : 0) + 101).padStart(4, '0');
     const invoiceNumber = `INV-${year}-${seq}`;
 
+    const finalIssueDate = (issue_date && String(issue_date).trim()) || new Date().toISOString().slice(0, 10);
+
     // 4. Insert Invoice Record
     const [result] = await pool.query(
       `INSERT INTO \`invoices\`
-       (invoice_number, client_name, client_email, client_phone, project_name, items, subtotal, vat_rate, vat_amount, discount, total_amount, status, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (invoice_number, client_name, client_email, client_phone, project_name, items, subtotal, vat_rate, vat_amount, discount, total_amount, status, created_by, issue_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         invoiceNumber,
         client_name.trim(),
@@ -158,7 +161,8 @@ router.post('/', requireAuth, async (req, res) => {
         numDiscount,
         totalAmount,
         status,
-        creatorName
+        creatorName,
+        finalIssueDate
       ]
     );
 
@@ -216,7 +220,8 @@ router.put('/:id', requireAuth, async (req, res) => {
     project_name,
     items,
     discount = 0,
-    vat_rate = 5
+    vat_rate = 5,
+    issue_date
   } = req.body;
 
   if (!client_name || !client_name.trim()) {
@@ -257,6 +262,8 @@ router.put('/:id', requireAuth, async (req, res) => {
     const vatAmount = (taxableAmount * numVatRate) / 100;
     const totalAmount = taxableAmount + vatAmount;
 
+    const finalIssueDate = (issue_date && String(issue_date).trim()) || rows[0].issue_date || new Date().toISOString().slice(0, 10);
+
     await pool.query(
       `UPDATE \`invoices\` SET
         client_name = ?,
@@ -268,7 +275,8 @@ router.put('/:id', requireAuth, async (req, res) => {
         vat_rate = ?,
         vat_amount = ?,
         discount = ?,
-        total_amount = ?
+        total_amount = ?,
+        issue_date = ?
        WHERE id = ?`,
       [
         client_name.trim(),
@@ -281,6 +289,7 @@ router.put('/:id', requireAuth, async (req, res) => {
         vatAmount,
         numDiscount,
         totalAmount,
+        finalIssueDate,
         id
       ]
     );

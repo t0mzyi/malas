@@ -329,15 +329,21 @@ export function updateCartSummary() {
   if (summaryGrandTotal) summaryGrandTotal.textContent = `AED ${total.toLocaleString('en-AE', { minimumFractionDigits: 2 })}`;
 }
 
+let isSubmittingInvoice = false;
+
 export async function handleFinalizeInvoice(e) {
   e.preventDefault();
+  if (isSubmittingInvoice) return;
 
   const cartClientName = document.getElementById('cart-client-name');
   const cartClientEmail = document.getElementById('cart-client-email');
   const cartClientPhone = document.getElementById('cart-client-phone');
   const cartProjectName = document.getElementById('cart-project-name');
   const cartDiscountInput = document.getElementById('cart-discount-input');
+  const cartIssueDate = document.getElementById('cart-issue-date');
   const finalizeInvoiceForm = document.getElementById('finalize-invoice-form') || document.getElementById('invoice-finalize-form');
+  const submitBtn = document.getElementById('finalize-invoice-btn');
+  const btnText = document.getElementById('finalize-btn-text');
 
   if (state.cart.length === 0) {
     showToast('Please select at least one hardware product for the invoice.', 'warning');
@@ -350,6 +356,7 @@ export async function handleFinalizeInvoice(e) {
     return;
   }
 
+  const issueDateVal = (cartIssueDate && cartIssueDate.value) ? cartIssueDate.value : new Date().toISOString().slice(0, 10);
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const discount = parseFloat(cartDiscountInput ? cartDiscountInput.value : 0) || 0;
   const taxable = Math.max(0, subtotal - discount);
@@ -366,12 +373,18 @@ export async function handleFinalizeInvoice(e) {
     vat_rate: 5.0,
     vat_amount: vatAmount,
     discount: discount,
-    total_amount: totalAmount
+    total_amount: totalAmount,
+    issue_date: issueDateVal
   };
 
   const isEditing = Boolean(state.editingInvoiceId);
   const targetUrl = isEditing ? ENDPOINTS.invoiceDetail(state.editingInvoiceId) : ENDPOINTS.invoices();
   const httpMethod = isEditing ? 'PUT' : 'POST';
+
+  isSubmittingInvoice = true;
+  if (submitBtn) submitBtn.disabled = true;
+  const prevBtnText = btnText ? btnText.textContent : 'Finalize & Issue Invoice';
+  if (btnText) btnText.textContent = isEditing ? 'Updating...' : 'Generating Invoice...';
 
   try {
     const res = await authFetch(targetUrl, {
@@ -390,7 +403,7 @@ export async function handleFinalizeInvoice(e) {
 
       loadDashboardStats();
       loadProducts();
-      loadInvoices();
+      await loadInvoices();
 
       const toastMsg = isEditing ? 'Invoice successfully updated.' : 'Official quotation invoice generated and stored.';
       showToast(toastMsg, 'success', isEditing ? 'Invoice Saved' : 'Invoice Finalized');
@@ -405,6 +418,10 @@ export async function handleFinalizeInvoice(e) {
     }
   } catch (err) {
     showToast('Communication error processing invoice.', 'error');
+  } finally {
+    isSubmittingInvoice = false;
+    if (submitBtn) submitBtn.disabled = false;
+    if (btnText) btnText.textContent = prevBtnText;
   }
 }
 
@@ -415,6 +432,10 @@ export function resetInvoiceModalMode() {
   if (modalTitle) modalTitle.textContent = 'Create Commercial Invoice';
   const btnText = document.getElementById('finalize-btn-text');
   if (btnText) btnText.textContent = 'Finalize & Issue Invoice';
+  const cartIssueDate = document.getElementById('cart-issue-date');
+  if (cartIssueDate) {
+    cartIssueDate.value = new Date().toISOString().slice(0, 10);
+  }
 }
 
 export async function loadInvoices() {
@@ -483,6 +504,10 @@ export function renderInvoicesTable(invoices) {
               <span>View</span>
               <span class="action-arr">&rarr;</span>
             </button>
+            <button type="button" class="btn-delete-inv" onclick="window.malasDeleteInvoice(${inv.id}, '${escapeHtml(invNum)}')" style="color:#EF4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding: 5px 9px; border-radius: 4px; font-size: 0.76rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Delete</span>
+            </button>
           </div>
         </td>
       </tr>
@@ -490,9 +515,38 @@ export function renderInvoicesTable(invoices) {
   }).join('');
 }
 
+export async function deleteInvoice(id, invNum) {
+  const ok = await showConfirmModal({
+    title: `Delete Invoice ${invNum || ''}?`,
+    message: 'This will permanently remove this invoice record from the database. Are you sure?',
+    confirmText: 'Yes, Delete',
+    cancelText: 'Cancel',
+    type: 'danger'
+  });
+  if (!ok) return;
+
+  try {
+    const res = await authFetch(ENDPOINTS.invoiceDetail(id), { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Invoice ${invNum || ''} deleted successfully.`, 'success', 'Deleted');
+      closeInvoiceViewModal();
+      loadInvoices();
+      loadDashboardStats();
+    } else {
+      showToast(data.error || 'Failed to delete invoice.', 'error');
+    }
+  } catch (err) {
+    showToast('Communication error deleting invoice.', 'error');
+  }
+}
+
 export function editInvoice(id) {
-  const inv = state.invoices.find(item => item.id === id);
-  if (!inv) return;
+  const inv = state.invoices.find(item => Number(item.id) === Number(id));
+  if (!inv) {
+    showToast('Could not find invoice details to edit.', 'warning');
+    return;
+  }
 
   state.editingInvoiceId = inv.id;
   state.editingInvoiceNumber = inv.invoice_number;
@@ -521,6 +575,8 @@ export function editInvoice(id) {
   const cartClientName = document.getElementById('cart-client-name');
   const cartClientEmail = document.getElementById('cart-client-email');
   const cartClientPhone = document.getElementById('cart-client-phone');
+  const cartProjectName = document.getElementById('cart-project-name');
+  const cartIssueDate = document.getElementById('cart-issue-date');
   const invoiceViewModal = document.getElementById('invoice-view-modal');
   const modalTitle = document.getElementById('invoice-modal-title');
   const btnText = document.getElementById('finalize-btn-text');
@@ -528,6 +584,10 @@ export function editInvoice(id) {
   if (cartClientName) cartClientName.value = inv.client_name || '';
   if (cartClientEmail) cartClientEmail.value = inv.client_email || '';
   if (cartClientPhone) cartClientPhone.value = inv.client_phone || '';
+  if (cartProjectName) cartProjectName.value = inv.project_name || '';
+  if (cartIssueDate) {
+    cartIssueDate.value = inv.issue_date || (inv.created_at ? inv.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10));
+  }
   if (modalTitle) modalTitle.textContent = `Edit Invoice (${inv.invoice_number})`;
   if (btnText) btnText.textContent = 'Save & Update Invoice';
   if (invoiceViewModal) invoiceViewModal.style.display = 'none';
@@ -542,7 +602,29 @@ export function openInvoiceViewModal(inv) {
   const viewModalNumber = document.getElementById('view-modal-number');
   const printInvNum = document.getElementById('print-inv-num');
   const printInvDate = document.getElementById('print-inv-date');
+  const printSignDate = document.getElementById('print-sign-date');
   const printInvAuthor = document.getElementById('print-inv-author');
+  const printClientName = document.getElementById('print-client-name');
+  const printClientEmail = document.getElementById('print-client-email');
+  const printClientPhone = document.getElementById('print-client-phone');
+  const printProjectName = document.getElementById('print-project-name');
+  const printItemsTbody = document.getElementById('print-items-tbody');
+
+  const printSubtotal = document.getElementById('print-subtotal');
+  const printDiscount = document.getElementById('print-discount');
+  const printTaxable = document.getElementById('print-taxable');
+  const printVat = document.getElementById('print-vat');
+  const printTotal = document.getElementById('print-total');
+  const invoiceViewModal = document.getElementById('invoice-view-modal');
+
+  if (viewModalNumber) viewModalNumber.textContent = 'TAX INVOICE';
+  if (printInvNum) printInvNum.textContent = inv.invoice_number || '';
+  
+  const rawDate = inv.issue_date || (inv.created_at ? inv.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10));
+  const formattedDate = new Date(rawDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  if (printInvDate) printInvDate.textContent = formattedDate;
+  if (printSignDate) printSignDate.textContent = formattedDate;
+  if (printInvAuthor) printInvAuthor.textContent = inv.created_by || 'Operations Dispatch';
   const printClientName = document.getElementById('print-client-name');
   const printClientEmail = document.getElementById('print-client-email');
   const printClientPhone = document.getElementById('print-client-phone');
@@ -685,8 +767,9 @@ export function initInvoicesPage() {
   window.malasChangeCartQty = changeCartQty;
   window.malasRemoveFromCart = removeFromCart;
   window.malasEditInvoice = editInvoice;
+  window.malasDeleteInvoice = deleteInvoice;
   window.malasViewInvoice = (id) => {
-    const inv = state.invoices.find(item => item.id === id);
+    const inv = state.invoices.find(item => Number(item.id) === Number(id));
     if (inv) openInvoiceViewModal(inv);
   };
 
@@ -707,6 +790,8 @@ export function initInvoicesPage() {
 
   const invoiceSearch = document.getElementById('invoice-search');
   const closeInvoiceViewBtn = document.getElementById('close-invoice-view-btn');
+  const editInvoiceFromViewBtn = document.getElementById('edit-invoice-from-view-btn');
+  const deleteInvoiceFromViewBtn = document.getElementById('delete-invoice-from-view-btn');
   const exportExcelBtn = document.getElementById('export-excel-btn');
   const exportPdfBtn = document.getElementById('export-pdf-btn');
   const printInvoiceBtn = document.getElementById('print-invoice-btn');
@@ -753,6 +838,20 @@ export function initInvoicesPage() {
 
   if (invoiceSearch) invoiceSearch.addEventListener('input', () => loadInvoices());
   if (closeInvoiceViewBtn) closeInvoiceViewBtn.addEventListener('click', closeInvoiceViewModal);
+  if (editInvoiceFromViewBtn) {
+    editInvoiceFromViewBtn.addEventListener('click', () => {
+      if (state.activeInvoiceForView && state.activeInvoiceForView.id) {
+        editInvoice(state.activeInvoiceForView.id);
+      }
+    });
+  }
+  if (deleteInvoiceFromViewBtn) {
+    deleteInvoiceFromViewBtn.addEventListener('click', () => {
+      if (state.activeInvoiceForView && state.activeInvoiceForView.id) {
+        deleteInvoice(state.activeInvoiceForView.id, state.activeInvoiceForView.invoice_number);
+      }
+    });
+  }
   if (exportExcelBtn) exportExcelBtn.addEventListener('click', handleExportExcel);
   if (exportPdfBtn) exportPdfBtn.addEventListener('click', handleExportPdf);
   if (printInvoiceBtn) printInvoiceBtn.addEventListener('click', () => window.print());

@@ -4518,24 +4518,24 @@ body:not(.is-authenticated) .sidebar-nav {
 }
 
 .inv-brand-name {
-  font-size: 1.45rem;
+  font-size: 1.85rem;
   font-weight: 900;
   color: #0F172A;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   margin-bottom: 2px;
 }
 
 .inv-company-sub {
-  font-size: 0.78rem;
-  color: #475569;
+  font-size: 0.92rem;
+  color: #334155;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .inv-legal-details {
-  font-size: 0.72rem;
-  color: #334155;
-  line-height: 1.5;
+  font-size: 0.88rem;
+  color: #1E293B;
+  line-height: 1.6;
 }
 
 .inv-meta-block {
@@ -4549,17 +4549,17 @@ body:not(.is-authenticated) .sidebar-nav {
   display: inline-block;
   background: #0F172A;
   color: #FFFFFF;
-  font-size: 0.78rem;
+  font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: 0.1em;
-  padding: 4px 12px;
-  border-radius: 3px;
+  padding: 6px 16px;
+  border-radius: 4px;
   margin-bottom: 12px;
 }
 
 .inv-meta-table td {
-  padding: 2px 6px;
-  font-size: 0.76rem;
+  padding: 4px 8px;
+  font-size: 0.92rem;
 }
 
 .inv-meta-table td.lbl {
@@ -4577,17 +4577,17 @@ body:not(.is-authenticated) .sidebar-nav {
 /* Billed Section */
 .inv-billed-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 20px;
   background: #F8FAFC;
   border: 1px solid #E2E8F0;
   border-radius: 6px;
-  padding: 16px 20px;
+  padding: 18px 22px;
   margin-bottom: 24px;
 }
 
 .inv-section-tag {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 800;
   color: #64748B;
   letter-spacing: 0.08em;
@@ -4596,26 +4596,26 @@ body:not(.is-authenticated) .sidebar-nav {
 }
 
 .inv-client-name {
-  font-size: 1.05rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: #0F172A;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
-.inv-client-sub {
-  font-size: 0.78rem;
+.inv-client-contacts {
+  font-size: 0.95rem;
   color: #475569;
 }
 
 .inv-project-title {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #0F172A;
   margin-bottom: 4px;
 }
 
 .inv-project-notes {
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   color: #64748B;
   line-height: 1.4;
 }
@@ -4630,17 +4630,17 @@ body:not(.is-authenticated) .sidebar-nav {
 .inv-items-table th {
   background: #0F172A;
   color: #FFFFFF;
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid #0F172A;
 }
 
 .inv-items-table td {
-  padding: 10px 12px;
-  font-size: 0.8rem;
+  padding: 12px 14px;
+  font-size: 0.95rem;
   color: #1E293B;
   border: 1px solid #E2E8F0;
 }
@@ -4722,7 +4722,7 @@ body:not(.is-authenticated) .sidebar-nav {
 }
 
 .stamp-text-title {
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: #0F172A;
   text-transform: uppercase;
@@ -4731,14 +4731,14 @@ body:not(.is-authenticated) .sidebar-nav {
 }
 
 .stamp-text-sub {
-  font-size: 0.72rem;
-  color: #64748B;
-  font-weight: 500;
+  font-size: 0.82rem;
+  color: #475569;
+  font-weight: 600;
 }
 
 .inv-sign-zone {
   flex: 1;
-  max-width: 260px;
+  max-width: 280px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -4747,7 +4747,7 @@ body:not(.is-authenticated) .sidebar-nav {
 
 .sign-block {
   width: 100%;
-  max-width: 220px;
+  max-width: 250px;
   margin-bottom: 8px;
 }
 
@@ -4756,13 +4756,32 @@ body:not(.is-authenticated) .sidebar-nav {
 }
 
 .sign-line {
-  border-top: 1.5px solid #0F172A;
+  border-top: 2px solid #0F172A;
   margin-bottom: 6px;
   width: 100%;
 }
 
 .sign-text-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0F172A;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.sign-text-sub {
   font-size: 0.82rem;
+  color: #475569;
+  font-weight: 600;
+  display: block;
+}
+
+.sign-date-row {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0F172A;
+}
   font-weight: 800;
   color: #0F172A;
   text-transform: uppercase;

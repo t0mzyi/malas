@@ -864,6 +864,11 @@
                 </div>
               </div>
 
+              <div class="form-group">
+                <label for="cart-issue-date" class="form-label">Invoice Issue Date *</label>
+                <input type="date" id="cart-issue-date" class="form-input" required>
+              </div>
+
 
 
               <input type="hidden" id="cart-vat-rate" value="5">
@@ -913,6 +918,10 @@
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
               <span>Edit</span>
             </button>
+            <button type="button" id="delete-invoice-from-view-btn" class="btn-inv-action btn-inv-delete" title="Delete this invoice" style="color: #EF4444; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25);">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Delete</span>
+            </button>
             <button type="button" id="export-excel-btn" class="btn-inv-action btn-export-excel" title="Download Excel Spreadsheet (.xlsx)">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
               <span class="lbl-desktop">Export Excel (.xlsx)</span>
@@ -945,15 +954,15 @@
             <!-- Sheet Header -->
             <div class="inv-sheet-header">
               <div class="inv-brand-info">
-                <div class="inv-brand-logo-wrap" style="display: flex; align-items: center; gap: 15px;">
-                  <h1 class="inv-brand-name" style="margin: 0;">MALAS ELECTRONICS L.L.C</h1>
-                  <img src="logo.png" alt="Malas Logo" style="height: 38px; width: auto; object-fit: contain;">
+                <div class="inv-brand-logo-wrap" style="display: flex; align-items: center; gap: 20px;">
+                  <h1 class="inv-brand-name" style="margin: 0; font-size: 26px; font-weight: 900; letter-spacing: 0.5px; color: #0F172A;">MALAS ELECTRONICS L.L.C</h1>
+                  <img src="logo.png" alt="Malas Logo" style="height: 52px; width: auto; object-fit: contain;">
                 </div>
-                <p class="inv-company-sub">AV Systems Design · Architectural Luminaires · Integrated Engineering</p>
-                <div class="inv-legal-details">
+                <p class="inv-company-sub" style="font-size: 13px; font-weight: 600; color: #334155; margin: 4px 0 8px 0;">AV Systems Design · Architectural Luminaires · Integrated Engineering</p>
+                <div class="inv-legal-details" style="font-size: 13px; color: #1E293B; line-height: 1.6;">
                   <p><strong>Tax Registration No (TRN):</strong> 100482910300003</p>
                   <p><strong>Address:</strong> Al Quoz Industrial Area 3, Dubai, United Arab Emirates</p>
-                  <p><strong>Dispatch Email:</strong> Info@malaselectronics.ae &nbsp;|&nbsp; <strong>Web:</strong> malaselectronics.ae</p>
+                  <p><strong>Dispatch Email:</strong> Info@malaselectronics.co &nbsp;|&nbsp; <strong>Web:</strong> malaselectronics.co</p>
                 </div>
               </div>
 
@@ -1036,9 +1045,9 @@
                   <span class="sign-text-title">Authorized Signatory</span>
                   <span class="sign-text-sub">For Malas Electronics L.L.C</span>
                 </div>
-                <div class="sign-date-row">
+                <div class="sign-date-row" style="margin-top: 10px; font-size: 13px; font-weight: 600;">
                   <span class="sign-date-label">Date:</span>
-                  <span class="sign-date-dots">____________________</span>
+                  <span class="sign-date-dots" id="print-sign-date" style="font-weight: 700; color: #0F172A; text-decoration: underline; margin-left: 6px;">____________________</span>
                 </div>
               </div>
             </div>
