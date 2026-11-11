@@ -3012,14 +3012,43 @@ html:not(.is-authenticated) #login-view {
     height: 30px;
   }
   .product-list-row {
-    grid-template-columns: 52px minmax(0, 1fr);
-    gap: 10px;
-    padding: 10px 12px;
+    display: grid !important;
+    grid-template-columns: 56px minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "thumb info info"
+      "thumb stock price"
+      "actions actions actions" !important;
+    align-items: center !important;
+    gap: 8px 12px !important;
+    padding: 12px !important;
   }
-  .product-list-stock,
+  .product-list-thumb {
+    grid-area: thumb;
+    width: 56px !important;
+    height: 56px !important;
+  }
+  .product-list-info {
+    grid-area: info;
+  }
+  .product-list-info .product-modern-tagline {
+    display: block !important;
+    font-size: 0.72rem !important;
+  }
+  .product-list-stock {
+    grid-area: stock;
+    justify-self: start;
+  }
   .product-list-price {
-    text-align: left;
-    min-width: unset;
+    grid-area: price;
+    text-align: right !important;
+    justify-self: end;
+    min-width: unset !important;
+  }
+  .product-list-row .product-modern-actions {
+    grid-area: actions;
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 }
 
