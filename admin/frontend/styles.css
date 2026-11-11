@@ -119,29 +119,30 @@ button {
 }
 
 /* Instant Session Persistence Display Rules */
-html.is-authenticated #login-view {
+html.is-authenticated #login-view,
+body.is-authenticated #login-view {
   display: none !important;
 }
-html.is-authenticated #dashboard-view {
+
+html.is-authenticated #dashboard-view,
+body.is-authenticated #dashboard-view {
   display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 html:not(.is-authenticated) #dashboard-view,
-body:not(.is-authenticated) #dashboard-view,
-#dashboard-view[style*="display: none"],
-#dashboard-view[style*="display:none"] {
+body:not(.is-authenticated) #dashboard-view {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
-html:not(.is-authenticated) .dash-sidebar,
-body:not(.is-authenticated) .dash-sidebar,
-html:not(.is-authenticated) .sidebar-nav,
-body:not(.is-authenticated) .sidebar-nav {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+html:not(.is-authenticated) #login-view,
+body:not(.is-authenticated) #login-view {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .form-row-2 {

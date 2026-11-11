@@ -13,40 +13,12 @@
   <link rel="stylesheet" href="/styles.css">
   <!-- Client-side Excel & PDF Export Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Instant Authentication State Check & Pre-Render Session Expiry Guard -->
+  <!-- Instant Authentication State Check -->
   <script>
     (function () {
       try {
         var token = localStorage.getItem('malas_admin_token');
-        var lastActive = parseInt(localStorage.getItem('malas_last_active') || '0', 10);
-        var IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15-minute inactivity limit
-        var now = Date.now();
-
         if (token) {
-          // If inactive for longer than 15 minutes, invalidate session immediately
-          if (lastActive && (now - lastActive > IDLE_TIMEOUT_MS)) {
-            localStorage.removeItem('malas_admin_token');
-            localStorage.removeItem('malas_admin_user');
-            localStorage.removeItem('malas_last_active');
-            try { sessionStorage.setItem('malas_session_timeout_msg', 'Your session timed out due to inactivity (15 minutes idle). Please sign in again.'); } catch (e) {}
-            return;
-          }
-
-          // Check if JWT token timestamp has expired
-          try {
-            var parts = token.split('.');
-            if (parts.length === 3) {
-              var payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-              if (payload && payload.exp && (now / 1000 >= payload.exp)) {
-                localStorage.removeItem('malas_admin_token');
-                localStorage.removeItem('malas_admin_user');
-                localStorage.removeItem('malas_last_active');
-                try { sessionStorage.setItem('malas_session_timeout_msg', 'Your security session has expired. Please sign in again.'); } catch (e) {}
-                return;
-              }
-            }
-          } catch (e) {}
-
           document.documentElement.classList.add('is-authenticated');
         }
       } catch (e) {}
@@ -106,7 +78,7 @@
     <!-- ============================================================
          2. DASHBOARD VIEW (PROTECTED)
          ============================================================ -->
-    <div id="dashboard-view" class="view-panel dash-layout" style="display:none;">
+    <div id="dashboard-view" class="view-panel dash-layout">
 
         <!-- LEFT SIDEBAR NAVBAR -->
         <aside class="dash-sidebar">
