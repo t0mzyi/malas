@@ -45,6 +45,8 @@ if (DB_CLIENT === 'supabase' || DB_CLIENT === 'postgres') {
     s = s.replace(/`/g, '');
     // Replace MySQL INSERT IGNORE with standard INSERT
     s = s.replace(/\bINSERT\s+IGNORE\s+INTO\b/gi, 'INSERT INTO');
+    // Translate scalar MAX(a, b) to PostgreSQL GREATEST(a, b)
+    s = s.replace(/\bMAX\s*\(\s*0\s*,/gi, 'GREATEST(0,');
     // Replace ? parameter placeholders with $1, $2, ...
     let paramIndex = 1;
     s = s.replace(/\?/g, () => `$${paramIndex++}`);

@@ -194,7 +194,7 @@ router.patch('/:id/stock', requireAuth, async (req, res) => {
 
     if (delta !== undefined) {
       const deltaVal = parseInt(delta, 10) || 0;
-      await pool.query('UPDATE `products` SET stock = MAX(0, stock + ?) WHERE id = ?', [deltaVal, id]);
+      await pool.query('UPDATE `products` SET stock = GREATEST(0, stock + ?) WHERE id = ?', [deltaVal, id]);
       const [[updated]] = await pool.query('SELECT stock FROM `products` WHERE id = ?', [id]);
       return res.json({ success: true, stock: updated.stock });
     }

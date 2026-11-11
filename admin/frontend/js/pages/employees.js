@@ -82,11 +82,11 @@ export function renderEmployeesTable(employees) {
     const lastActive = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Never';
     const isSuspended = emp.status === 'suspended';
 
-    let roleLabel = 'Field Engineer';
+    let roleLabel = 'Employee';
     if (emp.role === 'technician') roleLabel = 'AV Systems Technician';
     else if (emp.role === 'specialist') roleLabel = 'Acoustics & Lighting Specialist';
     else if (emp.role === 'sales') roleLabel = 'Sales & Accounts Consultant';
-    else if (emp.role === 'employee') roleLabel = 'Field Engineer';
+    else if (emp.role === 'employee') roleLabel = 'Employee';
 
     const initials = (emp.full_name || emp.username || 'ST').slice(0, 2).toUpperCase();
 
@@ -261,11 +261,11 @@ export function updateEmployeeSubpageView(emp) {
   const isSuspended = emp.status === 'suspended';
   const initials = (emp.full_name || emp.username || 'ST').slice(0, 2).toUpperCase();
 
-  let roleLabel = 'Field Engineer';
+  let roleLabel = 'Employee';
   if (emp.role === 'technician') roleLabel = 'AV Systems Technician';
   else if (emp.role === 'specialist') roleLabel = 'Acoustics & Lighting Specialist';
   else if (emp.role === 'sales') roleLabel = 'Sales & Accounts Consultant';
-  else if (emp.role === 'employee') roleLabel = 'Field Engineer';
+  else if (emp.role === 'employee') roleLabel = 'Employee';
 
   const employeeDetailStatusPill = document.getElementById('employee-detail-status-pill');
   const empPageAvatar = document.getElementById('emp-page-avatar');

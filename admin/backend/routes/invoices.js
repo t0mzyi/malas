@@ -166,7 +166,7 @@ router.post('/', requireAuth, async (req, res) => {
     for (const item of sanitizedItems) {
       if (item.id) {
         await pool.query(
-          'UPDATE `products` SET stock = MAX(0, stock - ?) WHERE id = ?',
+          'UPDATE `products` SET stock = GREATEST(0, stock - ?) WHERE id = ?',
           [item.quantity, item.id]
         );
         // If stock is now 0, optionally flag out of stock
