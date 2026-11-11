@@ -9,13 +9,19 @@ const { requireAuth } = require('../middleware/auth');
  */
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const { status, search } = req.query;
+    const { status, search, read } = req.query;
     let query = 'SELECT * FROM `rfp_inquiries` WHERE 1=1';
     const params = [];
 
     if (status && status !== 'all') {
       query += ' AND `status` = ?';
       params.push(status);
+    }
+
+    if (read === 'unread') {
+      query += ' AND (`is_read` = 0 OR `is_read` IS NULL)';
+    } else if (read === 'read') {
+      query += ' AND `is_read` = 1';
     }
 
     if (search) {
@@ -26,8 +32,12 @@ router.get('/', requireAuth, async (req, res) => {
 
     query += ' ORDER BY `created_at` DESC LIMIT 100';
 
-    const [rows] = await pool.query(query, params);
-    return res.json({ success: true, count: rows.length, inquiries: rows });
+    const [[rows], [unreadRows]] = await Promise.all([
+      pool.query(query, params),
+      pool.query('SELECT COUNT(*) as count FROM `rfp_inquiries` WHERE `is_read` = 0 OR `is_read` IS NULL')
+    ]);
+    const unreadCount = unreadRows && unreadRows[0] ? parseInt(unreadRows[0].count || 0, 10) : 0;
+    return res.json({ success: true, count: rows.length, unreadCount, inquiries: rows });
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }
@@ -93,7 +103,7 @@ router.post('/', async (req, res) => {
  */
 router.patch('/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
-  const { status, assigned_engineer } = req.body;
+  const { status, assigned_engineer, is_read } = req.body;
 
   try {
     const updates = [];
@@ -113,6 +123,11 @@ router.patch('/:id', requireAuth, async (req, res) => {
     if (assigned_engineer !== undefined) {
       updates.push('`assigned_engineer` = ?');
       params.push(assigned_engineer);
+    }
+    if (is_read !== undefined) {
+      const readVal = (is_read === true || is_read === 1 || is_read === '1' || is_read === 'true') ? 1 : 0;
+      updates.push('`is_read` = ?');
+      params.push(readVal);
     }
 
     if (updates.length === 0) {

@@ -114,12 +114,14 @@ export function setupUrlRouting() {
     switchTab(tab, false);
   });
 
-  const tabButtons = document.querySelectorAll('.sidebar-nav-item');
-  tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
+  const sidebarNav = document.querySelector('.sidebar-nav');
+  if (sidebarNav) {
+    sidebarNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.sidebar-nav-item');
+      if (!btn || btn.classList.contains('is-hidden')) return;
       const tab = btn.getAttribute('data-tab');
       if (tab) switchTab(tab, true);
     });
-  });
+  }
 }
 

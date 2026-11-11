@@ -25,10 +25,11 @@ export async function loadDashboardStats() {
     if (data.success) {
       const stats = data.stats || {};
 
-      // 1. Inquiries
+      // 1. Inquiries (Show unread count on nav badge, total count on metric card)
       const inqCount = stats.total !== undefined ? stats.total : (state.inquiries ? state.inquiries.length : 0);
+      const unreadInqCount = stats.unreadInquiries !== undefined ? stats.unreadInquiries : inqCount;
       if (statInquiries) statInquiries.textContent = inqCount;
-      updateNavBadge(badgeInquiries, inqCount);
+      updateNavBadge(badgeInquiries, unreadInqCount);
 
       // 2. Products
       const prodCount = stats.products !== undefined ? stats.products : (state.products ? state.products.length : 0);

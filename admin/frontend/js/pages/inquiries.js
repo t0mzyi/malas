@@ -10,14 +10,66 @@ import { updateNavBadge } from '../components/navigation.js';
 import { switchTab } from '../router.js';
 import { loadDashboardStats } from './dashboard.js';
 
+function isInquiryRead(inq) {
+  return inq && (inq.is_read === 1 || inq.is_read === true || inq.is_read === '1');
+}
+
+function updateDetailReadButton(isRead) {
+  const btn = document.getElementById('inq-page-toggle-read-btn');
+  const label = document.getElementById('inq-page-toggle-read-label');
+  if (label) {
+    label.textContent = isRead ? 'Mark as Unread' : 'Mark as Read';
+  }
+  if (btn) {
+    btn.classList.toggle('is-unread-action', isRead);
+    btn.title = isRead ? 'Move back to Unread inbox' : 'Mark inquiry as Read';
+  }
+}
+
+export async function setInquiryReadState(id, markAsRead, showFeedback = true) {
+  const targetVal = markAsRead ? 1 : 0;
+  const inq = (state.inquiries || []).find(item => Number(item.id) === Number(id));
+  if (inq) inq.is_read = targetVal;
+  if (state.selectedInquiry && Number(state.selectedInquiry.id) === Number(id)) {
+    state.selectedInquiry.is_read = targetVal;
+    updateDetailReadButton(markAsRead);
+  }
+
+  try {
+    const res = await authFetch(ENDPOINTS.inquiryDetail(id), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_read: targetVal })
+    });
+    const data = await res.json();
+    if (data.success) {
+      loadInquiries();
+      loadDashboardStats();
+      if (showFeedback) {
+        showToast(
+          markAsRead ? 'Inquiry marked as read.' : 'Inquiry marked as unread.',
+          'info',
+          markAsRead ? 'Read' : 'Unread'
+        );
+      }
+    } else if (showFeedback) {
+      showToast(data.error || 'Could not update read state.', 'error');
+    }
+  } catch (err) {
+    if (showFeedback) showToast('Communication error updating read status.', 'error');
+  }
+}
+
 export async function loadInquiries() {
   const inquiryFilter = document.getElementById('inquiry-filter');
+  const inquiryReadFilter = document.getElementById('inquiry-read-filter');
   const inquirySearch = document.getElementById('inquiry-search');
   const inquiriesTableBody = document.getElementById('inquiries-table-body');
   const badgeInquiries = document.getElementById('badge-inquiries-count');
   const statInquiries = document.getElementById('stat-inquiries');
 
   const status = inquiryFilter ? inquiryFilter.value : 'all';
+  const readFilter = inquiryReadFilter ? inquiryReadFilter.value : 'all';
   const search = inquirySearch ? inquirySearch.value.trim() : '';
 
   if (inquiriesTableBody) {
@@ -27,6 +79,7 @@ export async function loadInquiries() {
   try {
     const params = new URLSearchParams();
     if (status && status !== 'all') params.append('status', status);
+    if (readFilter && readFilter !== 'all') params.append('read', readFilter);
     if (search) params.append('search', search);
 
     const res = await authFetch(ENDPOINTS.inquiries(params.toString()));
@@ -34,8 +87,13 @@ export async function loadInquiries() {
 
     if (data.success) {
       state.inquiries = data.inquiries || [];
-      updateNavBadge(badgeInquiries, state.inquiries.length);
-      if (statInquiries) statInquiries.textContent = state.inquiries.length;
+      const unreadCount = data.unreadCount !== undefined
+        ? parseInt(data.unreadCount, 10)
+        : state.inquiries.filter(item => !isInquiryRead(item)).length;
+      updateNavBadge(badgeInquiries, unreadCount);
+      if (statInquiries && readFilter === 'all' && status === 'all' && !search) {
+        statInquiries.textContent = state.inquiries.length;
+      }
       renderInquiriesTable(data.inquiries);
     } else {
       if (inquiriesTableBody) {
@@ -54,7 +112,7 @@ export function renderInquiriesTable(inquiries) {
   if (!inquiriesTableBody) return;
 
   if (!inquiries || inquiries.length === 0) {
-    inquiriesTableBody.innerHTML = `<tr><td colspan="7" class="empty-state">No client inquiries received yet. Submissions from the website consultation form will appear here in real-time.</td></tr>`;
+    inquiriesTableBody.innerHTML = `<tr><td colspan="7" class="empty-state">No client inquiries match the current filter.</td></tr>`;
     return;
   }
 
@@ -62,11 +120,16 @@ export function renderInquiriesTable(inquiries) {
     const dateStr = inq.created_at ? new Date(inq.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
     const statusClass = inq.status || 'new';
     const statusLabel = (inq.status || 'new').replace('_', ' ');
+    const read = isInquiryRead(inq);
+    const nextReadState = !read;
 
     return `
-      <tr data-id="${inq.id}">
-        <td class="client-name-cell col-client">
-          <strong style="color:var(--text-pure); display:block; line-height:1.3;">${escapeHtml(inq.client_name)}</strong>
+      <tr data-id="${inq.id}" class="${read ? 'inq-row-read' : 'inq-row-unread'}">
+        <td class="client-name-cell col-client" onclick="window.malasOpenInquiry(${inq.id})" style="cursor:pointer;">
+          <div class="inq-client-wrap">
+            <span class="inq-unread-dot ${read ? 'is-read' : ''}" title="${read ? 'Read' : 'Unread inquiry'}"></span>
+            <strong class="inq-client-title">${escapeHtml(inq.client_name)}</strong>
+          </div>
         </td>
         <td class="hide-on-mobile">
           <a href="mailto:${escapeHtml(inq.email)}" class="contact-link">${escapeHtml(inq.email)}</a>
@@ -83,10 +146,18 @@ export function renderInquiriesTable(inquiries) {
           <span class="status-pill ${statusClass}">${escapeHtml(statusLabel)}</span>
         </td>
         <td class="date-cell col-date">${dateStr}</td>
-        <td class="col-action" style="text-align: right;">
-          <button type="button" class="btn-table-action" onclick="window.malasOpenInquiry(${inq.id})">
-            View &rarr;
-          </button>
+        <td class="col-action" style="text-align: right; white-space: nowrap;">
+          <div class="inq-row-actions">
+            <button type="button" class="btn-read-toggle ${read ? 'is-read' : 'is-unread'}" onclick="window.malasToggleInquiryRead(${inq.id}, ${nextReadState})" title="${read ? 'Mark as Unread' : 'Mark as Read'}" aria-label="${read ? 'Mark as Unread' : 'Mark as Read'}">
+              ${read
+                ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`
+                : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>`
+              }
+            </button>
+            <button type="button" class="btn-table-action" onclick="window.malasOpenInquiry(${inq.id})">
+              View &rarr;
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -94,13 +165,20 @@ export function renderInquiriesTable(inquiries) {
 }
 
 export function openInquiry(id) {
-  const inq = state.inquiries.find(item => item.id === id);
+  const inq = state.inquiries.find(item => Number(item.id) === Number(id));
   if (!inq) return;
 
   state.selectedInquiry = inq;
   const dateStr = inq.created_at ? new Date(inq.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
   const statusClass = inq.status || 'new';
   const statusLabel = (inq.status || 'new').replace('_', ' ').toUpperCase();
+
+  // Auto-mark unread inquiry as read on open
+  const wasRead = isInquiryRead(inq);
+  updateDetailReadButton(true);
+  if (!wasRead) {
+    setInquiryReadState(inq.id, true, false);
+  }
 
   const inqPageTag = document.getElementById('inq-page-tag');
   const inqPageClientName = document.getElementById('inq-page-client-name');
@@ -248,11 +326,14 @@ export async function handleDeleteInquiryPage() {
 
 export function initInquiriesPage() {
   window.malasOpenInquiry = openInquiry;
+  window.malasToggleInquiryRead = (id, markAsRead) => setInquiryReadState(id, markAsRead, true);
 
   const inquirySearch = document.getElementById('inquiry-search');
   const inquiryFilter = document.getElementById('inquiry-filter');
+  const inquiryReadFilter = document.getElementById('inquiry-read-filter');
   const refreshBtn = document.getElementById('refresh-btn');
   const inqPageSaveStatusBtn = document.getElementById('inq-page-save-status-btn');
+  const inqPageToggleReadBtn = document.getElementById('inq-page-toggle-read-btn');
   const inqPageDeleteBtn = document.getElementById('inq-page-delete-btn');
   const inquiryBackBtn = document.getElementById('inquiry-back-btn');
 
@@ -261,6 +342,9 @@ export function initInquiriesPage() {
   }
   if (inquiryFilter) {
     inquiryFilter.addEventListener('change', () => loadInquiries());
+  }
+  if (inquiryReadFilter) {
+    inquiryReadFilter.addEventListener('change', () => loadInquiries());
   }
   if (refreshBtn) {
     refreshBtn.addEventListener('click', () => {
@@ -271,6 +355,13 @@ export function initInquiriesPage() {
   }
   if (inqPageSaveStatusBtn) {
     inqPageSaveStatusBtn.addEventListener('click', handleSaveInquiryPageStatus);
+  }
+  if (inqPageToggleReadBtn) {
+    inqPageToggleReadBtn.addEventListener('click', () => {
+      if (!state.selectedInquiry) return;
+      const nextRead = !isInquiryRead(state.selectedInquiry);
+      setInquiryReadState(state.selectedInquiry.id, nextRead, true);
+    });
   }
   if (inqPageDeleteBtn) {
     inqPageDeleteBtn.addEventListener('click', handleDeleteInquiryPage);

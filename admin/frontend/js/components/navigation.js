@@ -76,6 +76,7 @@ export function updateHeaderProfile(admin) {
   }
 
   if (tabBtnEmployees) {
+    tabBtnEmployees.classList.toggle('is-hidden', !isCeo);
     tabBtnEmployees.style.display = isCeo ? 'flex' : 'none';
   }
   if (metricCardEmployees) {

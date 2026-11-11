@@ -263,6 +263,7 @@ async function initSupabaseSchema(pgPool) {
       timeline VARCHAR(64),
       scope_notes TEXT,
       status VARCHAR(32) NOT NULL DEFAULT 'new',
+      is_read SMALLINT NOT NULL DEFAULT 0,
       assigned_engineer VARCHAR(128),
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -465,6 +466,7 @@ function initSqliteSchema(db) {
 
   try { db.exec("ALTER TABLE products ADD COLUMN price REAL DEFAULT 0"); } catch (e) {}
   try { db.exec("ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 10"); } catch (e) {}
+  try { db.exec("ALTER TABLE rfp_inquiries ADD COLUMN is_read INTEGER NOT NULL DEFAULT 0"); } catch (e) {}
 
   const ceoHash = '$2a$10$vnNtLu44ajeUqjibmSxtkevT7LMRBqu.2PyPRKkn3vGe8hgGX7CRi'; // Ceo@Malas2026!
   try {

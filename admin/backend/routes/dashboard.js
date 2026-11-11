@@ -10,11 +10,13 @@ router.get('/stats', requireAuth, async (req, res) => {
   try {
     const [
       [[totalInquiries]],
+      [[unreadInquiries]],
       [[totalProducts]],
       [[totalCategories]],
       [[totalAdmins]]
     ] = await Promise.all([
       pool.query('SELECT COUNT(*) as count FROM `rfp_inquiries`'),
+      pool.query('SELECT COUNT(*) as count FROM `rfp_inquiries` WHERE `is_read` = 0 OR `is_read` IS NULL'),
       pool.query('SELECT COUNT(*) as count FROM `products`'),
       pool.query('SELECT COUNT(*) as count FROM `categories`'),
       pool.query("SELECT COUNT(*) as count FROM `admins` WHERE `role` NOT IN ('ceo', 'super_admin')")
@@ -30,6 +32,7 @@ router.get('/stats', requireAuth, async (req, res) => {
       success: true,
       stats: {
         total: totalInquiries.count,
+        unreadInquiries: unreadInquiries ? unreadInquiries.count : 0,
         products: totalProducts.count,
         invoices: totalInvoices.count,
         employees: totalAdmins.count
