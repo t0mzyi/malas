@@ -102,16 +102,12 @@ CREATE TABLE IF NOT EXISTS site_settings (
 -- INITIAL SEED DATA
 -- ============================================================
 
--- Initial CEO Account (ceo@malaselectronics.ae / Ceo@Malas2026!)
+-- Initial CEO Account (ceo@malaselectronics.ae & ceo@malaselectronics.co / Ceo@Malas2026!)
 INSERT INTO admins (username, email, password_hash, full_name, role, status)
-VALUES (
-  'ceo@malaselectronics.ae',
-  'ceo@malaselectronics.ae',
-  '$2a$10$vnNtLu44ajeUqjibmSxtkevT7LMRBqu.2PyPRKkn3vGe8hgGX7CRi',
-  'Chief Executive Officer',
-  'ceo',
-  'active'
-) ON CONFLICT (email) DO NOTHING;
+VALUES 
+  ('ceo@malaselectronics.ae', 'ceo@malaselectronics.ae', '$2a$10$vnNtLu44ajeUqjibmSxtkevT7LMRBqu.2PyPRKkn3vGe8hgGX7CRi', 'Chief Executive Officer', 'ceo', 'active'),
+  ('ceo@malaselectronics.co', 'ceo@malaselectronics.co', '$2a$10$vnNtLu44ajeUqjibmSxtkevT7LMRBqu.2PyPRKkn3vGe8hgGX7CRi', 'Chief Executive Officer', 'ceo', 'active')
+ON CONFLICT (email) DO NOTHING;
 
 -- Initial Settings
 INSERT INTO site_settings (setting_key, setting_value, description)

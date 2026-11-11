@@ -328,11 +328,13 @@ async function initSupabaseSchema(pgPool) {
 
   await pgPool.query(schema);
 
-  // Seed Initial CEO Account
+  // Seed Initial CEO Accounts (.ae and .co)
   const ceoHash = '$2a$10$vnNtLu44ajeUqjibmSxtkevT7LMRBqu.2PyPRKkn3vGe8hgGX7CRi'; // Ceo@Malas2026!
   await pgPool.query(`
     INSERT INTO admins (username, email, password_hash, full_name, role, status)
-    VALUES ('ceo@malaselectronics.ae', 'ceo@malaselectronics.ae', $1, 'Chief Executive Officer', 'ceo', 'active')
+    VALUES 
+      ('ceo@malaselectronics.ae', 'ceo@malaselectronics.ae', $1, 'Chief Executive Officer', 'ceo', 'active'),
+      ('ceo@malaselectronics.co', 'ceo@malaselectronics.co', $1, 'Chief Executive Officer', 'ceo', 'active')
     ON CONFLICT (email) DO NOTHING;
   `, [ceoHash]);
 
