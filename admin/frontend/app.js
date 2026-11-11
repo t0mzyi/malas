@@ -7,33 +7,31 @@
 (function () {
   'use strict';
 
-  // Determine API base URL dynamically (Express dev on 5000 / Vite on 3000 / Native PHP on Apache/cPanel/DirectAdmin)
-  const isNodeDev = (
-    window.location.port === '5000' ||
-    window.location.port === '3000' ||
-    window.location.origin.includes(':5000') ||
-    window.location.origin.includes(':3000')
-  );
-  const apiRoot = isNodeDev ? '/api' : './api';
+  // Determine API base URL dynamically (Configured via config.js, localStorage, or relative /api)
+  const apiRoot = (
+    (typeof window !== 'undefined' && window.MALAS_API_BASE) ||
+    localStorage.getItem('malas_admin_api_base') ||
+    '/api'
+  ).replace(/\/+$/, '');
 
   const ENDPOINTS = {
-    health: isNodeDev ? `${apiRoot}/dashboard/health` : `${apiRoot}/dashboard.php?action=health`,
-    stats: isNodeDev ? `${apiRoot}/dashboard/stats` : `${apiRoot}/dashboard.php?action=stats`,
-    me: isNodeDev ? `${apiRoot}/auth/me` : `${apiRoot}/auth.php?action=me`,
-    login: isNodeDev ? `${apiRoot}/auth/login` : `${apiRoot}/auth.php?action=login`,
-    logout: isNodeDev ? `${apiRoot}/auth/logout` : `${apiRoot}/auth.php?action=logout`,
-    inquiries: (query = '') => isNodeDev ? `${apiRoot}/inquiries${query ? '?' + query : ''}` : `${apiRoot}/inquiries.php${query ? '?' + query : ''}`,
-    inquiryDetail: (id) => isNodeDev ? `${apiRoot}/inquiries/${id}` : `${apiRoot}/inquiries.php?id=${id}`,
-    products: (query = '') => isNodeDev ? `${apiRoot}/products${query ? '?' + query : ''}` : `${apiRoot}/products.php${query ? '?' + query : ''}`,
-    productDetail: (id) => isNodeDev ? `${apiRoot}/products/${id}` : `${apiRoot}/products.php?id=${id}`,
-    productStock: (id) => isNodeDev ? `${apiRoot}/products/${id}/stock` : `${apiRoot}/products.php?action=stock&id=${id}`,
-    categories: isNodeDev ? `${apiRoot}/categories` : `${apiRoot}/categories.php`,
-    categoryDetail: (id) => isNodeDev ? `${apiRoot}/categories/${id}` : `${apiRoot}/categories.php?id=${id}`,
-    invoices: (query = '') => isNodeDev ? `${apiRoot}/invoices${query ? '?' + query : ''}` : `${apiRoot}/invoices.php${query ? '?' + query : ''}`,
-    invoiceDetail: (id) => isNodeDev ? `${apiRoot}/invoices/${id}` : `${apiRoot}/invoices.php?id=${id}`,
-    employees: isNodeDev ? `${apiRoot}/employees` : `${apiRoot}/employees.php`,
-    employeeDetail: (id) => isNodeDev ? `${apiRoot}/employees/${id}` : `${apiRoot}/employees.php?id=${id}`,
-    upload: isNodeDev ? `${apiRoot}/upload` : `${apiRoot}/upload.php`
+    health: `${apiRoot}/dashboard/health`,
+    stats: `${apiRoot}/dashboard/stats`,
+    me: `${apiRoot}/auth/me`,
+    login: `${apiRoot}/auth/login`,
+    logout: `${apiRoot}/auth/logout`,
+    inquiries: (query = '') => `${apiRoot}/inquiries${query ? '?' + query : ''}`,
+    inquiryDetail: (id) => `${apiRoot}/inquiries/${id}`,
+    products: (query = '') => `${apiRoot}/products${query ? '?' + query : ''}`,
+    productDetail: (id) => `${apiRoot}/products/${id}`,
+    productStock: (id) => `${apiRoot}/products/${id}/stock`,
+    categories: `${apiRoot}/categories`,
+    categoryDetail: (id) => `${apiRoot}/categories/${id}`,
+    invoices: (query = '') => `${apiRoot}/invoices${query ? '?' + query : ''}`,
+    invoiceDetail: (id) => `${apiRoot}/invoices/${id}`,
+    employees: `${apiRoot}/employees`,
+    employeeDetail: (id) => `${apiRoot}/employees/${id}`,
+    upload: `${apiRoot}/upload`
   };
 
   // Restore stored session immediately from localStorage
@@ -287,12 +285,42 @@
   async function init() {
     setupEventListeners();
     setupUrlRoutingListener();
+
+    // Check if pre-render script or prior action flagged a session timeout
+    let timeoutMsg = null;
+    try {
+      timeoutMsg = sessionStorage.getItem('malas_session_timeout_msg');
+      if (timeoutMsg) {
+        sessionStorage.removeItem('malas_session_timeout_msg');
+      }
+    } catch (e) {}
+
+    // Verify token expiration & idle timeout prior to presenting dashboard
+    const now = Date.now();
+    const lastActive = parseInt(localStorage.getItem('malas_last_active') || '0', 10);
+    const isIdle = lastActive && (now - lastActive > IDLE_TIMEOUT_MS);
+    const isExpired = state.token && isTokenExpired(state.token);
+
+    if (state.token && (isIdle || isExpired)) {
+      handleSessionTimeout(
+        isIdle
+          ? 'Your session timed out due to inactivity (15 minutes idle). Please sign in again.'
+          : 'Your security session has expired. Please sign in again.'
+      );
+      return;
+    }
+
     if (state.token) {
+      startSessionMonitoring();
       document.documentElement.classList.add('is-authenticated');
       showDashboardView();
     } else {
       document.documentElement.classList.remove('is-authenticated');
       showLoginView();
+      if (timeoutMsg) {
+        showAlert(timeoutMsg, 'error');
+        showToast(timeoutMsg, 'error');
+      }
     }
     await verifyCurrentSession();
   }
@@ -827,13 +855,191 @@
   }
 
   // ============================================================
-  // SESSION VERIFICATION & AUTHENTICATION
   // ============================================================
+  // SESSION SECURITY, INACTIVITY TIMEOUT & AUTHENTICATION
+  // ============================================================
+  const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes of inactivity limit
+  let sessionCheckInterval = null;
+  let lastActivityUpdate = 0;
+  let isLoggingOut = false;
+
+  function parseJwtPayload(token) {
+    if (!token || typeof token !== 'string') return null;
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const base64Url = parts[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function isTokenExpired(token) {
+    const payload = parseJwtPayload(token);
+    if (!payload || !payload.exp) return false;
+    return (Date.now() / 1000) >= payload.exp;
+  }
+
+  function recordUserActivity() {
+    const now = Date.now();
+    // Throttle writes to localStorage (once every 5 seconds)
+    if (now - lastActivityUpdate > 5000) {
+      lastActivityUpdate = now;
+      try {
+        localStorage.setItem('malas_last_active', now.toString());
+      } catch (e) {}
+    }
+  }
+
+  function checkSessionLiveness() {
+    if (!state.token || isLoggingOut) return;
+
+    const now = Date.now();
+    const lastActive = parseInt(localStorage.getItem('malas_last_active') || '0', 10);
+
+    // 1. Check idle timeout (15 minutes of inactivity)
+    if (lastActive && (now - lastActive > IDLE_TIMEOUT_MS)) {
+      handleSessionTimeout('Your session timed out due to inactivity (15 minutes idle). Please sign in again.');
+      return;
+    }
+
+    // 2. Check token expiration
+    if (isTokenExpired(state.token)) {
+      handleSessionTimeout('Your security session has expired. Please sign in again.');
+      return;
+    }
+  }
+
+  function onVisibilityChange() {
+    if (document.visibilityState === 'visible') {
+      checkSessionLiveness();
+    }
+  }
+
+  function onWindowFocus() {
+    checkSessionLiveness();
+  }
+
+  function startSessionMonitoring() {
+    stopSessionMonitoring();
+    recordUserActivity();
+
+    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    activityEvents.forEach((evt) => {
+      window.addEventListener(evt, recordUserActivity, { passive: true });
+    });
+
+    sessionCheckInterval = setInterval(checkSessionLiveness, 10000);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('focus', onWindowFocus);
+  }
+
+  function stopSessionMonitoring() {
+    if (sessionCheckInterval) {
+      clearInterval(sessionCheckInterval);
+      sessionCheckInterval = null;
+    }
+    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    activityEvents.forEach((evt) => {
+      window.removeEventListener(evt, recordUserActivity);
+    });
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.removeEventListener('focus', onWindowFocus);
+  }
+
+  function closeAllModals() {
+    const modals = [employeeModal, detailModal, productModal, invoiceCartModal, invoiceViewModal, stockModal, confirmModalEl];
+    modals.forEach((m) => {
+      if (m) {
+        m.classList.remove('active');
+        m.style.display = 'none';
+      }
+    });
+    if (tabInquiryDetail) {
+      tabInquiryDetail.style.display = 'none';
+      tabInquiryDetail.classList.remove('active');
+    }
+    if (tabEmployeeDetail) {
+      tabEmployeeDetail.style.display = 'none';
+      tabEmployeeDetail.classList.remove('active');
+    }
+  }
+
+  function handleSessionTimeout(reason = 'Your session has timed out. Please sign in to continue.') {
+    if (isLoggingOut) return;
+    isLoggingOut = true;
+
+    console.warn('[Session Security] Auto-logout triggered:', reason);
+
+    stopSessionMonitoring();
+
+    try {
+      localStorage.removeItem('malas_admin_token');
+      localStorage.removeItem('malas_admin_user');
+      localStorage.removeItem('malas_last_active');
+    } catch (e) {}
+
+    state.token = null;
+    state.admin = null;
+
+    closeAllModals();
+    showLoginView();
+
+    if (passwordInput) passwordInput.value = '';
+
+    showAlert(reason, 'error');
+    showToast(reason, 'error');
+
+    setTimeout(() => {
+      isLoggingOut = false;
+    }, 500);
+  }
+
+  async function authFetch(url, options = {}) {
+    if (!state.token || isTokenExpired(state.token)) {
+      handleSessionTimeout('Your security session has expired. Please sign in again.');
+      throw new Error('Session expired.');
+    }
+
+    const opts = Object.assign({}, options);
+    opts.headers = Object.assign({}, opts.headers || {});
+
+    if (!opts.headers['Authorization']) {
+      opts.headers['Authorization'] = `Bearer ${state.token}`;
+    }
+
+    recordUserActivity();
+
+    const res = await fetch(url, opts);
+
+    // If server rejects with 401 Unauthorized, automatically log out immediately
+    if (res.status === 401) {
+      console.warn('[Session Security] Server returned HTTP 401 Unauthorized on:', url);
+      handleSessionTimeout('Your session has timed out or expired. Please sign in again.');
+      throw new Error('Session unauthorized.');
+    }
+
+    return res;
+  }
+
   async function verifyCurrentSession() {
     const token = state.token;
     if (!token) {
       document.documentElement.classList.remove('is-authenticated');
       showLoginView();
+      return;
+    }
+
+    if (isTokenExpired(token)) {
+      handleSessionTimeout('Your security session has expired. Please sign in again.');
       return;
     }
 
@@ -845,8 +1051,7 @@
       // If server explicitly rejects with 401 Unauthorized, reset and prompt login
       if (res.status === 401) {
         console.warn('Session expired or invalidated by server (401).');
-        handleLogout(false);
-        showAlert('Your session expired. Please sign in to continue.', 'error');
+        handleSessionTimeout('Your session has expired. Please sign in to continue.');
         return;
       }
 
@@ -899,11 +1104,13 @@
         state.token = data.token;
         state.admin = data.admin;
         localStorage.setItem('malas_admin_token', data.token);
+        localStorage.setItem('malas_last_active', Date.now().toString());
         if (data.admin) {
           try {
             localStorage.setItem('malas_admin_user', JSON.stringify(data.admin));
           } catch (e) {}
         }
+        startSessionMonitoring();
         document.documentElement.classList.add('is-authenticated');
 
         showAlert('Access Granted. Authenticating operational clearance...', 'success');
@@ -921,14 +1128,20 @@
   }
 
   async function handleLogout(notifyServer = true) {
+    stopSessionMonitoring();
     if (notifyServer) {
       try {
         await fetch(ENDPOINTS.logout, { method: 'POST' });
       } catch (e) {}
     }
 
-    localStorage.removeItem('malas_admin_token');
-    localStorage.removeItem('malas_admin_user');
+    try {
+      localStorage.removeItem('malas_admin_token');
+      localStorage.removeItem('malas_admin_user');
+      localStorage.removeItem('malas_last_active');
+    } catch (e) {}
+
+    closeAllModals();
     document.documentElement.classList.remove('is-authenticated');
     state.token = null;
     state.admin = null;
@@ -1049,9 +1262,7 @@
 
   async function loadDashboardStats() {
     try {
-      const res = await fetch(ENDPOINTS.stats, {
-        headers: { Authorization: `Bearer ${state.token}` }
-      });
+      const res = await authFetch(ENDPOINTS.stats);
       const data = await res.json();
 
       if (data.success) {
@@ -1098,9 +1309,7 @@
       if (status && status !== 'all') params.append('status', status);
       if (search) params.append('search', search);
 
-      const res = await fetch(ENDPOINTS.inquiries(params.toString()), {
-        headers: { Authorization: `Bearer ${state.token}` }
-      });
+      const res = await authFetch(ENDPOINTS.inquiries(params.toString()));
       const data = await res.json();
 
       if (data.success) {
@@ -1229,12 +1438,9 @@
     }
 
     try {
-      const res = await fetch(ENDPOINTS.inquiryDetail(id), {
+      const res = await authFetch(ENDPOINTS.inquiryDetail(id), {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       });
       const data = await res.json();
@@ -1274,9 +1480,8 @@
     if (!ok) return;
 
     try {
-      const res = await fetch(ENDPOINTS.inquiryDetail(id), {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${state.token}` }
+      const res = await authFetch(ENDPOINTS.inquiryDetail(id), {
+        method: 'DELETE'
       });
       const data = await res.json();
 
@@ -1309,12 +1514,9 @@
     }
 
     try {
-      const res = await fetch(ENDPOINTS.inquiryDetail(id), {
+      const res = await authFetch(ENDPOINTS.inquiryDetail(id), {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       });
       const data = await res.json();
@@ -1351,9 +1553,8 @@
     if (!ok) return;
 
     try {
-      const res = await fetch(ENDPOINTS.inquiryDetail(id), {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${state.token}` }
+      const res = await authFetch(ENDPOINTS.inquiryDetail(id), {
+        method: 'DELETE'
       });
       const data = await res.json();
 
@@ -1379,9 +1580,7 @@
     }
 
     try {
-      const res = await fetch(ENDPOINTS.products(), {
-        headers: { Authorization: `Bearer ${state.token}` }
-      });
+      const res = await authFetch(ENDPOINTS.products());
       const data = await res.json();
 
       if (data.success) {
@@ -1580,12 +1779,9 @@
     const method = isEdit ? 'PATCH' : 'POST';
 
     try {
-      const res = await fetch(endpoint, {
+      const res = await authFetch(endpoint, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       const data = await res.json();
@@ -1614,9 +1810,8 @@
     if (!confirmed) return;
 
     try {
-      const res = await fetch(ENDPOINTS.productDetail(id), {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${state.token}` }
+      const res = await authFetch(ENDPOINTS.productDetail(id), {
+        method: 'DELETE'
       });
       const data = await res.json();
 
@@ -1654,12 +1849,9 @@
       const base64Data = event.target.result;
 
       try {
-        const res = await fetch(ENDPOINTS.upload, {
+        const res = await authFetch(ENDPOINTS.upload, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${state.token}`
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Data })
         });
         const data = await res.json();
@@ -1740,12 +1932,9 @@
     const stock = parseInt(stockAdjustQty.value, 10);
 
     try {
-      const res = await fetch(ENDPOINTS.productStock(id), {
+      const res = await authFetch(ENDPOINTS.productStock(id), {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stock: stock })
       });
       const data = await res.json();
@@ -2123,12 +2312,9 @@
     const httpMethod = isEditing ? 'PUT' : 'POST';
 
     try {
-      const res = await fetch(targetUrl, {
+      const res = await authFetch(targetUrl, {
         method: httpMethod,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(invoicePayload)
       });
       const data = await res.json();
@@ -2176,9 +2362,7 @@
       const params = new URLSearchParams();
       if (search) params.append('search', search);
 
-      const res = await fetch(ENDPOINTS.invoices(params.toString()), {
-        headers: { Authorization: `Bearer ${state.token}` }
-      });
+      const res = await authFetch(ENDPOINTS.invoices(params.toString()));
       const data = await res.json();
 
       if (data.success) {
@@ -2422,9 +2606,7 @@
   async function populateCategoryDropdown() {
     if (!productCategorySelect && !productCategoryFilter) return;
     try {
-      const res = await fetch(ENDPOINTS.categories, {
-        headers: { Authorization: `Bearer ${state.token}` }
-      });
+      const res = await authFetch(ENDPOINTS.categories);
       const data = await res.json();
 
       if (data.success && data.categories) {
@@ -2456,9 +2638,7 @@
     employeesTableBody.innerHTML = `<tr><td colspan="6" class="empty-state">Loading staff directory...</td></tr>`;
 
     try {
-      const res = await fetch(ENDPOINTS.employees, {
-        headers: { Authorization: `Bearer ${state.token}` }
-      });
+      const res = await authFetch(ENDPOINTS.employees);
       const data = await res.json();
 
       if (data.success) {
@@ -2593,12 +2773,9 @@
     };
 
     try {
-      const res = await fetch(ENDPOINTS.employees, {
+      const res = await authFetch(ENDPOINTS.employees, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       const data = await res.json();
@@ -2626,9 +2803,8 @@
     if (!ok) return;
 
     try {
-      const res = await fetch(ENDPOINTS.employeeDetail(id), {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${state.token}` }
+      const res = await authFetch(ENDPOINTS.employeeDetail(id), {
+        method: 'DELETE'
       });
       const data = await res.json();
 
@@ -2656,12 +2832,9 @@
     if (!ok) return;
 
     try {
-      const res = await fetch(ENDPOINTS.employeeDetail(id), {
+      const res = await authFetch(ENDPOINTS.employeeDetail(id), {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${state.token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: shouldBlock ? 'suspended' : 'active' })
       });
       const data = await res.json();
@@ -2789,9 +2962,8 @@
     if (!ok) return;
 
     try {
-      const res = await fetch(ENDPOINTS.employeeDetail(id), {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${state.token}` }
+      const res = await authFetch(ENDPOINTS.employeeDetail(id), {
+        method: 'DELETE'
       });
       const data = await res.json();
 

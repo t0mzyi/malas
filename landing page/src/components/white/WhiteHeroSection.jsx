@@ -36,6 +36,10 @@ export default function WhiteHeroSection() {
             src={SITE_DATA.hero.image}
             alt={SITE_DATA.hero.imageAlt}
             loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            width="1376"
+            height="768"
           />
         </div>
       </div>

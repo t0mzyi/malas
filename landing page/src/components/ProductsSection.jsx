@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from '../config/api';
 
 export default function ProductsSection() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/products')
+    fetch(`${API_BASE}/products`)
       .then(res => res.json())
       .then(data => {
         if (data && data.success && Array.isArray(data.products)) {

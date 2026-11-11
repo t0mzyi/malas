@@ -136,6 +136,8 @@ export default function ProjectsSection() {
                 alt={currentProject.imageAlt || currentProject.title}
                 className="mobile-carousel-img"
                 key={currentProject.id}
+                loading="lazy"
+                decoding="async"
               />
               <div className="mobile-carousel-gradient-overlay" />
 
@@ -196,6 +198,7 @@ export default function ProjectsSection() {
                       alt={project.imageAlt || project.title}
                       className="portfolio-front-image"
                       loading="lazy"
+                      decoding="async"
                     />
                     <div className="portfolio-front-overlay">
                       <div className="portfolio-front-meta">

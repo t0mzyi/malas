@@ -7,33 +7,31 @@
 (function () {
   'use strict';
 
-  // Determine API base URL dynamically (Express dev on 5000 / Vite on 3000 / Native PHP on Apache/cPanel/DirectAdmin)
-  const isNodeDev = (
-    window.location.port === '5000' ||
-    window.location.port === '3000' ||
-    window.location.origin.includes(':5000') ||
-    window.location.origin.includes(':3000')
-  );
-  const apiRoot = isNodeDev ? '/api' : './api';
+  // Determine API base URL dynamically (Configured via config.js, localStorage, or relative /api)
+  const apiRoot = (
+    (typeof window !== 'undefined' && window.MALAS_API_BASE) ||
+    localStorage.getItem('malas_admin_api_base') ||
+    '/api'
+  ).replace(/\/+$/, '');
 
   const ENDPOINTS = {
-    health: isNodeDev ? `${apiRoot}/dashboard/health` : `${apiRoot}/dashboard.php?action=health`,
-    stats: isNodeDev ? `${apiRoot}/dashboard/stats` : `${apiRoot}/dashboard.php?action=stats`,
-    me: isNodeDev ? `${apiRoot}/auth/me` : `${apiRoot}/auth.php?action=me`,
-    login: isNodeDev ? `${apiRoot}/auth/login` : `${apiRoot}/auth.php?action=login`,
-    logout: isNodeDev ? `${apiRoot}/auth/logout` : `${apiRoot}/auth.php?action=logout`,
-    inquiries: (query = '') => isNodeDev ? `${apiRoot}/inquiries${query ? '?' + query : ''}` : `${apiRoot}/inquiries.php${query ? '?' + query : ''}`,
-    inquiryDetail: (id) => isNodeDev ? `${apiRoot}/inquiries/${id}` : `${apiRoot}/inquiries.php?id=${id}`,
-    products: (query = '') => isNodeDev ? `${apiRoot}/products${query ? '?' + query : ''}` : `${apiRoot}/products.php${query ? '?' + query : ''}`,
-    productDetail: (id) => isNodeDev ? `${apiRoot}/products/${id}` : `${apiRoot}/products.php?id=${id}`,
-    productStock: (id) => isNodeDev ? `${apiRoot}/products/${id}/stock` : `${apiRoot}/products.php?action=stock&id=${id}`,
-    categories: isNodeDev ? `${apiRoot}/categories` : `${apiRoot}/categories.php`,
-    categoryDetail: (id) => isNodeDev ? `${apiRoot}/categories/${id}` : `${apiRoot}/categories.php?id=${id}`,
-    invoices: (query = '') => isNodeDev ? `${apiRoot}/invoices${query ? '?' + query : ''}` : `${apiRoot}/invoices.php${query ? '?' + query : ''}`,
-    invoiceDetail: (id) => isNodeDev ? `${apiRoot}/invoices/${id}` : `${apiRoot}/invoices.php?id=${id}`,
-    employees: isNodeDev ? `${apiRoot}/employees` : `${apiRoot}/employees.php`,
-    employeeDetail: (id) => isNodeDev ? `${apiRoot}/employees/${id}` : `${apiRoot}/employees.php?id=${id}`,
-    upload: isNodeDev ? `${apiRoot}/upload` : `${apiRoot}/upload.php`
+    health: `${apiRoot}/dashboard/health`,
+    stats: `${apiRoot}/dashboard/stats`,
+    me: `${apiRoot}/auth/me`,
+    login: `${apiRoot}/auth/login`,
+    logout: `${apiRoot}/auth/logout`,
+    inquiries: (query = '') => `${apiRoot}/inquiries${query ? '?' + query : ''}`,
+    inquiryDetail: (id) => `${apiRoot}/inquiries/${id}`,
+    products: (query = '') => `${apiRoot}/products${query ? '?' + query : ''}`,
+    productDetail: (id) => `${apiRoot}/products/${id}`,
+    productStock: (id) => `${apiRoot}/products/${id}/stock`,
+    categories: `${apiRoot}/categories`,
+    categoryDetail: (id) => `${apiRoot}/categories/${id}`,
+    invoices: (query = '') => `${apiRoot}/invoices${query ? '?' + query : ''}`,
+    invoiceDetail: (id) => `${apiRoot}/invoices/${id}`,
+    employees: `${apiRoot}/employees`,
+    employeeDetail: (id) => `${apiRoot}/employees/${id}`,
+    upload: `${apiRoot}/upload`
   };
 
   // Restore stored session immediately from localStorage

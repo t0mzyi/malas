@@ -36,6 +36,10 @@ export default function HeroSection() {
               alt="High-Performance Audio-Visual Installation by Malas Electronics LLC"
               className="hero-mobile-img"
               loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              width="1376"
+              height="768"
             />
           </div>
 
@@ -72,6 +76,10 @@ export default function HeroSection() {
               alt="High-Performance Audio-Visual Installation by Malas Electronics LLC"
               className="hero-faded-image"
               loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              width="1376"
+              height="768"
             />
             {/* Left Edge Fade for seamless text legibility */}
             <div className="hero-image-fade-left"></div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SITE_DATA } from '../data/siteData';
+import { API_BASE } from '../config/api';
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -31,26 +32,14 @@ export default function ContactSection() {
         : `Consultation request for ${formData.project}`
     };
 
-    // Determine target API endpoint (Local dev port 3000 -> 5000; Production -> PHP inquiries API)
-    const apiUrl = (window.location.port === '3000')
-      ? 'http://localhost:5000/api/inquiries'
-      : '/api/inquiries.php';
+    const apiUrl = `${API_BASE}/inquiries`;
 
     try {
-      let res = await fetch(apiUrl, {
+      const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
-      // Fallback if local /api/inquiries.php is not found
-      if (res.status === 404 && apiUrl === '/api/inquiries.php') {
-        res = await fetch('https://admin.malaselectronics.ae/api/inquiries.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      }
 
       const data = await res.json();
       if (res.ok && data.success) {

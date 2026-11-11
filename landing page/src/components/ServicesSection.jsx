@@ -213,6 +213,8 @@ export default function ServicesSection() {
                 alt={currentActivity.imageAlt || currentActivity.title}
                 className="mobile-carousel-img"
                 key={currentActivity.id}
+                loading="lazy"
+                decoding="async"
               />
               <div className="mobile-carousel-gradient-overlay" />
 
@@ -268,6 +270,8 @@ export default function ServicesSection() {
                 alt={currentActivity.imageAlt || currentActivity.title}
                 className="activities-photo-img"
                 key={currentActivity.id}
+                loading="lazy"
+                decoding="async"
               />
               <div className="activities-photo-overlay-badge">
                 <span className="photo-num-tag">{currentActivity.title}</span>

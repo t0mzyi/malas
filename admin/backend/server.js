@@ -27,26 +27,36 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-      imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com', 'https://malaselectronics.ae'],
-      connectSrc: ["'self'", "https://admin.malaselectronics.ae"],
+      imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com', 'https://malaselectronics.co', 'https://admin.malaselectronics.co'],
+      connectSrc: ["'self'", "https://*.onrender.com", "https://*.supabase.co", "https://malaselectronics.co", "https://admin.malaselectronics.co", "http://localhost:*"],
     }
   },
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 
-// CORS — Strict Origin Whitelist
-const allowedOrigins = [
-  'https://admin.malaselectronics.ae',
-  'https://malaselectronics.ae',
-  'https://www.malaselectronics.ae'
+// CORS — Allowed Origins (Production domains + Local development + Environment variables)
+const defaultOrigins = [
+  'https://malaselectronics.co',
+  'https://www.malaselectronics.co',
+  'https://admin.malaselectronics.co',
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5000'
 ];
+
+const envOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(o => o.trim()).filter(Boolean)
+  : [];
+
+const allowedOrigins = Array.from(new Set([...defaultOrigins, ...envOrigins]));
+
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (same-origin, mobile apps, curl)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (e.g. mobile apps, curl, server-to-server) or matched origins
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.onrender.com') || origin.endsWith('.vercel.app')) {
       callback(null, true);
     } else {
       callback(new Error(`CORS policy: Origin '${origin}' is not allowed.`));
