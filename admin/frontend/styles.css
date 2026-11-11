@@ -5691,5 +5691,181 @@ body:not(.is-authenticated) #login-view {
   }
 }
 
+/* ============================================================
+   UNIFIED RESPONSIVE BUTTON & TOOLBAR ALIGNMENT SYSTEM
+   Standardizes height, inline grouping, and mobile wrapping
+   ============================================================ */
+.modal-footer .btn-primary-action,
+.modal-footer-actions .btn-primary-action,
+.confirm-modal-actions .btn-primary-action,
+.detail-status-change-group .btn-primary-action,
+.detail-action-bar .btn-primary-action,
+.invoice-add-product-bar .btn-primary-action,
+.panel-controls .btn-primary-action {
+  width: auto !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  margin-top: 0 !important;
+  padding: 0 18px !important;
+  font-size: 0.82rem !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0;
+}
+
+.modal-footer .btn-secondary-action,
+.modal-footer-actions .btn-secondary-action,
+.confirm-modal-actions .btn-secondary-action,
+.btn-detail-action,
+.detail-status-change-group .filter-select,
+.panel-controls .filter-select,
+.panel-controls .search-box input,
+.panel-controls .btn-refresh,
+.panel-controls .view-mode-toggle {
+  height: 38px !important;
+  min-height: 38px !important;
+  box-sizing: border-box !important;
+}
+
+.modal-footer .btn-secondary-action,
+.modal-footer-actions .btn-secondary-action,
+.confirm-modal-actions .btn-secondary-action,
+.btn-detail-action {
+  padding: 0 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-footer.modal-footer-between {
+  justify-content: space-between;
+}
+
+.modal-footer-actions,
+.confirm-modal-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-delete-danger {
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: var(--radius-btn) !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  color: #F87171 !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.btn-delete-danger:hover {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+}
+
+.emp-action-btn-group,
+.inv-action-btn-group,
+.inq-row-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+}
+
+.emp-action-btn-group .btn-table-action,
+.inq-row-actions .btn-table-action,
+.inv-action-btn-group .btn-edit-inv,
+.inv-action-btn-group .btn-view-inv,
+.inv-action-btn-group .btn-delete-inv {
+  height: 30px !important;
+  padding: 0 11px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+}
+
+.inq-row-actions .btn-read-toggle {
+  width: 30px !important;
+  height: 30px !important;
+  flex-shrink: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .modal-footer,
+  .modal-footer.modal-footer-between {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .modal-footer-actions,
+  .confirm-modal-actions {
+    width: 100%;
+    display: flex;
+  }
+
+  .modal-footer-actions > button,
+  .confirm-modal-actions > button,
+  .modal-footer > .btn-secondary-action,
+  .modal-footer > .btn-primary-action,
+  .modal-footer > .btn-delete-danger {
+    flex: 1 1 0% !important;
+    width: 100% !important;
+  }
+
+  .invoice-add-product-bar {
+    flex-wrap: wrap !important;
+  }
+
+  .invoice-add-product-bar .invoice-search-picker-wrap {
+    flex: 1 1 100% !important;
+  }
+
+  .invoice-add-product-bar .invoice-picker-qty-wrap {
+    flex: 0 0 auto !important;
+  }
+
+  .invoice-add-product-bar .btn-primary-action {
+    flex: 1 1 0% !important;
+  }
+
+  .panel-controls {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .panel-controls .btn-add-new,
+  .panel-controls .btn-refresh {
+    flex: 1 1 auto !important;
+  }
+}
+
 
 

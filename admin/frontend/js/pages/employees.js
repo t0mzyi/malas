@@ -112,12 +112,14 @@ export function renderEmployeesTable(employees) {
         </td>
         <td class="hide-on-mobile date-cell" style="color: ${dateStr ? '#E2E8F0' : '#64748B'};">${lastActive}</td>
         <td class="col-emp-actions" style="text-align: right; white-space: nowrap; padding-right: 20px;">
-          <button type="button" class="btn-table-action ${isSuspended ? 'btn-unblock' : 'btn-block'}" onclick="window.malasToggleEmployeeBlock(${emp.id}, ${!isSuspended}, '${escapeHtml(emp.full_name || emp.username)}')" style="${isSuspended ? 'color: #10B981; background: rgba(16, 185, 129, 0.1);' : 'color: #EF4444; background: rgba(239, 68, 68, 0.1);'} margin-right: 8px;">
-            ${isSuspended ? 'Unblock' : 'Block'}
-          </button>
-          <button type="button" class="btn-table-action" onclick="window.malasOpenEmployee(${emp.id})" style="background: rgba(255,255,255,0.05); color: #F8FAFC;">
-            View Profile &rarr;
-          </button>
+          <div class="emp-action-btn-group">
+            <button type="button" class="btn-table-action ${isSuspended ? 'btn-unblock' : 'btn-block'}" onclick="window.malasToggleEmployeeBlock(${emp.id}, ${!isSuspended}, '${escapeHtml(emp.full_name || emp.username)}')">
+              ${isSuspended ? 'Unblock' : 'Block'}
+            </button>
+            <button type="button" class="btn-table-action" onclick="window.malasOpenEmployee(${emp.id})">
+              View Profile &rarr;
+            </button>
+          </div>
         </td>
       </tr>
     `;
