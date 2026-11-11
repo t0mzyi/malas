@@ -118,28 +118,24 @@ button {
   padding: 0 24px;
 }
 
-/* Instant Session Persistence Display Rules */
-html.is-authenticated #login-view,
-body.is-authenticated #login-view {
+/* Instant Session Persistence Display Rules (driven purely by html.is-authenticated) */
+html.is-authenticated #login-view {
   display: none !important;
 }
 
-html.is-authenticated #dashboard-view,
-body.is-authenticated #dashboard-view {
+html.is-authenticated #dashboard-view {
   display: flex !important;
   visibility: visible !important;
   pointer-events: auto !important;
 }
 
-html:not(.is-authenticated) #dashboard-view,
-body:not(.is-authenticated) #dashboard-view {
+html:not(.is-authenticated) #dashboard-view {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
-html:not(.is-authenticated) #login-view,
-body:not(.is-authenticated) #login-view {
+html:not(.is-authenticated) #login-view {
   display: flex !important;
   visibility: visible !important;
   pointer-events: auto !important;
@@ -971,8 +967,7 @@ body:not(.is-authenticated) #login-view {
     touch-action: manipulation !important;
   }
 
-  html:not(.is-authenticated) .sidebar-nav,
-  body:not(.is-authenticated) .sidebar-nav {
+  html:not(.is-authenticated) .sidebar-nav {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;

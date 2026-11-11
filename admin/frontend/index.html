@@ -10,18 +10,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=2.7">
-  <!-- Instant Authentication State Check -->
+  <!-- Instant Authentication State Check (runs before any stylesheet or body parse) -->
   <script>
     (function () {
       try {
-        var token = localStorage.getItem('malas_admin_token');
-        if (token) {
+        if (localStorage.getItem('malas_admin_token')) {
           document.documentElement.classList.add('is-authenticated');
         }
       } catch (e) {}
     })();
   </script>
+  <style>
+    html.is-authenticated #login-view { display: none !important; }
+    html:not(.is-authenticated) #dashboard-view { display: none !important; }
+  </style>
+  <link rel="stylesheet" href="/styles.css?v=2.8">
   <!-- Client-side Excel & PDF Export Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
 </head>
