@@ -77,7 +77,7 @@ router.post('/login', loginLimiter, async (req, res) => {
       console.warn('Non-blocking last_login update notice:', err.message);
     });
 
-    // Sign JWT valid for 24 hours
+    // Sign persistent JWT valid for 30 days so user stays logged in
     const token = jwt.sign(
       {
         id: admin.id,
@@ -87,15 +87,15 @@ router.post('/login', loginLimiter, async (req, res) => {
         fullName: admin.full_name
       },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '30d' }
     );
 
-    // Set HTTP-only cookie with 24h lifespan
+    // Set HTTP-only cookie with 30d lifespan
     res.cookie('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days persistent login
     });
 
     return res.json({

@@ -50,16 +50,8 @@ export function recordUserActivity() {
 export function checkSessionLiveness() {
   if (!state.token || isLoggingOut) return;
 
-  const now = Date.now();
-  const lastActive = parseInt(localStorage.getItem('malas_last_active') || '0', 10);
-
-  // 1. Idle timeout (15 min inactivity)
-  if (lastActive && (now - lastActive > IDLE_TIMEOUT_MS)) {
-    handleSessionTimeout('Your session timed out due to inactivity (15 minutes idle). Please sign in again.');
-    return;
-  }
-
-  // 2. Token expired
+  // No idle timeout: Keep user logged in persistently
+  // Only verify token expiration
   if (isTokenExpired(state.token)) {
     handleSessionTimeout('Your security session has expired. Please sign in again.');
     return;
@@ -184,6 +176,11 @@ export async function handleLogout(notifyServer = true) {
   clearSession();
   closeAllModals();
   showLoginView();
+
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  if (usernameInput) usernameInput.value = '';
+  if (passwordInput) passwordInput.value = '';
 
   if (window.history && window.history.pushState && window.location.pathname !== '/login') {
     window.history.pushState({ tab: 'login' }, '', '/login');

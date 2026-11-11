@@ -50,10 +50,18 @@ export function setAdmin(adminData) {
 export function clearSession() {
   state.token = null;
   state.admin = null;
+  state.cart = [];
+  state.selectedInquiry = null;
+  state.selectedProduct = null;
+  state.selectedCategory = null;
+  state.activeInvoiceForView = null;
+  state.editingInvoiceId = null;
+  state.editingInvoiceNumber = null;
   try {
     localStorage.removeItem('malas_admin_token');
     localStorage.removeItem('malas_admin_user');
     localStorage.removeItem('malas_last_active');
+    sessionStorage.clear();
   } catch (e) {}
 }
 

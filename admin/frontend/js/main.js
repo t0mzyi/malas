@@ -62,25 +62,17 @@ async function bootstrap() {
     switchTab(initialTab, true);
   });
 
-  // 4. Session Validation on Page Boot
+  // 4. Session Validation on Page Boot (Persistent login - no idle timeout)
   let timeoutMsg = null;
   try {
     timeoutMsg = sessionStorage.getItem('malas_session_timeout_msg');
     if (timeoutMsg) sessionStorage.removeItem('malas_session_timeout_msg');
   } catch (e) {}
 
-  const now = Date.now();
-  const lastActive = parseInt(localStorage.getItem('malas_last_active') || '0', 10);
-  const IDLE_TIMEOUT_MS = 15 * 60 * 1000;
-  const isIdle = lastActive && (now - lastActive > IDLE_TIMEOUT_MS);
   const isExpired = state.token && isTokenExpired(state.token);
 
-  if (state.token && (isIdle || isExpired)) {
-    handleSessionTimeout(
-      isIdle
-        ? 'Your session timed out due to inactivity (15 minutes idle). Please sign in again.'
-        : 'Your security session has expired. Please sign in again.'
-    );
+  if (state.token && isExpired) {
+    handleSessionTimeout('Your security session has expired. Please sign in again.');
     return;
   }
 
