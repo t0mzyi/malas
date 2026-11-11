@@ -11,8 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
-  <!-- Client-side Excel & PDF Export Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Instant Authentication State Check -->
   <script>
     (function () {
@@ -24,6 +22,8 @@
       } catch (e) {}
     })();
   </script>
+  <!-- Client-side Excel & PDF Export Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
 </head>
 <body>
   <div id="app" class="admin-wrapper">
@@ -31,7 +31,7 @@
     <!-- ============================================================
          1. LOGIN VIEW
          ============================================================ -->
-    <div id="login-view" class="view-panel active">
+    <div id="login-view" class="view-panel">
       <div class="login-card-backdrop"></div>
       
       <div class="login-container">

@@ -30,9 +30,9 @@ if (DB_CLIENT === 'supabase' || DB_CLIENT === 'postgres') {
   const pgPool = new PgPool({
     connectionString,
     ssl: isLocal ? false : { rejectUnauthorized: false },
-    max: 10,
-    min: 2, // Keep warm connections ready in pool to eliminate handshake delay
-    idleTimeoutMillis: 120000, // 2 minutes before recycling idle connection
+    max: 20,
+    min: 4, // Keep 4 warm connections ready to eliminate roundtrip latency
+    idleTimeoutMillis: 300000, // 5 minutes before recycling idle connection
     connectionTimeoutMillis: 10000
   });
 

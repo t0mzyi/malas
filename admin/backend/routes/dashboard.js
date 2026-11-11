@@ -8,13 +8,18 @@ const { requireAuth } = require('../middleware/auth');
  */
 router.get('/stats', requireAuth, async (req, res) => {
   try {
-    const [[totalInquiries]] = await pool.query('SELECT COUNT(*) as count FROM `rfp_inquiries`');
-    const [[newInquiries]] = await pool.query("SELECT COUNT(*) as count FROM `rfp_inquiries` WHERE `status` = 'new'");
-    const [[activeReviews]] = await pool.query("SELECT COUNT(*) as count FROM `rfp_inquiries` WHERE `status` = 'in_review'");
-    const [[totalAdmins]] = await pool.query("SELECT COUNT(*) as count FROM `admins` WHERE `role` NOT IN ('ceo', 'super_admin')");
-    const [[activeAdmins]] = await pool.query("SELECT COUNT(*) as count FROM `admins` WHERE `status` = 'active'");
-    const [[totalProducts]] = await pool.query('SELECT COUNT(*) as count FROM `products`');
-    const [[totalCategories]] = await pool.query('SELECT COUNT(*) as count FROM `categories`');
+    const [
+      [[totalInquiries]],
+      [[totalProducts]],
+      [[totalCategories]],
+      [[totalAdmins]]
+    ] = await Promise.all([
+      pool.query('SELECT COUNT(*) as count FROM `rfp_inquiries`'),
+      pool.query('SELECT COUNT(*) as count FROM `products`'),
+      pool.query('SELECT COUNT(*) as count FROM `categories`'),
+      pool.query("SELECT COUNT(*) as count FROM `admins` WHERE `role` NOT IN ('ceo', 'super_admin')")
+    ]);
+
     let totalInvoices = { count: 0 };
     try {
       const [[invCount]] = await pool.query('SELECT COUNT(*) as count FROM `invoices`');
