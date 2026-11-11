@@ -65,6 +65,9 @@ function getTargetPath(tabName) {
 
 export function switchTab(rawTabName, updateHistory = true) {
   let tabName = resolveTabName(rawTabName);
+  if (!tabName || tabName === 'login') {
+    tabName = 'inquiries';
+  }
   const isCeo = isUserCeo(state.admin);
   if (tabName === 'employees' && !isCeo) {
     tabName = 'inquiries';

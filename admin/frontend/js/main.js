@@ -53,9 +53,13 @@ async function bootstrap() {
   });
 
   window.addEventListener('malas:login-success', () => {
+    showDashboardView();
     loadDashboardStats();
-    const initialTab = getTabFromUrl();
-    switchTab(initialTab, false);
+    let initialTab = getTabFromUrl();
+    if (!initialTab || initialTab === 'login') {
+      initialTab = 'inquiries';
+    }
+    switchTab(initialTab, true);
   });
 
   // 4. Session Validation on Page Boot

@@ -34,6 +34,17 @@ export function showDashboardView() {
     dashboardView.style.display = 'flex';
   }
 
+  const activePanel = document.querySelector('.tab-panel.active');
+  if (!activePanel) {
+    const inquiriesPanel = document.getElementById('tab-inquiries');
+    if (inquiriesPanel) {
+      inquiriesPanel.classList.add('active');
+      inquiriesPanel.style.display = 'block';
+    }
+    const inqNav = document.querySelector('.sidebar-nav-item[data-tab="inquiries"]');
+    if (inqNav) inqNav.classList.add('active');
+  }
+
   updateHeaderProfile(state.admin);
 }
 

@@ -72,8 +72,10 @@ router.post('/login', loginLimiter, async (req, res) => {
       });
     }
 
-    // Update last_login
-    await pool.query('UPDATE `admins` SET last_login = NOW() WHERE id = ?', [admin.id]);
+    // Update last_login asynchronously in background without delaying user response
+    pool.query('UPDATE `admins` SET last_login = NOW() WHERE id = ?', [admin.id]).catch(err => {
+      console.warn('Non-blocking last_login update notice:', err.message);
+    });
 
     // Sign JWT valid for 24 hours
     const token = jwt.sign(

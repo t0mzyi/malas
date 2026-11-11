@@ -31,7 +31,8 @@ if (DB_CLIENT === 'supabase' || DB_CLIENT === 'postgres') {
     connectionString,
     ssl: isLocal ? false : { rejectUnauthorized: false },
     max: 10,
-    idleTimeoutMillis: 30000,
+    min: 2, // Keep warm connections ready in pool to eliminate handshake delay
+    idleTimeoutMillis: 120000, // 2 minutes before recycling idle connection
     connectionTimeoutMillis: 10000
   });
 
