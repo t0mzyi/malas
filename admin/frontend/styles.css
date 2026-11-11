@@ -1466,13 +1466,13 @@ body:not(.is-authenticated) #login-view {
 }
 
 .panel-header {
-  padding: 24px 28px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px 20px;
 }
 
 .panel-title {
@@ -1491,7 +1491,8 @@ body:not(.is-authenticated) #login-view {
 .panel-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -1505,27 +1506,30 @@ body:not(.is-authenticated) #login-view {
   position: absolute;
   left: 12px;
   color: var(--text-muted);
+  pointer-events: none;
 }
 
 .search-box input {
-  padding: 8px 12px 8px 34px;
+  height: 38px;
+  padding: 0 14px 0 34px;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-btn);
   color: var(--text-pure);
   font-size: 0.82rem;
-  width: 220px;
-  transition: all 0.2s ease;
+  width: 205px;
+  transition: border-color 0.2s ease, width 0.2s ease;
 }
 
 .search-box input:focus {
   outline: none;
   border-color: var(--accent-bronze);
-  width: 260px;
+  width: 235px;
 }
 
 .filter-select {
-  padding: 8px 14px;
+  height: 38px;
+  padding: 0 14px;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-btn);
@@ -1536,16 +1540,19 @@ body:not(.is-authenticated) #login-view {
 }
 
 .btn-refresh {
+  height: 38px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 0 16px;
   background: var(--bg-surface);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-btn);
   color: var(--text-pure);
   font-size: 0.82rem;
   font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
@@ -1697,6 +1704,55 @@ body:not(.is-authenticated) #login-view {
   font-style: italic;
 }
 
+/* Invoices & Row Action Button Groups (Desktop + Laptop) */
+.inv-action-btn-group {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.btn-edit-inv,
+.btn-view-inv,
+.btn-delete-inv {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-edit-inv {
+  background: rgba(200, 155, 104, 0.12);
+  border: 1px solid rgba(200, 155, 104, 0.45);
+  color: var(--accent-bronze-light);
+}
+
+.btn-edit-inv:hover {
+  background: var(--accent-bronze);
+  color: #000000;
+}
+
+.btn-view-inv {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-medium);
+  color: var(--text-pure);
+}
+
+.btn-view-inv:hover {
+  background: rgba(200, 155, 104, 0.18);
+  border-color: var(--accent-bronze);
+  color: var(--accent-bronze-light);
+}
+
 .btn-table-action {
   padding: 6px 14px;
   background: var(--bg-surface);
@@ -1705,6 +1761,8 @@ body:not(.is-authenticated) #login-view {
   color: var(--text-pure);
   font-size: 0.78rem;
   font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
@@ -1929,7 +1987,8 @@ body:not(.is-authenticated) #login-view {
 .detail-hero-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .btn-detail-action {
@@ -2466,11 +2525,17 @@ body:not(.is-authenticated) #login-view {
 }
 
 .btn-add-new {
+  width: auto;
+  height: 38px;
+  margin-top: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 9px 16px;
+  padding: 0 18px;
   font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* ============================================================
@@ -4560,7 +4625,8 @@ body:not(.is-authenticated) #login-view {
 .invoice-export-buttons {
   display: flex;
   align-items: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .btn-inv-action {
