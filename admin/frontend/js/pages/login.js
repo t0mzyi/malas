@@ -6,17 +6,29 @@ import { handleLogin, handleLogout } from '../services/auth.js';
 
 export function initLoginPage() {
   const loginForm = document.getElementById('login-form');
+  const loginSubmitBtn = document.getElementById('login-submit-btn');
   const usernameInput = document.getElementById('username');
   const passwordInput = document.getElementById('password');
   const togglePwdBtn = document.getElementById('toggle-pwd-btn');
   const logoutBtn = document.getElementById('logout-btn');
 
+  function submitLogin() {
+    const username = usernameInput ? usernameInput.value.trim() : '';
+    const password = passwordInput ? passwordInput.value : '';
+    handleLogin(username, password);
+  }
+
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const username = usernameInput ? usernameInput.value.trim() : '';
-      const password = passwordInput ? passwordInput.value : '';
-      handleLogin(username, password);
+      submitLogin();
+    });
+  }
+
+  if (loginSubmitBtn) {
+    loginSubmitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      submitLogin();
     });
   }
 
