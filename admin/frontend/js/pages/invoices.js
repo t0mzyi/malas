@@ -759,7 +759,6 @@ export function initInvoicesPage() {
   const newInvoiceTabBtn = document.getElementById('new-invoice-from-tab-btn');
   const openCartBtn = document.getElementById('open-cart-btn');
   const closeCartModalBtn = document.getElementById('close-cart-modal-btn');
-  const cartContinueShoppingBtn = document.getElementById('cart-continue-shopping-btn');
   const cartClearAllBtn = document.getElementById('cart-clear-all-btn');
   const finalizeInvoiceForm = document.getElementById('finalize-invoice-form') || document.getElementById('invoice-finalize-form');
   const cartDiscountInput = document.getElementById('cart-discount-input');
@@ -787,7 +786,6 @@ export function initInvoicesPage() {
   }
   if (openCartBtn) openCartBtn.addEventListener('click', openCartModal);
   if (closeCartModalBtn) closeCartModalBtn.addEventListener('click', closeCartModal);
-  if (cartContinueShoppingBtn) cartContinueShoppingBtn.addEventListener('click', closeCartModal);
 
   if (cartClearAllBtn) {
     cartClearAllBtn.addEventListener('click', () => {
