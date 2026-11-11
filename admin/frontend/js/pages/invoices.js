@@ -5,7 +5,7 @@
 import { state } from '../state.js';
 import { ENDPOINTS } from '../config.js';
 import { authFetch } from '../services/api.js';
-import { showToast, escapeHtml } from '../components/notifications.js';
+import { showToast, showConfirmModal, escapeHtml } from '../components/notifications.js';
 import { updateNavBadge } from '../components/navigation.js';
 import { switchTab } from '../router.js';
 import { loadDashboardStats } from './dashboard.js';
